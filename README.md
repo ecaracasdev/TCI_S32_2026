@@ -2,6 +2,15 @@
 
 > **Trabajo de Campo Integrador · Desarrollo de Software 2026 · Comisión S32 · UTN FR La Plata**
 
+## Integrantes
+
+| Legajo | Nombre y apellido   | Email                  |
+| ------ | ------------------- | ----------------------- |
+| 34575  | ELIAS, CARACAS      | ecaracasdev@gmail.com   |
+| ...    | ...                 | ...                     |
+
+--
+
 Este repo es la **base de operaciones** de tu TCI. Acá la cátedra va a publicar el **dominio**, la **spec** y las **actividades**. Tu equipo **no trabaja acá**: hace un **fork** de este repo y labura en el suyo, recibiendo las actualizaciones de acá al toque.
 
 ---
@@ -28,12 +37,12 @@ Todo el detalle paso a paso **te llega por mail**. Acá va la versión corta:
 
 ## 🗂️ Estructura del repo (qué va a haber acá)
 
-| Ruta | Qué es |
-|---|---|
-| `README.md` | Esta portada |
+| Ruta            | Qué es                                                 |
+| --------------- | ------------------------------------------------------ |
+| `README.md`     | Esta portada                                           |
 | `docs/dominio/` | El **dominio** del TCI (cuando la cátedra lo publique) |
-| `docs/spec/` | La **spec** (requerimientos y criterios) |
-| Actividades | Consignas y material de cada etapa |
+| `docs/spec/`    | La **spec** (requerimientos y criterios)               |
+| Actividades     | Consignas y material de cada etapa                     |
 
 > ⚠️ **Ojo:** esta estructura crece a medida que avanza el cuatrimestre. Mantené tu fork **al día** con:
 >
@@ -72,10 +81,10 @@ Trabajamos con **forks + `upstream`** (el flujo de colaboración real del open s
 
 ## 🧩 Alcance académico
 
-| Resultado de aprendizaje | Qué toca |
-|---|---|
-| **RA03** | Uso de herramientas de desarrollo (Git, GitHub) |
-| **RA04** | Administración del seguimiento (PR, review) |
-| **RA07** | Asistencia entre pares (revisión de código) |
+| Resultado de aprendizaje | Qué toca                                        |
+| ------------------------ | ----------------------------------------------- |
+| **RA03**                 | Uso de herramientas de desarrollo (Git, GitHub) |
+| **RA04**                 | Administración del seguimiento (PR, review)     |
+| **RA07**                 | Asistencia entre pares (revisión de código)     |
 
-*Comisión S32 · Desarrollo de Software 2026 · UTN FR La Plata · Aula invertida + TCI.*
+_Comisión S32 · Desarrollo de Software 2026 · UTN FR La Plata · Aula invertida + TCI._
