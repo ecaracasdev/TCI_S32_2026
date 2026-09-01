@@ -6,23 +6,41 @@
 
 Convención del TCI: **una feature = una rama = un PR**.
 
-- Cada cambio (funcionalidad, fix, doc) se desarrolla en su propia rama.
-- Esa rama se abre como un único Pull Request contra `main`.
-- No se mezclan cambios de distinto propósito en la misma rama/PR.
+Elegimos Feature Branch Flow como workflow del equipo por:
+
+1. **Tamaño del equipo:** somos pocos integrantes, así que un flujo simple de una
+   rama por feature es más fácil de coordinar que esquemas con múltiples ramas
+   de larga vida (ej. Gitflow).
+2. **Metodología ágil:** queremos control dinámico sobre features y fixes,
+   iterando rápido, sin la sobrecarga de sincronizar varios entornos de
+   desarrollo en paralelo.
+3. **Despliegue:** no manejamos múltiples entornos (staging/producción
+   separados) — un solo entorno de despliegue. Eso hace que `main` sea siempre
+   la fuente de la verdad: estable y lista para desplegarse en cualquier
+   momento, sin pasos de promoción entre ramas.
+
+### Acciones que este flow nos exige
+
+- `main` nunca se toca directo — siempre estable y desplegable.
+- Cada historia/tarea = una rama nueva desde `main` actualizado.
+- Commits chicos y frecuentes en la rama.
+- Abrir PR de la rama a `main`.
+- Al menos 1 review de un par; el autor no se auto-mergea.
+- Merge a `main` y borrar la rama.
 
 ## Nombrar una rama
 
-Usá un nombre claro que indique el tipo de cambio y una descripción corta:
+Usá un nombre claro que indique el tipo de cambio, el código de la tarea y una descripción corta:
 
 ```
-<tipo>/<descripcion-corta>
+<tipo>/<codigo>-<descripcion-corta>
 ```
 
 Ejemplos:
 
-- `feat/login-usuario`
-- `fix/validacion-email`
-- `docs/team-charter`
+- `feat/T12-login-usuario`
+- `fix/T15-validacion-email`
+- `docs/T20-workflow-justificacion`
 
 ## Nadie pushea directo a `main`
 
@@ -48,7 +66,7 @@ git push origin main
 Después, creá tu rama de feature desde `main` ya actualizado:
 
 ```bash
-git checkout -b feat/mi-feature main
+git checkout -b feat/T00-mi-feature main
 ```
 
 ## Convención de commits
