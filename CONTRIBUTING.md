@@ -61,6 +61,22 @@ Usamos **Conventional Commits** — ver detalle en [TEAM_CHARTER.md](./TEAM_CHAR
 
 Tipos: `feat`, `fix`, `docs`, `chore`, `refactor`, `test`.
 
+Tipos de commit msgs del proyecto:
+
+| Tipo          | Descripción                                             |
+| ------------  | -----------------------------------------------------  |
+| ⭐ `RELEASE` | Versión final con integración de funcionalidades        |
+| 🔒 `STABLE`  | Versión estable o probada de una funcionalidad          |
+| ➕ `ADD`     | Nuevo desarrollo sobre una funcionalidad existente      |
+| 🔧 `MOD`     | Modificación de código existente                        |
+| ✨ `REF`     | Refactorización para mejorar estructura o rendimiento   |
+| 🐛 `FIX`     | Corrección de un error específico                       |
+
+Ejemplo:
+```
+➕ descripción de commit message en CONTRIBUTING.md
+```
+
 ## Revisión y aprobación de PRs
 
 - **Mínimo 1 review** de un compañero antes de mergear.
