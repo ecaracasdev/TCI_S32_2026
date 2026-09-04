@@ -1,0 +1,6 @@
+# dft python
+.venv
+__pycache__
+*.log
+
+config.*.toml
