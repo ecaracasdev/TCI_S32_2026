@@ -8,6 +8,7 @@
 | ------ | ------------------ | ---------------------------- |
 | 34575  | ELIAS, CARACAS      | ecaracasdev@gmail.com        |
 | 32520  | Martin, Carrasco    | carrascomartin532@gmail.com  |
+| 31064  | PIERONI, NICOLAS    | pieroni.nico@gmail.com       |
 
 ## Canal de comunicación y frecuencia mínima de encuentro
 

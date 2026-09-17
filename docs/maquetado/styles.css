@@ -1,0 +1,52 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 16px;
+}
+
+header,
+footer {
+  text-align: center;
+  padding: 8px 0;
+}
+
+.formulario {
+  max-width: 480px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.formulario label {
+  font-weight: bold;
+  margin-top: 12px;
+}
+
+.formulario input,
+.formulario textarea,
+.formulario select {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.formulario textarea {
+  min-height: 100px;
+  resize: vertical;
+}
+
+.formulario input[type="submit"] {
+  margin-top: 16px;
+  align-self: center;
+  padding: 10px 24px;
+  background-color: #2e6b4c;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
