@@ -12,14 +12,14 @@
     </header>
     <main>
         <h1>Reportar incidencia</h1>
-        <form class="formulario">
+        <form class="formulario" id="form-incidencia">
            <label for="maquina">Máquina:</label>
            <input type="text" id="maquina" name="maquina" placeholder="Código QR de la máquina">
 
-           <!-- B2: segundo campo de máquina, listo para escaneo QR real en M3
-           <label for="maquina-qr">Escanear código QR:</label>
-           <input type="text" id="maquina-qr" name="maquina-qr" placeholder="Se completa automáticamente al escanear">
-           -->
+           <!-- B2: segundo campo de máquina, listo para escaneo QR real en M3 -->
+           <label for="codigo-maquina">Escanear código QR:</label>
+           <input type="text" id="codigo-maquina" name="codigo-maquina" placeholder="Se completa automáticamente al escanear">
+          
 
            <label for="descripcion">Descripción:</label>
            <textarea id="descripcion" name="descripcion" placeholder="Describí el problema que observaste…"></textarea>
@@ -34,12 +34,14 @@
                <option value="noche">Noche</option>
            </select>
 
-           <label for="boto">Botón:</label>
-           <input type="submit" id="boto" name="boto" value="Reportar">
+           <label for="btn-enviar">Botón:</label>
+           <input type="submit" id="btn-enviar" name="btn-enviar" value="Reportar">
         </form>
+        <div id="preview-incidencia" hidden></div>
     </main>
     <footer>
-        <p>Turno: tarde</p>
+        <p>footer</p>
     </footer>
+    <script src="app.js" defer></script>
 </body>
 </html>
