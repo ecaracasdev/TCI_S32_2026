@@ -1,0 +1,31 @@
+<header class="header">
+    <div class="header-container">
+        <a class="brand" [href]="config.brand.homeUrl" (click)="closeMenu()">
+            {{ config.brand.name }}
+        </a>
+
+        <button
+            class="menu-toggle"
+            type="button"
+            [attr.aria-expanded]="isMenuOpen()"
+            aria-label="Toggle menu"
+            (click)="toggleMenu()"
+        >
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+
+        <nav class="nav" [class.nav-open]="isMenuOpen()">
+            @for (item of config.navigation; track item.label) {
+                <a class="nav-link" [href]="item.href" (click)="closeMenu()">
+                    {{ item.label }}
+                </a>
+            }
+        </nav>
+
+        <a class="cta" [href]="config.cta.href" (click)="closeMenu()">
+            {{ config.cta.label }}
+        </a>
+    </div>
+</header>
