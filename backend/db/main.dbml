@@ -1,0 +1,5 @@
+
+Project Template {
+  database_type: 'Sqlite'
+  Note: 'Plantilla de Código para el SCHEMA DE LA BASE DE DATOS'
+}

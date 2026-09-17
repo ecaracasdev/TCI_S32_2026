@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reportar incidencia — Mantenimiento</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <p>Sistema de Gestión de Stock y Mantenimiento de Planta</p>
+    </header>
+    <main>
+        <h1>Reportar incidencia</h1>
+        <form class="formulario">
+           <label for="maquina">Máquina:</label>
+           <input type="text" id="maquina" name="maquina" placeholder="Código QR de la máquina">
+
+           <!-- B2: segundo campo de máquina, listo para escaneo QR real en M3
+           <label for="maquina-qr">Escanear código QR:</label>
+           <input type="text" id="maquina-qr" name="maquina-qr" placeholder="Se completa automáticamente al escanear">
+           -->
+
+           <label for="descripcion">Descripción:</label>
+           <textarea id="descripcion" name="descripcion" placeholder="Describí el problema que observaste…"></textarea>
+
+           <label for="foto">Foto:</label>
+           <input type="file" id="foto" name="foto" accept="image/*">
+
+           <label for="turno">Turno:</label>
+           <select id="turno" name="turno">
+               <option value="manana">Mañana</option>
+               <option value="tarde">Tarde</option>
+               <option value="noche">Noche</option>
+           </select>
+
+           <label for="boto">Botón:</label>
+           <input type="submit" id="boto" name="boto" value="Reportar">
+        </form>
+    </main>
+    <footer>
+        <p>Turno: tarde</p>
+    </footer>
+</body>
+</html>
