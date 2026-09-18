@@ -25,8 +25,8 @@ Hoy solo CUN-01 (registrar uso de repuesto) está documentado en `main`. El caso
 | CU | Actor | Reglas | Pantalla |
 | --- | --- | --- | --- |
 | CUN-01 Registrar uso de repuesto en reparación | Empleado de mantenimiento | RN-01, RN-02, RN-06 | Issue #26 |
-| CUN-02 Cargar stock recibido con ubicación | Encargado de mantenimiento (puede delegar) | RN-06, RN-08 | Issue #27 |
-| CUN-03 Reportar incidencia con QR de máquina | Operario de máquina | RN-09 | Maquetado hecho |
+| CUN-02 Cargar stock recibido con ubicación | Encargado de mantenimiento (puede delegar) | RN-08 | Issue #27 |
+| CUN-03 Reportar incidencia con QR de máquina | Operario de máquina | El cronograma no cita ninguna | Maquetado hecho |
 
 2. La autenticación usa 3 roles: operario, empleado de mantenimiento y encargado. Son los que tienen un caso de uso propio en el núcleo.
 3. Dueños propuestos, uno por caso de uso: Martín en CUN-01, Nicolás en CUN-02 y Elias en CUN-03.
