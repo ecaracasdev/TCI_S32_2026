@@ -1,0 +1,18 @@
+[07:14:52] » [CLI] ...  awaiting  Starting Prism…
+(node:31424) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+[07:14:52] » [CLI] i  info      GET        http://127.0.0.1:4010/incidencias
+[07:14:52] » [CLI] i  info      GET        http://127.0.0.1:4010/repuestos
+[07:14:52] » [CLI] ►  start     Prism is listening on http://127.0.0.1:4010
+[07:16:19] » [HTTP SERVER] get /incidencias i  info      Request received
+[07:16:19] »     [NEGOTIATOR] i  info      Request contains an accept header: */*
+[07:16:19] »     [VALIDATOR] √  success   The request passed the validation rules. Looking for the best response
+[07:16:19] »     [NEGOTIATOR] √  success   Found a compatible content for */*
+[07:16:19] »     [NEGOTIATOR] √  success   Responding with the requested status code 200
+[07:16:19] »     [NEGOTIATOR] i  info      > Responding with "200"
+[07:16:19] » [HTTP SERVER] get /repuestos i  info      Request received
+[07:16:19] »     [NEGOTIATOR] i  info      Request contains an accept header: */*
+[07:16:19] »     [VALIDATOR] √  success   The request passed the validation rules. Looking for the best response
+[07:16:19] »     [NEGOTIATOR] √  success   Found a compatible content for */*
+[07:16:19] »     [NEGOTIATOR] √  success   Responding with the requested status code 200
+[07:16:19] »     [NEGOTIATOR] i  info      > Responding with "200"

@@ -1,0 +1,121 @@
+openapi: 3.1.0
+info:
+  title: API de práctica - Incidencias y stock
+  version: 0.1.0
+  description: Contrato de práctica para generar un mock con Prism.
+servers:
+  - url: http://127.0.0.1:4010
+    description: Servidor mock local de Prism
+paths:
+  /incidencias:
+    get:
+      summary: Lista las incidencias registradas
+      operationId: listarIncidencias
+      responses:
+        '200':
+          description: Lista de incidencias
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Incidencia'
+              example:
+                - id: 1
+                  maquina: Torno CNC-01
+                  descripcion: La máquina se detiene durante el cambio automático de herramienta.
+                  estado: Reportada
+                  turno: mañana
+                  fotos: []
+                - id: 2
+                  maquina: Prensa hidráulica-02
+                  descripcion: Se observa una pérdida de presión durante el ciclo de trabajo.
+                  estado: EnTriage
+                  turno: tarde
+                  fotos:
+                    - https://example.com/fotos/prensa-02.jpg
+  /repuestos:
+    get:
+      summary: Lista los repuestos disponibles
+      operationId: listarRepuestos
+      responses:
+        '200':
+          description: Lista de repuestos
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Repuesto'
+              example:
+                - id: 1
+                  codigo: REP-AC-001
+                  nombre: Filtro de aire
+                  stockFisico: 8
+                  umbralMinimo: 2
+                  ubicacion: A-03-12
+components:
+  schemas:
+    Incidencia:
+      type: object
+      required:
+        - id
+        - maquina
+        - descripcion
+        - estado
+        - turno
+        - fotos
+      properties:
+        id:
+          type: integer
+          example: 1
+        maquina:
+          type: string
+          example: Torno CNC-01
+        descripcion:
+          type: string
+          example: La máquina se detiene durante el cambio automático de herramienta.
+        estado:
+          type: string
+          enum: [Reportada, EnTriage, EnReparacion, PendienteDeRepuesto, Resuelta]
+          example: Reportada
+        turno:
+          type: string
+          enum: [mañana, tarde, noche]
+          example: mañana
+        fotos:
+          type: array
+          items:
+            type: string
+            format: uri
+          example: []
+    Repuesto:
+      type: object
+      required:
+        - id
+        - codigo
+        - nombre
+        - stockFisico
+        - umbralMinimo
+        - ubicacion
+      properties:
+        id:
+          type: integer
+          example: 1
+        codigo:
+          type: string
+          example: REP-AC-001
+        nombre:
+          type: string
+          example: Filtro de aire
+        stockFisico:
+          type: integer
+          minimum: 0
+          example: 8
+        umbralMinimo:
+          type: integer
+          minimum: 0
+          example: 2
+        ubicacion:
+          type: string
+          example: A-03-12
