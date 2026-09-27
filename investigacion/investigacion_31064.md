@@ -234,7 +234,7 @@ Capturas que hay que incluir:
 
 #### Evidencias
 
-![Aplicación React funcionando con Vite](actividad-react-prism/captura-react-vite.png)
+![Aplicación React funcionando con Vite](actividad-react-prism/react-con-vite.png)
 
 ![Componente Incidencia con props tipadas](actividad-react-prism/captura-componente-incidencia.png)
 
@@ -330,9 +330,9 @@ De esa manera ambas personas avanzan al mismo tiempo y pueden detectar temprano 
 
 #### 3. ¿Qué relación hay entre el contrato OpenAPI y las reglas de negocio RN-STOCK y RN-UMBRAL documentadas en la M1?
 
-Ambos son parte de la definición de contrato pero partes diferentes.
-OpenAPI es para el contrato que debe establecer la API, asi mismo este contrato esta atado a una estructura superior que se define por las reglas de negocio como RN-STOCK y RN-UMBRAL.
-Por ejemplo, el contrato puede exigir los campos necesarios para registrar stock y documentar respuestas de error cuando una operación no cumple RN-STOCK o RN-UMBRAL. OpenAPI describe la forma de la comunicación, pero la validación se realiza por código en backend.
+OpenAPI y las reglas de negocio no son exactamente lo mismo, aunque están muy relacionadas. OpenAPI sirve para definir el contrato que tiene que cumplir la API: los endpoints, los datos que se reciben, los datos que se devuelven y los posibles errores.
+Las reglas RN-STOCK y RN-UMBRAL, en cambio, describen qué tiene que estar permitido o prohibido dentro del negocio. Es decir, esas reglas definen qué significa que una operación de stock sea válida, mientras que OpenAPI ayuda a comunicar cómo se solicita esa operación y qué respuesta se obtiene.
+Por ejemplo, el contrato puede exigir los campos necesarios para registrar un movimiento de stock y documentar una respuesta de error cuando una operación no cumple RN-STOCK o RN-UMBRAL. OpenAPI puede describir parte de esas restricciones, como tipos, campos obligatorios o valores mínimos, pero la validación completa de las reglas se realiza por código en el backend.
 
 ### Registro de búsquedas
 
@@ -370,14 +370,18 @@ Capturas que hay que incluir:
 #### Evidencias
 ![Prism Instalado correctamente](actividad-react-prism/verificacion-instalacion-prism.png)
 ![Prism escuchando en el puerto 4010](actividad-react-prism/captura-prism-terminal.png)
-![Respuesta de Prism para incidencias](prism-incidencias.png)
-![Respuesta de Prism para repuestos](prism-repuestos.png)
+![Respuesta de Prism para incidencias](actividad-react-prism/prism-incidencias.png)
+![Respuesta de Prism para repuestos](actividad-react-prism/prism-repuestos.png)
 Contrato utilizado: [contrato_ejemplo_openapi.yaml](actividad-react-prism/contrato_ejemplo_openapi.yaml).
 ## Reflexión
 
 Lo más difícil fue entender el modelo que una respuesta de `fetch` no es todavía el dato final: primero hay que esperar la petición y después leer su cuerpo con `json()`.
 Lo destrabé probando la misma consulta con `.then()` y con `async/await`, y comparando qué se imprimía en cada paso.
 También me ayudó relacionar el contrato OpenAPI con el trabajo separado de frontend y backend, porque muestra qué tienen que acordar antes de integrar.
+Si extiendo un poco la reflexión (porque quedo algo corta) diría que no es raro que se use un Response como respuesta de una consulta o el uso de programación con async/await.
+Sino la forma particular de trabajar de forma asincronica en si, el modelo de trabajo donde no se programa de forma imperativa sino que hay un pseudoparalelismo con posibilidad de esperar y manejar eventos.
+Puede pasar que un evento dispare una función que dispare una función que al recibir la respuesta tenga que disparar otra función.
+la ejeción se vuelve complicada si no nos adaptamos al código de alto nivel de js.
 
 ## Checklist final
 
