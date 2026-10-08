@@ -9,6 +9,7 @@
 <body>
     <header>
         <p>Sistema de Gestión de Stock y Mantenimiento de Planta</p>
+        <a class="volver" href="home.html">&larr; Inicio</a>
     </header>
     <main>
         <h1>Reportar incidencia</h1>
@@ -18,14 +19,17 @@
 
            <!-- B2: segundo campo de máquina, listo para escaneo QR real en M3 -->
            <label for="codigo-maquina">Escanear código QR:</label>
-           <input type="text" id="codigo-maquina" name="codigo-maquina" placeholder="Se completa automáticamente al escanear">
-          
+           <div class="campo-con-boton">
+               <input type="text" id="codigo-maquina" name="codigo-maquina" placeholder="Se completa automáticamente al escanear">
+               <button type="button" id="btn-escanear" class="boton-secundario">📷 Escanear</button>
+           </div>
 
            <label for="descripcion">Descripción:</label>
            <textarea id="descripcion" name="descripcion" placeholder="Describí el problema que observaste…"></textarea>
 
            <label for="foto">Foto:</label>
            <input type="file" id="foto" name="foto" accept="image/*">
+           <span id="foto-nombre" class="archivo-nombre">Sin archivo seleccionado</span>
 
            <label for="turno">Turno:</label>
            <select id="turno" name="turno">
@@ -34,8 +38,10 @@
                <option value="noche">Noche</option>
            </select>
 
-           <label for="btn-enviar">Botón:</label>
-           <input type="submit" id="btn-enviar" name="btn-enviar" value="Reportar">
+           <div class="acciones">
+               <input type="submit" id="btn-enviar" name="btn-enviar" value="Reportar">
+               <button type="button" id="btn-limpiar" class="boton-texto">Limpiar</button>
+           </div>
         </form>
         <div id="preview-incidencia" hidden></div>
     </main>
