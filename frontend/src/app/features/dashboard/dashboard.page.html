@@ -1,0 +1,39 @@
+<div class="page-shell dashboard-page">
+    <section class="welcome-row">
+        <div><p class="eyebrow">MIÉRCOLES · TURNO MAÑANA</p><h1>{{ config.greeting }} <span>☀</span></h1><p class="page-description">{{ config.description }}</p></div>
+        <a class="button" routerLink="/incidencias"><span aria-hidden="true">＋</span> Reportar incidencia</a>
+    </section>
+
+    <section class="metric-grid" aria-label="Indicadores de operación">
+        @for (metric of config.metrics; track metric.label) {
+            <article class="metric-card surface-card">
+                <div class="metric-top"><span>{{ metric.label }}</span><span class="metric-icon" [class]="'metric-icon ' + metric.tone" aria-hidden="true">{{ metric.icon }}</span></div>
+                <strong class="metric-value">{{ metric.value }}</strong>
+                <span class="metric-note" [class]="'metric-note ' + metric.tone">{{ metric.note }}</span>
+            </article>
+        }
+    </section>
+
+    <section class="dashboard-grid">
+        <article class="surface-card panel incidents-panel">
+            <div class="panel-heading"><div><h2 class="section-title">Incidencias recientes</h2><p class="section-subtitle">Reportes que necesitan seguimiento</p></div><a class="text-link" routerLink="/incidencias">Ver todas <span aria-hidden="true">→</span></a></div>
+            <div class="incident-list">
+                @for (incident of config.incidents; track incident.code) {
+                    <div class="incident-row"><div class="incident-avatar">{{ incident.initials }}</div><div class="incident-copy"><strong>{{ incident.machine }}</strong><span>{{ incident.issue }}</span><small>{{ incident.code }} · {{ incident.time }}</small></div><span [class]="'status ' + incident.tone">{{ incident.state }}</span></div>
+                }
+            </div>
+        </article>
+
+        <article class="surface-card panel stock-panel">
+            <div class="panel-heading"><div><h2 class="section-title">Repuestos por reponer</h2><p class="section-subtitle">Disponibilidad igual o menor al mínimo</p></div><a class="text-link" routerLink="/stock">Inventario <span aria-hidden="true">→</span></a></div>
+            <div class="stock-list">
+                @for (item of config.stock; track item.code) {
+                    <div class="stock-row"><span class="stock-symbol" aria-hidden="true">◈</span><div class="stock-copy"><strong>{{ item.name }}</strong><small>{{ item.code }} · Ubicación {{ item.location }}</small></div><div class="stock-count"><b [class]="item.tone">{{ item.count }}</b><small>{{ item.min }}</small></div></div>
+                }
+            </div>
+            <a class="button quiet full-button" routerLink="/compras">Revisar lista de compras <span aria-hidden="true">→</span></a>
+        </article>
+    </section>
+
+    <section class="shift-card"><div class="shift-icon" aria-hidden="true">◷</div><div><strong>Operación continua, tres turnos</strong><p>El próximo cambio de turno está previsto para las 14:00. Los reportes mantienen su trazabilidad.</p></div><span class="shift-pill"><i></i> Planta activa</span></section>
+</div>

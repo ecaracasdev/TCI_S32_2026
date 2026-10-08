@@ -1,16 +1,13 @@
 export const HEADER_CONFIG = {
     brand: {
-        name: 'Enterprise Name',
+        name: 'Nexo Planta',
         homeUrl: '/',
     },
     navigation: [
-        { label: 'Inicio', href: '/' },
-        { label: 'Servicios', href: '#servicios' },
-        { label: 'Nosotros', href: '#nosotros' },
-        { label: 'Contacto', href: '#contacto' },
+        { label: 'Resumen', href: '/' },
+        { label: 'Repuestos', href: '/stock' },
+        { label: 'Incidencias', href: '/incidencias' },
+        { label: 'Compras', href: '/compras' },
+        { label: 'Máquinas', href: '/maquinas' },
     ],
-    cta: {
-        label: 'Solicitar presupuesto',
-        href: '#contacto',
-    },
 };

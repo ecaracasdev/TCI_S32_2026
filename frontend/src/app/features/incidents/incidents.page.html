@@ -1,0 +1,24 @@
+<div class="page-shell incident-page">
+    <section class="page-heading"><div><p class="eyebrow">MANTENIMIENTO · NUEVO REPORTE</p><h1>{{ config.title }}</h1><p class="page-description">{{ config.description }}</p></div><span class="turn-badge"><i></i> Turno mañana · 08:42</span></section>
+
+    @if (submitted()) {
+        <section class="submitted-card surface-card"><span class="submitted-check">✓</span><p class="eyebrow">REPORTE REGISTRADO</p><h2>Ya avisamos a mantenimiento</h2><p>Tu incidencia quedó en seguimiento con el código <strong>INC-0249</strong>. Podés continuar con otro reporte si hace falta.</p><button class="button" type="button" (click)="newReport()">Reportar otra incidencia</button></section>
+    } @else {
+        <div class="report-layout">
+            <form class="surface-card report-form" (submit)="submit($event)">
+                <div class="form-section-heading"><span class="step-number">01</span><div><h2 class="section-title">¿Dónde está el problema?</h2><p class="section-subtitle">Identificá el equipo para asignar el reporte correctamente.</p></div></div>
+                <div class="machine-input-row"><label class="field-label machine-field">Código de máquina<input class="field-control" name="machineCode" placeholder="Ej. FRAC-F02-001" required><small>Podés encontrarlo en la etiqueta del equipo.</small></label><button class="scan-button" type="button"><span aria-hidden="true">▦</span><b>Escanear QR</b></button></div>
+                <div class="selected-machine"><span class="machine-pictogram">⚙</span><div><strong>Fraccionador F-02</strong><small>Sector de envasado · Línea 2</small></div><span class="status good">Operativa</span></div>
+
+                <div class="form-divider"></div>
+                <div class="form-section-heading"><span class="step-number">02</span><div><h2 class="section-title">Describí lo que observaste</h2><p class="section-subtitle">Incluí sonidos, cambios o condiciones que ayuden a diagnosticarlo.</p></div></div>
+                <label class="field-label">Descripción<textarea class="field-control" name="description" placeholder="Por ejemplo: el motor comenzó a vibrar durante el arranque…" required></textarea></label>
+                <label class="field-label photo-upload">Foto del problema <span class="optional-label">Opcional</span><input class="file-input" type="file" accept="image/*" capture="environment" (change)="selectPhoto($event)"><span class="upload-target"><span class="upload-icon">＋</span><span><b>{{ fileName() || 'Tomar o subir una foto' }}</b><small>JPG o PNG · hasta 10 MB</small></span><span class="upload-action">Elegir archivo</span></span></label>
+
+                <div class="form-footer"><span><span class="required-dot">●</span> Los campos marcados son obligatorios</span><button class="button submit-button" type="submit">Enviar reporte <span aria-hidden="true">→</span></button></div>
+            </form>
+
+            <aside class="report-aside"><article class="safety-card"><span class="safety-icon">✳</span><p class="eyebrow">ATENCIÓN</p><h2>¿La máquina requiere detenerse?</h2><p>Si hay riesgo para las personas o la producción, avisá al encargado de turno antes de enviar el reporte.</p><span class="safety-contact">Avisá al encargado de turno <span>→</span></span></article><article class="tips-card surface-card"><h2 class="section-title">Para un buen reporte</h2><div class="tip-list">@for (tip of config.tips; track tip.title) {<div class="tip-row"><span>✓</span><div><strong>{{ tip.title }}</strong><p>{{ tip.text }}</p></div></div>}</div></article><p class="privacy-note">⌑ Las imágenes se comparten solo con el equipo de mantenimiento.</p></aside>
+        </div>
+    }
+</div>

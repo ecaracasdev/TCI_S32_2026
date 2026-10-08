@@ -1,6 +1,7 @@
 <header class="header">
     <div class="header-container">
-        <a class="brand" [href]="config.brand.homeUrl" (click)="closeMenu()">
+        <a class="brand" [routerLink]="config.brand.homeUrl" (click)="closeMenu()">
+            <span class="brand-mark" aria-hidden="true">N</span>
             {{ config.brand.name }}
         </a>
 
@@ -8,7 +9,7 @@
             class="menu-toggle"
             type="button"
             [attr.aria-expanded]="isMenuOpen()"
-            aria-label="Toggle menu"
+                aria-label="Abrir menú"
             (click)="toggleMenu()"
         >
             <span></span>
@@ -18,14 +19,11 @@
 
         <nav class="nav" [class.nav-open]="isMenuOpen()">
             @for (item of config.navigation; track item.label) {
-                <a class="nav-link" [href]="item.href" (click)="closeMenu()">
+                <a class="nav-link" [routerLink]="item.href" routerLinkActive="nav-link-active" [routerLinkActiveOptions]="{ exact: item.href === '/' }" (click)="closeMenu()">
                     {{ item.label }}
                 </a>
             }
         </nav>
-
-        <a class="cta" [href]="config.cta.href" (click)="closeMenu()">
-            {{ config.cta.label }}
-        </a>
+        <div class="header-user" aria-label="Usuario conectado"><span class="user-avatar">NM</span><span class="user-name">Nicolás M.</span></div>
     </div>
 </header>
