@@ -1,0 +1,16 @@
+[12:14:34 PM] › [CLI] …  awaiting  Starting Prism…
+[12:14:35 PM] › [CLI] ℹ  info      GET        http://127.0.0.1:4010/incidencias
+[12:14:35 PM] › [CLI] ℹ  info      GET        http://127.0.0.1:4010/repuestos
+[12:14:35 PM] › [CLI] ▶  start     Prism is listening on http://127.0.0.1:4010
+[12:14:39 PM] › [HTTP SERVER] get /repuestos ℹ  info      Request received
+[12:14:39 PM] ›     [NEGOTIATOR] ℹ  info      Request contains an accept header: */*
+[12:14:39 PM] ›     [VALIDATOR] ✔  success   The request passed the validation rules. Looking for the best response
+[12:14:39 PM] ›     [NEGOTIATOR] ✔  success   Found a compatible content for */*
+[12:14:39 PM] ›     [NEGOTIATOR] ✔  success   Responding with the requested status code 200
+[12:14:39 PM] ›     [NEGOTIATOR] ℹ  info      > Responding with "200"
+[12:14:39 PM] › [HTTP SERVER] get /incidencias ℹ  info      Request received
+[12:14:39 PM] ›     [NEGOTIATOR] ℹ  info      Request contains an accept header: */*
+[12:14:39 PM] ›     [VALIDATOR] ✔  success   The request passed the validation rules. Looking for the best response
+[12:14:39 PM] ›     [NEGOTIATOR] ✔  success   Found a compatible content for */*
+[12:14:39 PM] ›     [NEGOTIATOR] ✔  success   Responding with the requested status code 200
+[12:14:39 PM] ›     [NEGOTIATOR] ℹ  info      > Responding with "200"

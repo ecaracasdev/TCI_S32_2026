@@ -1,0 +1,1 @@
+[{"id":1,"maquina":"Torno CNC-01","descripcion":"La máquina se detiene durante el cambio automático de herramienta.","estado":"Reportada","turno":"mañana","fotos":[]},{"id":2,"maquina":"Prensa hidráulica-02","descripcion":"Se observa una pérdida de presión durante el ciclo de trabajo.","estado":"EnTriage","turno":"tarde","fotos":["https://example.com/fotos/prensa-02.jpg"]}]
