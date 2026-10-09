@@ -1,0 +1,7 @@
+.venv
+__pycache__
+*.log
+logs/*
+!logs/.gitkeep
+*.sqlite3
+config.*.toml
