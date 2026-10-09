@@ -11,7 +11,28 @@
     "experimentalDecorators": true,
     "importHelpers": true,
     "target": "ES2022",
-    "module": "preserve"
+    "module": "preserve",
+    "paths": {
+      "@shared/ui/button": [
+        "./src/app/shared/ui/button/src/index.ts"
+      ],
+      "@shared/ui/utils": [
+        "./src/app/shared/ui/utils/src/index.ts"
+      ],
+      "@shared/ui/card": [
+        "./src/app/shared/ui/card/src/index.ts"
+      ],
+      "@shared/ui/badge": [
+        "./src/app/shared/ui/badge/src/index.ts"
+      ],
+      "@shared/ui/input": [
+        "./src/app/shared/ui/input/src/index.ts"
+      ],
+      "@shared/ui/label": [
+        "./src/app/shared/ui/label/src/index.ts"
+      ],
+      "@shared/ui/icon": ["./src/app/shared/ui/icon/index.ts"]
+    }
   },
   "angularCompilerOptions": {
     "enableI18nLegacyMessageIdFormat": false,

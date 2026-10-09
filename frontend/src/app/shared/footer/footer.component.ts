@@ -6,7 +6,6 @@ import { FOOTER_CONFIG } from './FOOTER_CONFIG';
     standalone: true,
     imports: [],
     templateUrl: './footer.component.html',
-    styleUrl: './footer.component.css',
 })
 export class FooterComponent {
     protected readonly config = FOOTER_CONFIG;

@@ -1,39 +1,33 @@
-<div class="page-shell dashboard-page">
+<div class="dashboard-page mx-auto w-full max-w-screen-2xl px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
     <section class="welcome-row">
-        <div><p class="eyebrow">MIÉRCOLES · TURNO MAÑANA</p><h1>{{ config.greeting }} <span>☀</span></h1><p class="page-description">{{ config.description }}</p></div>
-        <a class="button" routerLink="/incidencias"><span aria-hidden="true">＋</span> Reportar incidencia</a>
+        <div><p class="eyebrow mb-2 text-xs font-semibold uppercase tracking-widest text-muted-foreground">OPERACIÓN DE PLANTA</p><h1 class="text-2xl font-semibold tracking-tight sm:text-3xl">{{ config.greeting }}</h1><p class="page-description mt-2 max-w-2xl text-sm leading-6 text-muted-foreground">{{ config.description }}</p></div>
+        <a hlmBtn routerLink="/incidencias"><app-icon name="plus" /> {{ config.primaryAction }}</a>
     </section>
 
-    <section class="metric-grid" aria-label="Indicadores de operación">
-        @for (metric of config.metrics; track metric.label) {
-            <article class="metric-card surface-card">
-                <div class="metric-top"><span>{{ metric.label }}</span><span class="metric-icon" [class]="'metric-icon ' + metric.tone" aria-hidden="true">{{ metric.icon }}</span></div>
-                <strong class="metric-value">{{ metric.value }}</strong>
-                <span class="metric-note" [class]="'metric-note ' + metric.tone">{{ metric.note }}</span>
-            </article>
-        }
-    </section>
-
-    <section class="dashboard-grid">
-        <article class="surface-card panel incidents-panel">
-            <div class="panel-heading"><div><h2 class="section-title">Incidencias recientes</h2><p class="section-subtitle">Reportes que necesitan seguimiento</p></div><a class="text-link" routerLink="/incidencias">Ver todas <span aria-hidden="true">→</span></a></div>
+    @if (preview(); as data) {
+      <section class="dashboard-grid">
+        <article hlmCard class="gap-0 panel incidents-panel">
+            <div class="panel-heading"><div><h2 class="text-base font-semibold tracking-tight">Incidencias recientes</h2><p class="mt-1 text-sm leading-5 text-muted-foreground">Reportes que necesitan seguimiento</p></div><a class="text-link" routerLink="/incidencias">Ver todas <app-icon name="arrowRight" class="size-4" /></a></div>
             <div class="incident-list">
-                @for (incident of config.incidents; track incident.code) {
-                    <div class="incident-row"><div class="incident-avatar">{{ incident.initials }}</div><div class="incident-copy"><strong>{{ incident.machine }}</strong><span>{{ incident.issue }}</span><small>{{ incident.code }} · {{ incident.time }}</small></div><span [class]="'status ' + incident.tone">{{ incident.state }}</span></div>
+                @for (incident of data.incidents; track incident.code) {
+                    <div class="incident-row"><div class="incident-avatar">{{ incident.initials }}</div><div class="incident-copy"><strong>{{ incident.machine }}</strong><span>{{ incident.issue }}</span><small>{{ incident.code }} · {{ incident.time }}</small></div><span hlmBadge [variant]="incident.tone === 'danger' ? 'destructive' : incident.tone === 'warning' ? 'outline' : 'secondary'">{{ incident.state }}</span></div>
                 }
             </div>
         </article>
 
-        <article class="surface-card panel stock-panel">
-            <div class="panel-heading"><div><h2 class="section-title">Repuestos por reponer</h2><p class="section-subtitle">Disponibilidad igual o menor al mínimo</p></div><a class="text-link" routerLink="/stock">Inventario <span aria-hidden="true">→</span></a></div>
+        <article hlmCard class="gap-0 panel stock-panel">
+            <div class="panel-heading"><div><h2 class="text-base font-semibold tracking-tight">Repuestos por reponer</h2><p class="mt-1 text-sm leading-5 text-muted-foreground">Disponibilidad igual o menor al mínimo</p></div><a class="text-link" routerLink="/stock">Inventario <app-icon name="arrowRight" class="size-4" /></a></div>
             <div class="stock-list">
-                @for (item of config.stock; track item.code) {
-                    <div class="stock-row"><span class="stock-symbol" aria-hidden="true">◈</span><div class="stock-copy"><strong>{{ item.name }}</strong><small>{{ item.code }} · Ubicación {{ item.location }}</small></div><div class="stock-count"><b [class]="item.tone">{{ item.count }}</b><small>{{ item.min }}</small></div></div>
+                @for (item of data.stock; track item.code) {
+                    <div class="stock-row"><span class="stock-symbol"><app-icon name="package" class="size-4" /></span><div class="stock-copy"><strong>{{ item.name }}</strong><small>{{ item.code }} · Ubicación {{ item.location }}</small></div><div class="stock-count"><b class="numeric" [class]="item.tone">{{ item.available | number:'3.0-0' }}</b><small class="numeric">Mín. {{ item.minimum | number:'3.0-0' }}</small></div></div>
                 }
             </div>
-            <a class="button quiet full-button" routerLink="/compras">Revisar lista de compras <span aria-hidden="true">→</span></a>
+            <a hlmBtn variant="secondary" class="full-button" routerLink="/compras">{{ config.reviewAction }} <app-icon name="arrowRight" class="size-4" /></a>
         </article>
-    </section>
+      </section>
+    } @else {
+      <p class="preview-loading" role="status">Cargando resumen de muestra…</p>
+    }
 
-    <section class="shift-card"><div class="shift-icon" aria-hidden="true">◷</div><div><strong>Operación continua, tres turnos</strong><p>El próximo cambio de turno está previsto para las 14:00. Los reportes mantienen su trazabilidad.</p></div><span class="shift-pill"><i></i> Planta activa</span></section>
+    <section hlmCard class="gap-0 shift-card"><div class="shift-icon"><app-icon name="clock" class="size-4" /></div><div><strong>Operación continua, tres turnos</strong><p>El próximo cambio de turno está previsto para las 14:00. Los reportes mantienen su trazabilidad.</p></div></section>
 </div>

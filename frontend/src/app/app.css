@@ -1,1 +1,5 @@
-.app-content { min-height: calc(100vh - 144px); }
+.app-content { min-height: 100vh; padding-bottom: calc(5rem + env(safe-area-inset-bottom)); }
+
+@media (min-width: 900px) {
+  .app-content { min-height: calc(100vh - 4.6rem); padding-bottom: 1.5rem; }
+}

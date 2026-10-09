@@ -1,42 +1,82 @@
-import { Component, computed, signal } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
+import { DecimalPipe } from '@angular/common';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { HlmButtonImports } from '@shared/ui/button';
+import { HlmCardImports } from '@shared/ui/card';
+import { HlmBadgeImports } from '@shared/ui/badge';
+import { HlmInputImports } from '@shared/ui/input';
+import { IconComponent } from '@shared/ui/icon';
+import { UiPreviewDataService } from '@core/services/ui-preview-data.service';
+import { DataTableComponent } from '@shared/ui/table';
+import { PaginationComponent } from '@shared/ui/pagination';
 
 const STOCK_CONFIG = {
   title: 'Inventario de repuestos',
   description: 'Consultá existencias, disponibilidad y ubicación de cada repuesto en el almacén.',
-  items: [
-    { code: 'REP-00142', name: 'Rodamiento 6205-2RS', description: 'Rodamiento rígido de bolas · sellado', machines: 'Fraccionador F-02, Banda B-04', physical: 2, reserved: 0, minimum: 5, location: 'A-03-12', state: 'Bajo mínimo', tone: 'danger' },
-    { code: 'REP-00087', name: 'Filtro de aceite FO-18', description: 'Filtro hidráulico de retorno', machines: 'Caldera C-01, Caldera C-02', physical: 4, reserved: 0, minimum: 6, location: 'B-01-04', state: 'Bajo mínimo', tone: 'warning' },
-    { code: 'REP-00203', name: 'Correa dentada HTD-8M', description: 'Paso 8 mm · ancho 20 mm', machines: 'Banda transportadora B-04', physical: 1, reserved: 0, minimum: 3, location: 'A-02-08', state: 'Bajo mínimo', tone: 'danger' },
-    { code: 'REP-00031', name: 'Junta tórica NBR 40 mm', description: 'Caucho nitrilo · alta presión', machines: 'Fraccionador F-01, F-02', physical: 18, reserved: 4, minimum: 8, location: 'C-02-11', state: 'Disponible', tone: 'good' },
-    { code: 'REP-00106', name: 'Sensor de temperatura PT100', description: 'Sonda industrial · acero inoxidable', machines: 'Caldera C-01', physical: 7, reserved: 2, minimum: 3, location: 'B-04-02', state: 'Disponible', tone: 'good' },
-    { code: 'REP-00056', name: 'Válvula de presión 1/2”', description: 'Acero inoxidable · 10 bar', machines: 'Caldera C-01, C-02', physical: 3, reserved: 1, minimum: 2, location: 'D-01-06', state: 'Disponible', tone: 'good' },
-  ],
+  filters: [
+    { value: 'all', label: 'Todos' },
+    { value: 'out', label: 'Sin stock' },
+    { value: 'low', label: 'Bajo mínimo' },
+    { value: 'normal', label: 'Stock normal' },
+  ] as const,
 };
+
+type StockFilter = typeof STOCK_CONFIG.filters[number]['value'];
 
 @Component({
   selector: 'app-stock-page',
   standalone: true,
+  imports: [HlmButtonImports, HlmCardImports, HlmBadgeImports, HlmInputImports, IconComponent, DecimalPipe, DataTableComponent, PaginationComponent],
   templateUrl: './stock.page.html',
   styleUrl: './stock.page.css',
 })
 export class StockPage {
   protected readonly config = STOCK_CONFIG;
+  protected readonly preview = toSignal(inject(UiPreviewDataService).getStock(), { initialValue: null });
   protected readonly query = signal('');
-  protected readonly lowOnly = signal(false);
+  protected readonly activeFilter = signal<StockFilter>('all');
+  protected readonly page = signal(1);
+  private readonly pageSize = 5;
   protected readonly filteredItems = computed(() => {
     const term = this.query().trim().toLocaleLowerCase('es');
-    return this.config.items.filter((item) => {
+    return (this.preview()?.items ?? []).filter((item) => {
       const matchesText = !term || `${item.code} ${item.name} ${item.description} ${item.machines} ${item.location}`.toLocaleLowerCase('es').includes(term);
       const available = item.physical - item.reserved;
-      return matchesText && (!this.lowOnly() || available <= item.minimum);
+      const filter = this.activeFilter();
+      const matchesFilter = filter === 'all'
+        || (filter === 'out' && available <= 0)
+        || (filter === 'low' && available > 0 && available <= item.minimum)
+        || (filter === 'normal' && available > item.minimum);
+      return matchesText && matchesFilter;
     });
   });
+  protected readonly pageCount = computed(() => Math.max(1, Math.ceil(this.filteredItems().length / this.pageSize)));
+  protected readonly visibleItems = computed(() => this.filteredItems().slice((this.page() - 1) * this.pageSize, this.page() * this.pageSize));
+  protected readonly rangeStart = computed(() => this.filteredItems().length === 0 ? 0 : (this.page() - 1) * this.pageSize + 1);
+  protected readonly rangeEnd = computed(() => Math.min(this.page() * this.pageSize, this.filteredItems().length));
 
   protected updateQuery(event: Event): void {
     this.query.set((event.target as HTMLInputElement).value);
+    this.page.set(1);
   }
 
-  protected toggleLowOnly(): void {
-    this.lowOnly.update((value) => !value);
+  protected countFor(filter: StockFilter): number {
+    const items = this.preview()?.items ?? [];
+    if (filter === 'all') return items.length;
+    return items.filter((item) => {
+      const available = item.physical - item.reserved;
+      return filter === 'out' ? available <= 0
+        : filter === 'low' ? available > 0 && available <= item.minimum
+        : available > item.minimum;
+    }).length;
+  }
+
+  protected setFilter(filter: StockFilter): void {
+    this.activeFilter.set(filter);
+    this.page.set(1);
+  }
+
+  protected setPage(page: number): void {
+    this.page.set(Math.min(Math.max(page, 1), this.pageCount()));
   }
 }

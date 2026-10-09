@@ -1,0 +1,13 @@
+{
+  "totalParts": 248,
+  "purchaseListCount": 12,
+  "reservedUnits": 36,
+  "items": [
+    { "code": "REP-00142", "name": "Rodamiento 6205-2RS", "description": "Rodamiento rígido de bolas · sellado", "machines": "Fraccionador F-02, Banda B-04", "physical": 2, "reserved": 0, "minimum": 5, "location": "A-03-12", "state": "Bajo mínimo", "tone": "danger" },
+    { "code": "REP-00087", "name": "Filtro de aceite FO-18", "description": "Filtro hidráulico de retorno", "machines": "Caldera C-01, Caldera C-02", "physical": 4, "reserved": 0, "minimum": 6, "location": "B-01-04", "state": "Bajo mínimo", "tone": "warning" },
+    { "code": "REP-00203", "name": "Correa dentada HTD-8M", "description": "Paso 8 mm · ancho 20 mm", "machines": "Banda transportadora B-04", "physical": 0, "reserved": 0, "minimum": 3, "location": "A-02-08", "state": "Sin stock", "tone": "danger" },
+    { "code": "REP-00031", "name": "Junta tórica NBR 40 mm", "description": "Caucho nitrilo · alta presión", "machines": "Fraccionador F-01, F-02", "physical": 18, "reserved": 4, "minimum": 8, "location": "C-02-11", "state": "Disponible", "tone": "good" },
+    { "code": "REP-00106", "name": "Sensor de temperatura PT100", "description": "Sonda industrial · acero inoxidable", "machines": "Caldera C-01", "physical": 7, "reserved": 2, "minimum": 3, "location": "B-04-02", "state": "Disponible", "tone": "good" },
+    { "code": "REP-00056", "name": "Válvula de presión 1/2”", "description": "Acero inoxidable · 10 bar", "machines": "Caldera C-01, C-02", "physical": 3, "reserved": 1, "minimum": 2, "location": "D-01-06", "state": "Disponible", "tone": "good" }
+  ]
+}

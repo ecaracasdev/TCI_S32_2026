@@ -1,20 +1,111 @@
-<div class="page-shell purchases-page">
-    <section class="page-heading"><div><p class="eyebrow">ABASTECIMIENTO · REPOSICIÓN</p><h1>{{ config.title }}</h1><p class="page-description">{{ config.description }}</p></div><button class="button" type="button" (click)="createOrder()"><span aria-hidden="true">＋</span> Preparar pedido</button></section>
-
-    @if (created()) {<div class="inline-success"><span>✓</span> Pedido preparado. Revisá las cantidades antes de notificar a los encargados y a gerencia.</div>}
-    @if (orderSent()) {<div class="inline-success"><span>✓</span> La solicitud de compra quedó registrada y se notificó a los responsables.</div>}
-
-    <section class="purchase-overview">
-        <article class="overview-card"><span class="overview-mark warning-mark">!</span><div><small>Para reponer</small><strong>12 <em>repuestos</em></strong></div><span class="overview-foot">Umbral alcanzado</span></article>
-        <article class="overview-card"><span class="overview-mark blue-mark">⌁</span><div><small>Requerimientos puntuales</small><strong>03 <em>solicitudes</em></strong></div><span class="overview-foot">Agregados por mantenimiento</span></article>
-        <article class="overview-card"><span class="overview-mark green-mark">◷</span><div><small>Pedidos en curso</small><strong>02 <em>solicitudes</em></strong></div><span class="overview-foot">En espera de recepción</span></article>
+<div class="purchases-page mx-auto w-full max-w-screen-2xl px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
+    <section class="mb-6 flex flex-col items-start gap-5 sm:mb-8 sm:flex-row sm:items-end sm:justify-between">
+        <div>
+            <p class="eyebrow mb-2 text-xs font-semibold uppercase tracking-widest text-muted-foreground">ABASTECIMIENTO · REPOSICIÓN</p>
+            <h1 class="text-2xl font-semibold tracking-tight sm:text-3xl">{{ config.title }}</h1>
+            <p class="page-description mt-2 max-w-2xl text-sm leading-6 text-muted-foreground">{{ config.description }}</p>
+        </div>
+        <button hlmBtn class="w-full sm:w-auto" type="button" (click)="createOrder()"><app-icon name="plus" /> Preparar pedido</button>
     </section>
 
-    <section class="surface-card purchase-card">
-        <div class="purchase-toolbar"><div><h2 class="section-title">Repuestos sugeridos</h2><p class="section-subtitle">La lista combina alertas de stock, requerimientos y previsión de necesidades.</p></div><button class="button secondary small" type="button">＋ Agregar requerimiento</button></div>
-        <div class="table-wrap"><table class="data-table purchase-table"><thead><tr><th><input type="checkbox" aria-label="Seleccionar todos los repuestos"></th><th>Repuesto</th><th>Motivo</th><th>Disponible</th><th>Mínimo</th><th>Cantidad sugerida</th><th>Urgencia</th></tr></thead><tbody>@for (item of config.items; track item.code) {<tr><td><input type="checkbox" [checked]="$index < 3" [attr.aria-label]="'Seleccionar ' + item.name"></td><td><div class="part-title"><strong>{{ item.name }}</strong><small>{{ item.code }} · {{ item.machine }}</small></div></td><td><span [class]="'status ' + item.tone">{{ item.reason }}</span></td><td><strong>{{ item.available }} u.</strong></td><td>{{ item.minimum }} u.</td><td><div class="quantity-input"><button type="button" aria-label="Restar una unidad">−</button><strong>{{ item.suggested }}</strong><button type="button" aria-label="Sumar una unidad">＋</button><small>unidades</small></div></td><td><span [class]="'status ' + (item.urgency === 'Urgente' ? 'danger' : 'info')">{{ item.urgency }}</span></td></tr>}</tbody></table></div>
-        <div class="order-footer"><span><strong>3 repuestos</strong> seleccionados · Pedido sugerido <b>normal</b></span><button class="button" type="button" (click)="sendOrder()">Enviar solicitud <span aria-hidden="true">→</span></button></div>
+    @if (created()) {<div class="inline-success"><app-icon name="checkCircle" class="size-4" /> {{ config.preparedMessage }}</div>}
+    @if (orderSent()) {<div class="inline-success"><app-icon name="checkCircle" class="size-4" /> {{ config.sentMessage }}</div>}
+
+    <section hlmCard class="gap-0 p-0 purchase-card">
+        <div class="purchase-toolbar">
+            <div>
+                <h2 class="text-base font-semibold tracking-tight">Repuestos sugeridos</h2>
+                <p class="mt-1 text-sm leading-5 text-muted-foreground">La lista combina alertas de stock, requerimientos y previsión de necesidades.</p>
+            </div>
+            <button hlmBtn size="sm" type="button"><app-icon name="plus" /> Agregar requerimiento</button>
+        </div>
+
+        <div class="purchase-tabs" role="group" aria-label="Filtrar repuestos por nivel de stock">
+            @for (filter of config.filters; track filter.value) {
+                <button type="button" [attr.aria-pressed]="activeFilter() === filter.value" [class.active]="activeFilter() === filter.value" (click)="setFilter(filter.value)">
+                    <span>{{ filter.label }} ({{ countFor(filter.value) | number:'1.0-0' }})</span>
+                </button>
+            }
+        </div>
+
+        <div class="purchase-card-list" aria-label="Repuestos sugeridos para reposición">
+            @for (item of visibleItems(); track item.code) {
+                <article hlmCard class="gap-0 purchase-item-card">
+                    <div class="purchase-item-heading">
+                        <input type="checkbox" [checked]="isSelected(item.code)" [attr.aria-label]="'Seleccionar ' + item.name" (change)="toggleItem(item.code, $event)">
+                        <div class="part-title"><strong>{{ item.name }}</strong><small>{{ item.code }} · {{ item.machine }}</small></div>
+                        <span hlmBadge [variant]="item.urgency === 'Urgente' ? 'destructive' : 'secondary'">{{ item.urgency }}</span>
+                    </div>
+                    <div class="purchase-item-facts">
+                        <div><small>Motivo</small><span hlmBadge [variant]="item.tone === 'danger' ? 'destructive' : item.tone === 'warning' ? 'outline' : 'secondary'">{{ item.reason }}</span></div>
+                        <div><small>Disponible</small><strong class="numeric">{{ item.available | number:'3.0-0' }} u. <span>· mín. {{ item.minimum | number:'3.0-0' }}</span></strong></div>
+                        <div>
+                            <small>Cantidad sugerida</small>
+                            <div class="quantity-input">
+                                <button hlmBtn variant="outline" size="icon-sm" type="button" [attr.aria-label]="'Restar una unidad de ' + item.name" [disabled]="quantityFor(item.code) <= 1" (click)="adjustQuantity(item.code, -1)"><app-icon name="minus" class="size-3" /></button>
+                                <strong class="numeric">{{ quantityFor(item.code) | number:'3.0-0' }}</strong>
+                                <button hlmBtn variant="outline" size="icon-sm" type="button" [attr.aria-label]="'Sumar una unidad a ' + item.name" (click)="adjustQuantity(item.code, 1)"><app-icon name="plus" class="size-3" /></button>
+                                <small>unidades</small>
+                            </div>
+                        </div>
+                    </div>
+                </article>
+            }
+        </div>
+
+        <div class="table-wrap">
+            <app-data-table variant="purchases" minWidth="72rem">
+                <thead>
+                    <tr>
+                        <th data-align="center"><input type="checkbox" aria-label="Seleccionar todos los repuestos de esta pestaña" [checked]="allVisibleSelected()" [indeterminate]="selectedVisibleCount() > 0 && !allVisibleSelected()" (change)="toggleAll($event)"></th>
+                        <th>Repuesto</th>
+                        <th>Motivo</th>
+                        <th data-align="center">Disponible</th>
+                        <th data-align="center">Mínimo</th>
+                        <th data-align="center">Cantidad sugerida</th>
+                        <th data-align="center">Urgencia</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @for (item of visibleItems(); track item.code) {
+                        <tr>
+                            <td data-align="center"><input type="checkbox" [checked]="isSelected(item.code)" [attr.aria-label]="'Seleccionar ' + item.name" (change)="toggleItem(item.code, $event)"></td>
+                            <td><div class="part-title"><strong>{{ item.name }}</strong><small>{{ item.code }} · {{ item.machine }}</small></div></td>
+                            <td><span hlmBadge [variant]="item.tone === 'danger' ? 'destructive' : item.tone === 'warning' ? 'outline' : 'secondary'">{{ item.reason }}</span></td>
+                            <td data-align="center"><strong class="numeric">{{ item.available | number:'3.0-0' }} u.</strong></td>
+                            <td data-align="center"><span class="numeric">{{ item.minimum | number:'3.0-0' }} u.</span></td>
+                            <td data-align="center">
+                                <div class="quantity-input">
+                                    <button hlmBtn variant="outline" size="icon-sm" type="button" [attr.aria-label]="'Restar una unidad de ' + item.name" [disabled]="quantityFor(item.code) <= 1" (click)="adjustQuantity(item.code, -1)"><app-icon name="minus" class="size-3" /></button>
+                                    <strong class="numeric">{{ quantityFor(item.code) | number:'3.0-0' }}</strong>
+                                    <button hlmBtn variant="outline" size="icon-sm" type="button" [attr.aria-label]="'Sumar una unidad a ' + item.name" (click)="adjustQuantity(item.code, 1)"><app-icon name="plus" class="size-3" /></button>
+                                    <small>unidades</small>
+                                </div>
+                            </td>
+                            <td data-align="center"><span hlmBadge [variant]="item.urgency === 'Urgente' ? 'destructive' : 'secondary'">{{ item.urgency }}</span></td>
+                        </tr>
+                    } @empty {
+                        <tr><td class="empty-state" colspan="7">No hay repuestos sugeridos para reponer.</td></tr>
+                    }
+                </tbody>
+            </app-data-table>
+        </div>
+
+        <div class="order-footer">
+            <span><strong class="numeric">{{ selectedCount() | number:'3.0-0' }} repuestos</strong> seleccionados · Pedido sugerido <b>{{ orderPriority() }}</b><small>Vista demostrativa, sin registro ni envío.</small></span>
+            <button hlmBtn type="button" [disabled]="selectedCount() === 0" (click)="sendOrder()">Ver aviso de ejemplo <app-icon name="arrowRight" class="size-4" /></button>
+        </div>
     </section>
 
-    <section class="purchase-bottom"><article class="surface-card delivery-card"><div class="bottom-heading"><div><p class="eyebrow">SEGUIMIENTO</p><h2 class="section-title">Pedidos por recibir</h2></div><a class="text-link" routerLink="/stock">Ver inventario →</a></div><div class="delivery-row"><span class="delivery-icon">⇢</span><div><strong>Pedido #PC-0084</strong><small>3 repuestos · Solicitado hoy, 07:54</small></div><span class="status info">Pendiente</span></div><div class="delivery-row"><span class="delivery-icon">⇢</span><div><strong>Pedido #PC-0081</strong><small>5 repuestos · Solicitado ayer, 16:20</small></div><span class="status warning">En camino</span></div></article><article class="receive-card"><span class="receive-icon">↓</span><div><strong>¿Llegó una compra?</strong><p>Registrá las unidades recibidas y su ubicación para actualizar el stock.</p><a routerLink="/stock">Cargar recepción <span>→</span></a></div></article></section>
+    <section class="purchase-bottom">
+        <article hlmCard class="gap-0 delivery-card">
+            <div class="bottom-heading">
+                <div><p class="eyebrow mb-2 text-xs font-semibold uppercase tracking-widest text-muted-foreground">SEGUIMIENTO DE MUESTRA</p><h2 class="text-base font-semibold tracking-tight">Pedidos por recibir</h2></div>
+                <a class="text-link" routerLink="/stock">Ver inventario <app-icon name="arrowRight" class="size-3" /></a>
+            </div>
+            <div class="delivery-row"><span class="delivery-icon"><app-icon name="package" class="size-4" /></span><div><strong>Pedido #PC-0084</strong><small>3 repuestos · Solicitado hoy, 07:54</small></div><span hlmBadge variant="secondary">Pendiente</span></div>
+            <div class="delivery-row"><span class="delivery-icon"><app-icon name="package" class="size-4" /></span><div><strong>Pedido #PC-0081</strong><small>5 repuestos · Solicitado ayer, 16:20</small></div><span hlmBadge variant="outline">En camino</span></div>
+        </article>
+        <article hlmCard class="gap-0 receive-card"><span class="receive-icon"><app-icon name="arrowDown" /></span><div><strong>¿Llegó una compra?</strong><p>La recepción física todavía no se registra en esta vista de muestra.</p><a routerLink="/stock">Ver inventario <app-icon name="arrowRight" class="size-3" /></a></div></article>
+    </section>
 </div>

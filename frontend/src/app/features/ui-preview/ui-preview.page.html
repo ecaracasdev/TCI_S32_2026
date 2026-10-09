@@ -1,0 +1,144 @@
+<div class="preview-page mx-auto w-full max-w-screen-2xl px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
+  <header class="page-heading">
+    <div>
+      <p class="eyebrow">{{ config.eyebrow }}</p>
+      <h1>{{ config.title }}</h1>
+      <p class="page-description">{{ config.description }}</p>
+    </div>
+    <span class="preview-notice"><span aria-hidden="true"></span>{{ config.notice }}</span>
+  </header>
+
+  @if (preview(); as data) {
+    @if (metrics(); as summary) {
+      <section class="metric-grid" aria-label="Indicadores principales">
+        <article class="metric-item">
+          <span class="metric-icon"><app-icon name="factory" /></span>
+          <span class="metric-label">Máquinas operativas</span>
+          <strong class="metric-value numeric">{{ summary.operationalMachines | number:'2.0-0' }}<small> / {{ summary.machineCount | number:'2.0-0' }}</small></strong>
+          <span class="metric-footnote">Equipos registrados</span>
+        </article>
+        <article class="metric-item">
+          <span class="metric-icon"><app-icon name="alert" /></span>
+          <span class="metric-label">Incidencias abiertas</span>
+          <strong class="metric-value numeric">{{ summary.openIncidents | number:'2.0-0' }}</strong>
+          <span class="metric-footnote">Requieren seguimiento</span>
+        </article>
+        <article class="metric-item">
+          <span class="metric-icon"><app-icon name="package" /></span>
+          <span class="metric-label">Repuestos a reponer</span>
+          <strong class="metric-value numeric">{{ summary.restockParts | number:'2.0-0' }}</strong>
+          <span class="metric-footnote">En la muestra de inventario</span>
+        </article>
+        <article class="metric-item">
+          <span class="metric-icon"><app-icon name="boxes" /></span>
+          <span class="metric-label">Sin stock</span>
+          <strong class="metric-value numeric">{{ summary.noStockParts | number:'2.0-0' }}</strong>
+          <span class="metric-footnote">Necesitan atención prioritaria</span>
+        </article>
+      </section>
+
+      <div class="overview-grid">
+        <section hlmCard class="panel machine-panel">
+          <div class="panel-heading">
+            <div><p class="section-kicker">ESTADO OPERATIVO</p><h2>Máquinas de la planta</h2><p>Estado actual de los equipos incluidos en la muestra.</p></div>
+            <a class="text-link" routerLink="/maquinas">Ver máquinas <app-icon name="arrowRight" /></a>
+          </div>
+
+          <div class="machine-list">
+            @for (machine of summary.machines; track machine.code) {
+              <article class="machine-row">
+                <span class="machine-icon"><app-icon [name]="machine.icon" /></span>
+                <div class="machine-copy"><strong>{{ machine.name }}</strong><span class="numeric">{{ machine.code }} · {{ machine.sector }}</span></div>
+                <span hlmBadge [variant]="machine.tone === 'danger' ? 'destructive' : machine.tone === 'warning' ? 'outline' : 'secondary'" class="status-badge">{{ machine.status }}</span>
+              </article>
+            }
+          </div>
+          <div class="machine-summary">
+            <span><i class="dot dot-good"></i> {{ summary.operationalMachines }} operativas</span>
+            <span><i class="dot dot-attention"></i> {{ summary.machineCount - summary.operationalMachines }} con seguimiento</span>
+          </div>
+        </section>
+
+        <section hlmCard class="panel incidents-panel">
+          <div class="panel-heading">
+            <div><p class="section-kicker">SEGUIMIENTO</p><h2>Incidencias recientes</h2><p>Reportes que requieren atención.</p></div>
+            <a class="icon-link" routerLink="/incidencias" aria-label="Ver incidencias"><app-icon name="arrowUpRight" /></a>
+          </div>
+          <div class="incident-list">
+            @for (incident of summary.incidents; track incident.code) {
+              <article class="incident-row">
+                <span class="incident-mark" [class.mark-danger]="incident.tone === 'danger'" [class.mark-warning]="incident.tone === 'warning'"><app-icon name="alert" /></span>
+                <div class="incident-copy"><strong>{{ incident.machine }}</strong><span>{{ incident.issue }}</span><small class="numeric">{{ incident.code }} · {{ incident.time }}</small></div>
+                <span hlmBadge [variant]="incident.tone === 'danger' ? 'destructive' : incident.tone === 'warning' ? 'outline' : 'secondary'" class="status-badge">{{ incident.state }}</span>
+              </article>
+            }
+          </div>
+          <a hlmBtn variant="secondary" class="panel-action" routerLink="/incidencias">Abrir incidencias <app-icon name="arrowRight" /></a>
+        </section>
+
+        <section hlmCard class="panel stock-health-panel">
+          <div class="panel-heading">
+            <div><p class="section-kicker">INVENTARIO · MUESTRA</p><h2>Disponibilidad de repuestos</h2><p>Distribución de los artículos cargados para la vista.</p></div>
+            <a class="icon-link" routerLink="/stock" aria-label="Ver inventario"><app-icon name="arrowUpRight" /></a>
+          </div>
+          <div class="stock-legend" aria-label="Resumen de disponibilidad">
+            <div><strong class="numeric">{{ summary.stockCounts.empty | number:'2.0-0' }}</strong><span><i class="dot dot-danger"></i> Sin stock</span></div>
+            <div><strong class="numeric">{{ summary.stockCounts.low | number:'2.0-0' }}</strong><span><i class="dot dot-attention"></i> Bajo mínimo</span></div>
+            <div><strong class="numeric">{{ summary.stockCounts.available | number:'2.0-0' }}</strong><span><i class="dot dot-good"></i> Disponible</span></div>
+          </div>
+          <div class="stock-bar" role="img" [attr.aria-label]="summary.stockCounts.empty + ' sin stock, ' + summary.stockCounts.low + ' bajo mínimo, ' + summary.stockCounts.available + ' disponibles'">
+            <span class="bar-empty" [style.flex]="summary.stockCounts.empty"></span>
+            <span class="bar-low" [style.flex]="summary.stockCounts.low"></span>
+            <span class="bar-good" [style.flex]="summary.stockCounts.available"></span>
+          </div>
+          <div class="part-list">
+            @for (part of summary.parts; track part.code) {
+              <div class="part-row"><div><strong>{{ part.name }}</strong><small class="numeric">{{ part.code }} · Ubicación {{ part.location }}</small></div><span class="numeric part-count" [class.count-empty]="part.physical === 0">{{ part.physical | number:'3.0-0' }} <small>de {{ part.minimum | number:'3.0-0' }} mín.</small></span></div>
+            }
+          </div>
+          <a hlmBtn class="panel-action" routerLink="/compras">Revisar reposición <app-icon name="arrowRight" /></a>
+        </section>
+
+        <section class="quick-panel">
+          <p class="section-kicker">ACCESOS RÁPIDOS</p>
+          <h2>¿Qué necesitás revisar?</h2>
+          <div class="quick-links">
+            <a routerLink="/compras"><span><app-icon name="shoppingCart" /></span><strong>Lista de compras</strong><app-icon name="arrowRight" class="quick-arrow" /></a>
+            <a routerLink="/stock"><span><app-icon name="boxes" /></span><strong>Inventario completo</strong><app-icon name="arrowRight" class="quick-arrow" /></a>
+            <a routerLink="/incidencias"><span><app-icon name="alert" /></span><strong>Reportar incidencia</strong><app-icon name="arrowRight" class="quick-arrow" /></a>
+          </div>
+        </section>
+      </div>
+
+      <div class="preview-examples-grid">
+        <section hlmCard class="panel chart-panel">
+          <div class="panel-heading">
+            <div><p class="section-kicker">GRÁFICO · MUESTRA</p><h2>{{ config.chartTitle }}</h2><p>{{ config.chartDescription }}</p></div>
+          </div>
+          <div class="incident-chart" role="img" [attr.aria-label]="config.chartTitle + ': ' + summary.incidentChartLabel">
+            @for (state of summary.incidentStates; track state.label) {
+              <div class="chart-row">
+                <span>{{ state.label }}</span>
+                <div class="chart-track"><span class="chart-bar" [class.chart-bar--danger]="state.tone === 'danger'" [class.chart-bar--warning]="state.tone === 'warning'" [class.chart-bar--good]="state.tone === 'good'" [style.width.%]="summary.openIncidents ? state.count / summary.openIncidents * 100 : 0"></span></div>
+                <strong class="numeric">{{ state.count | number:'1.0-0' }}</strong>
+              </div>
+            }
+          </div>
+        </section>
+
+        <section hlmCard class="panel actions-panel">
+          <div class="panel-heading">
+            <div><p class="section-kicker">COMPONENTES · MUESTRA</p><h2>{{ config.actionsTitle }}</h2><p>{{ config.actionsDescription }}</p></div>
+          </div>
+          <div class="button-examples">
+            <div class="button-example"><span>{{ config.primaryLabel }}</span><a hlmBtn routerLink="/incidencias">{{ config.primaryAction }} <app-icon name="arrowRight" /></a></div>
+            <div class="button-example"><span>{{ config.secondaryLabel }}</span><a hlmBtn variant="secondary" routerLink="/stock">{{ config.secondaryAction }} <app-icon name="boxes" /></a></div>
+            <div class="button-example"><span>{{ config.outlineLabel }}</span><a hlmBtn variant="outline" routerLink="/compras">{{ config.outlineAction }} <app-icon name="arrowRight" /></a></div>
+          </div>
+        </section>
+      </div>
+    }
+  } @else {
+    <p class="preview-loading" role="status">Cargando vista de muestra…</p>
+  }
+</div>

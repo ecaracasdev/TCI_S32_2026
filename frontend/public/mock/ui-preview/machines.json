@@ -1,0 +1,10 @@
+{
+  "items": [
+    { "code": "CAL-C01-001", "name": "Caldera C-01", "type": "Caldera de vapor", "sector": "Servicios auxiliares", "status": "En reparación", "tone": "danger", "incidents": 1, "lastReview": "Hoy, 07:32", "icon": "factory" },
+    { "code": "FRAC-F02-001", "name": "Fraccionador F-02", "type": "Línea de fraccionado", "sector": "Envasado · Línea 2", "status": "En triage", "tone": "warning", "incidents": 1, "lastReview": "Hoy, 08:30", "icon": "activity" },
+    { "code": "BAND-B04-001", "name": "Banda transportadora B-04", "type": "Transportador modular", "sector": "Envasado · Línea 4", "status": "En reparación", "tone": "info", "incidents": 1, "lastReview": "Hoy, 08:05", "icon": "boxes" },
+    { "code": "CAL-C02-001", "name": "Caldera C-02", "type": "Caldera de vapor", "sector": "Servicios auxiliares", "status": "Operativa", "tone": "good", "incidents": 0, "lastReview": "Ayer, 22:10", "icon": "factory" },
+    { "code": "FRAC-F01-001", "name": "Fraccionador F-01", "type": "Línea de fraccionado", "sector": "Envasado · Línea 1", "status": "Operativa", "tone": "good", "incidents": 0, "lastReview": "Ayer, 18:45", "icon": "activity" },
+    { "code": "BAND-B02-001", "name": "Banda transportadora B-02", "type": "Transportador modular", "sector": "Envasado · Línea 2", "status": "Operativa", "tone": "good", "incidents": 0, "lastReview": "Ayer, 16:22", "icon": "boxes" }
+  ]
+}

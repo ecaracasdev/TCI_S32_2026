@@ -1,0 +1,12 @@
+{
+  "incidents": [
+    { "code": "INC-0248", "machine": "Fraccionador F-02", "issue": "Vibración anormal en motor", "time": "Hace 12 min", "state": "En triage", "tone": "warning", "initials": "LM" },
+    { "code": "INC-0247", "machine": "Banda transportadora B-04", "issue": "Desalineación de banda", "time": "Hace 38 min", "state": "En reparación", "tone": "info", "initials": "CR" },
+    { "code": "INC-0246", "machine": "Caldera C-01", "issue": "Fuga en válvula de presión", "time": "Hace 1 h", "state": "Urgente", "tone": "danger", "initials": "AP" }
+  ],
+  "stock": [
+    { "name": "Rodamiento 6205-2RS", "code": "REP-00142", "available": 2, "minimum": 5, "tone": "danger", "location": "A-03-12" },
+    { "name": "Filtro de aceite FO-18", "code": "REP-00087", "available": 4, "minimum": 6, "tone": "warning", "location": "B-01-04" },
+    { "name": "Correa dentada HTD-8M", "code": "REP-00203", "available": 0, "minimum": 3, "tone": "danger", "location": "A-02-08" }
+  ]
+}

@@ -1,29 +1,72 @@
-<header class="header">
-    <div class="header-container">
-        <a class="brand" [routerLink]="config.brand.homeUrl" (click)="closeMenu()">
-            <span class="brand-mark" aria-hidden="true">N</span>
-            {{ config.brand.name }}
-        </a>
+@if (isRoleMenuOpen() || isMoreMenuOpen()) {
+    <button class="menu-dismiss" type="button" aria-label="Cerrar menú" (click)="closeMenus()"></button>
+}
 
-        <button
-            class="menu-toggle"
-            type="button"
-            [attr.aria-expanded]="isMenuOpen()"
-                aria-label="Abrir menú"
-            (click)="toggleMenu()"
-        >
-            <span></span>
-            <span></span>
-            <span></span>
-        </button>
+<nav class="bottom-navbar" aria-label="Navegación principal" (keydown.escape)="closeMenus()">
+    <div class="navbar-inner">
+        @for (item of config.leftNavigation; track item.href) {
+            <a class="nav-item" [routerLink]="item.href" routerLinkActive="is-active"
+                [routerLinkActiveOptions]="{ exact: item.href === '/' }" ariaCurrentWhenActive="page" (click)="closeMenus()">
+                <app-icon class="nav-icon" [name]="item.icon" />
+                <span>{{ item.label }}</span>
+            </a>
+        }
 
-        <nav class="nav" [class.nav-open]="isMenuOpen()">
-            @for (item of config.navigation; track item.label) {
-                <a class="nav-link" [routerLink]="item.href" routerLinkActive="nav-link-active" [routerLinkActiveOptions]="{ exact: item.href === '/' }" (click)="closeMenu()">
-                    {{ item.label }}
-                </a>
+        <div class="role-slot">
+            @if (isRoleMenuOpen()) {
+                <div id="role-options" class="role-orbit" aria-label="Elegir tipo de usuario">
+                    @for (role of config.roles; track role.id; let index = $index) {
+                        <button class="role-bubble" type="button"
+                            [class.role-bubble--north-west]="index === 0"
+                            [class.role-bubble--north-east]="index === 1"
+                            [class.role-bubble--south-west]="index === 2"
+                            [class.role-bubble--south-east]="index === 3"
+                            [class.is-selected]="activeRole().id === role.id"
+                            [attr.aria-pressed]="activeRole().id === role.id"
+                            [attr.aria-label]="role.label" (click)="selectRole(role)">
+                            <app-icon name="user" class="size-4" />
+                            <span>{{ role.shortLabel }}</span>
+                        </button>
+                    }
+                </div>
             }
-        </nav>
-        <div class="header-user" aria-label="Usuario conectado"><span class="user-avatar">NM</span><span class="user-name">Nicolás M.</span></div>
+
+            <button class="role-trigger" type="button" aria-haspopup="true" aria-controls="role-options"
+                [attr.aria-expanded]="isRoleMenuOpen()"
+                [attr.aria-label]="'Tipo de usuario: ' + activeRole().label + '. Mantené pulsado para cambiarlo.'"
+                (pointerdown)="startRoleHold()" (pointerup)="endRoleHold()"
+                (pointerleave)="endRoleHold()" (pointercancel)="endRoleHold()"
+                (click)="toggleRoleMenu()">
+                <app-icon name="user" class="size-6" />
+            </button>
+        </div>
+
+        @for (item of config.rightNavigation; track item.href) {
+            <a class="nav-item" [routerLink]="item.href" routerLinkActive="is-active"
+                [routerLinkActiveOptions]="{ exact: true }" ariaCurrentWhenActive="page" (click)="closeMenus()">
+                <app-icon class="nav-icon" [name]="item.icon" />
+                <span>{{ item.label }}</span>
+            </a>
+        }
+
+        <div class="more-slot">
+            <button class="nav-item" type="button" aria-haspopup="menu" aria-controls="more-navigation"
+                [attr.aria-expanded]="isMoreMenuOpen()" (click)="toggleMoreMenu()">
+                <app-icon name="menu" class="nav-icon" />
+                <span>Más</span>
+            </button>
+            @if (isMoreMenuOpen()) {
+                <div id="more-navigation" class="more-menu" role="menu" aria-label="Más secciones">
+                    @for (item of config.overflowNavigation; track item.href) {
+                        <a role="menuitem" [routerLink]="item.href" routerLinkActive="is-active"
+                            ariaCurrentWhenActive="page" (click)="closeMenus()">
+                            <app-icon [name]="item.icon" class="size-4" />
+                            <span>{{ item.label }}</span>
+                        </a>
+                    }
+                </div>
+            }
+        </div>
+
     </div>
-</header>
+</nav>

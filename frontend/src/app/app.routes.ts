@@ -6,5 +6,6 @@ export const routes: Routes = [
   { path: 'incidencias', title: 'Incidencias · Nexo Planta',  loadComponent: () => import('./features/incidents/incidents.page').then((page) => page.IncidentsPage) },
   { path: 'compras',     title: 'Compras · Nexo Planta',      loadComponent: () => import('./features/purchases/purchases.page').then((page) => page.PurchasesPage) },
   { path: 'maquinas',    title: 'Máquinas · Nexo Planta',     loadComponent: () => import('./features/machines/machines.page').then((page) =>    page.MachinesPage) },
+  { path: 'ui-preview',  title: 'Vista general · Nexo Planta', loadComponent: () => import('./features/ui-preview/ui-preview.page').then((page) => page.UiPreviewPage) },
   { path: '**', redirectTo: '' },
 ];

@@ -1,21 +1,37 @@
-<div class="page-shell stock-page">
-    <section class="page-heading"><div><p class="eyebrow">ALMACÉN · REPUESTOS</p><h1>{{ config.title }}</h1><p class="page-description">{{ config.description }}</p></div><button class="button" type="button"><span aria-hidden="true">⌗</span> Escanear código</button></section>
+<div class="stock-page mx-auto w-full max-w-screen-2xl px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
+    <section class="mb-6 flex flex-col items-start gap-5 sm:mb-8"><div><p class="eyebrow mb-2 text-xs font-semibold uppercase tracking-widest text-muted-foreground">ALMACÉN · REPUESTOS</p><h1 class="text-2xl font-semibold tracking-tight sm:text-3xl">{{ config.title }}</h1><p class="page-description mt-2 max-w-2xl text-sm leading-6 text-muted-foreground">{{ config.description }}</p></div></section>
 
-    <section class="stock-summary">
-        <article class="surface-card summary-card"><span class="summary-icon">◈</span><div><small>Repuestos registrados</small><strong>248</strong></div></article>
-        <article class="surface-card summary-card"><span class="summary-icon alert">!</span><div><small>En lista de compras</small><strong>12 <em>requieren reposición</em></strong></div></article>
-        <article class="surface-card summary-card"><span class="summary-icon reserve">▣</span><div><small>Unidades reservadas</small><strong>36 <em>para preventivos</em></strong></div></article>
-    </section>
-
-    <section class="surface-card inventory-card">
-        <div class="inventory-toolbar"><div><h2 class="section-title">Existencias</h2><p class="section-subtitle">{{ filteredItems().length }} repuestos en esta vista</p></div><div class="toolbar-controls"><label class="search-box"><span aria-hidden="true">⌕</span><input type="search" placeholder="Buscar por nombre, código o máquina" [value]="query()" (input)="updateQuery($event)" aria-label="Buscar repuestos"><kbd>/</kbd></label><button class="button secondary small" [class.selected]="lowOnly()" type="button" (click)="toggleLowOnly()">♧ <span>Solo bajo mínimo</span></button></div></div>
-        <div class="table-wrap"><table class="data-table inventory-table"><thead><tr><th>Repuesto</th><th>Máquina compatible</th><th>Stock físico</th><th>Reservado</th><th>Disponible</th><th>Ubicación</th><th>Estado</th></tr></thead><tbody>
-            @for (item of filteredItems(); track item.code) {
-                <tr><td><div class="part-name"><span class="part-icon">◈</span><div><strong>{{ item.name }}</strong><small>{{ item.code }} · {{ item.description }}</small></div></div></td><td>{{ item.machines }}</td><td><strong>{{ item.physical }} u.</strong></td><td>{{ item.reserved }} u.</td><td><strong [class.low-count]="item.physical - item.reserved <= item.minimum">{{ item.physical - item.reserved }} u.</strong><small class="minimum">Mín. {{ item.minimum }}</small></td><td><span class="location-chip">⌖ {{ item.location }}</span></td><td><span [class]="'status ' + item.tone">{{ item.state }}</span></td></tr>
+    <section hlmCard class="gap-0 p-0 inventory-card">
+        <div class="inventory-toolbar"><div><h2 class="text-base font-semibold tracking-tight">Existencias</h2><p class="mt-1 text-sm leading-5 text-muted-foreground"><span class="numeric">{{ filteredItems().length | number:'3.0-0' }}</span> repuestos en esta vista</p></div><div class="search-control"><app-icon name="search" class="search-icon size-4" /><input type="search" hlmInput class="w-full" placeholder="Buscar repuestos" [value]="query()" (input)="updateQuery($event)" aria-label="Buscar repuestos"></div></div>
+        <div class="inventory-tabs" role="tablist" aria-label="Filtrar repuestos por disponibilidad">
+            @for (filter of config.filters; track filter.value) {
+                <button type="button" role="tab" [attr.aria-selected]="activeFilter() === filter.value" [class.active]="activeFilter() === filter.value" (click)="setFilter(filter.value)">{{ filter.label }} ({{ countFor(filter.value) | number:'1.0-0' }})</button>
+            }
+        </div>
+        <div class="inventory-card-list" aria-label="Repuestos encontrados">
+            @for (item of visibleItems(); track item.code) {
+                <article hlmCard class="gap-0 part-card">
+                    <div class="part-card-heading"><div class="part-name"><span class="part-icon"><app-icon name="package" /></span><div><strong>{{ item.name }}</strong><small>{{ item.code }}</small></div></div><span hlmBadge [variant]="item.tone === 'danger' ? 'destructive' : item.tone === 'warning' ? 'outline' : 'secondary'">{{ item.state }}</span></div>
+                    <p class="part-description">{{ item.description }}</p>
+                    <dl class="stock-facts">
+                        <div><dt>Físico</dt><dd class="numeric">{{ item.physical | number:'3.0-0' }}</dd></div>
+                        <div><dt>Reservado</dt><dd class="numeric">{{ item.reserved | number:'3.0-0' }}</dd></div>
+                        <div><dt>Disponible</dt><dd class="numeric" [class.low-count]="item.physical - item.reserved <= item.minimum">{{ item.physical - item.reserved | number:'3.0-0' }} <small>· mín. {{ item.minimum | number:'3.0-0' }}</small></dd></div>
+                        <div><dt>Ubicación</dt><dd><span class="location-chip"><app-icon name="location" class="size-3" /> {{ item.location }}</span></dd></div>
+                    </dl>
+                    <p class="compatible-machines"><strong>Máquinas:</strong> {{ item.machines }}</p>
+                </article>
+            } @empty {
+                <div hlmCard class="gap-0 empty-card">No encontramos repuestos con esos filtros.</div>
+            }
+        </div>
+        <div class="table-wrap"><app-data-table variant="stock" minWidth="64rem"><thead><tr><th>Repuesto</th><th>Máquina compatible</th><th data-align="center">Físico</th><th data-align="center">Reservado</th><th data-align="center">Disponible</th><th>Ubicación</th><th>Estado</th></tr></thead><tbody>
+            @for (item of visibleItems(); track item.code) {
+                <tr><td><div class="part-name"><span class="part-icon"><app-icon name="package" /></span><div><strong>{{ item.name }}</strong><small>{{ item.code }} · {{ item.description }}</small></div></div></td><td>{{ item.machines }}</td><td data-align="center"><strong class="numeric">{{ item.physical | number:'3.0-0' }}</strong></td><td data-align="center" class="numeric">{{ item.reserved | number:'3.0-0' }}</td><td data-align="center"><strong class="numeric" [class.low-count]="item.physical - item.reserved <= item.minimum">{{ item.physical - item.reserved | number:'3.0-0' }}</strong><small class="minimum numeric">Mín. {{ item.minimum | number:'3.0-0' }}</small></td><td><span class="location-chip"><app-icon name="location" class="size-3" /> {{ item.location }}</span></td><td><span hlmBadge [variant]="item.tone === 'danger' ? 'destructive' : item.tone === 'warning' ? 'outline' : 'secondary'">{{ item.state }}</span></td></tr>
             } @empty {
                 <tr><td class="empty-state" colspan="7">No encontramos repuestos con esos filtros.</td></tr>
             }
-        </tbody></table></div>
-        <div class="inventory-foot"><span>Mostrando <strong>{{ filteredItems().length }}</strong> de 248 repuestos</span><div class="pagination"><button type="button" disabled aria-label="Página anterior">←</button><button class="page-current" type="button" aria-current="page">1</button><button type="button">2</button><button type="button">3</button><span>…</span><button type="button">21</button><button type="button" aria-label="Página siguiente">→</button></div></div>
+        </tbody></app-data-table></div>
+        <div class="inventory-foot"><span>Mostrando <strong class="numeric">{{ rangeStart() | number:'3.0-0' }}–{{ rangeEnd() | number:'3.0-0' }}</strong> de <span class="numeric">{{ filteredItems().length | number:'3.0-0' }}</span> en esta vista</span><app-pagination [page]="page()" [pageCount]="pageCount()" (pageChange)="setPage($event)" /></div>
     </section>
 </div>

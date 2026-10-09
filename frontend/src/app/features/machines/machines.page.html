@@ -1,18 +1,73 @@
-<div class="page-shell machines-page">
-    <section class="page-heading"><div><p class="eyebrow">PLANTA · EQUIPOS</p><h1>{{ config.title }}</h1><p class="page-description">{{ config.description }}</p></div><button class="button secondary" type="button"><span aria-hidden="true">＋</span> Registrar máquina</button></section>
-
-    <section class="machine-summary">
-        <article class="machine-kpi"><span class="kpi-dot green-dot"></span><div><small>Operativas</small><strong>31 <em>/ 33</em></strong></div><span class="kpi-trend">94% de planta</span></article>
-        <article class="machine-kpi"><span class="kpi-dot red-dot"></span><div><small>En reparación</small><strong>01</strong></div><span class="status danger">Atención activa</span></article>
-        <article class="machine-kpi"><span class="kpi-dot amber-dot"></span><div><small>En triage</small><strong>01</strong></div><span class="kpi-trend">Revisar reporte</span></article>
-        <article class="machine-kpi"><span class="kpi-dot blue-dot"></span><div><small>Preventivos próximos</small><strong>04</strong></div><span class="kpi-trend">En los próximos 7 días</span></article>
+<div class="machines-page mx-auto w-full max-w-screen-2xl px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
+    <section class="mb-6 flex flex-col items-start gap-5 sm:mb-8 sm:flex-row sm:items-end sm:justify-between">
+        <div>
+            <p class="eyebrow mb-2 text-xs font-semibold uppercase tracking-widest text-muted-foreground">PLANTA · EQUIPOS</p>
+            <h1 class="text-2xl font-semibold tracking-tight sm:text-3xl">{{ config.title }}</h1>
+            <p class="page-description mt-2 max-w-2xl text-sm leading-6 text-muted-foreground">{{ config.description }}</p>
+        </div>
+        <button hlmBtn class="w-full sm:w-auto" type="button"><app-icon name="plus" /> Registrar máquina</button>
     </section>
 
-    <section class="surface-card machines-card">
-        <div class="machine-toolbar"><div><h2 class="section-title">Equipos registrados</h2><p class="section-subtitle">Vista general de la maquinaria de planta</p></div><div class="machine-filters" role="group" aria-label="Filtrar máquinas">@for (filter of ['Todas', 'Con incidencias', 'Operativas']; track filter) {<button type="button" [class.active]="selectedFilter() === filter" (click)="setFilter(filter)">{{ filter }}</button>}</div></div>
-        <div class="table-wrap"><table class="data-table machine-table"><thead><tr><th>Máquina</th><th>Sector</th><th>Estado</th><th>Incidencias activas</th><th>Última revisión</th><th></th></tr></thead><tbody>@for (machine of visibleMachines(); track machine.code) {<tr><td><div class="machine-name"><span class="machine-icon">{{ machine.icon }}</span><div><strong>{{ machine.name }}</strong><small>{{ machine.code }} · {{ machine.type }}</small></div></div></td><td>{{ machine.sector }}</td><td><span [class]="'status ' + machine.tone">{{ machine.status }}</span></td><td><strong [class.has-incidents]="machine.incidents > 0">{{ machine.incidents }}</strong></td><td>{{ machine.lastReview }}</td><td><button class="row-action" type="button" [attr.aria-label]="'Ver máquina ' + machine.name">↗</button></td></tr>} @empty {<tr><td class="empty-state" colspan="6">No hay máquinas para este filtro.</td></tr>}</tbody></table></div>
-        <div class="machine-card-list">@for (machine of visibleMachines(); track machine.code) {<article class="mobile-machine"><div class="machine-name"><span class="machine-icon">{{ machine.icon }}</span><div><strong>{{ machine.name }}</strong><small>{{ machine.code }} · {{ machine.sector }}</small></div></div><div class="mobile-machine-foot"><span [class]="'status ' + machine.tone">{{ machine.status }}</span><span>{{ machine.incidents }} incidencias</span></div></article>}</div>
-    </section>
+    <section hlmCard class="gap-0 p-0 machines-card">
+        <div class="machine-toolbar">
+            <div>
+                <h2 class="text-base font-semibold tracking-tight">Equipos registrados</h2>
+                <p class="mt-1 text-sm leading-5 text-muted-foreground"><span class="numeric">{{ filteredMachines().length | number:'3.0-0' }}</span> equipos en esta vista</p>
+            </div>
+            <div class="machine-filters" role="group" aria-label="Filtrar máquinas">
+                @for (filter of config.filters; track filter) {
+                    <button hlmBtn variant="ghost" size="sm" type="button" [class.active]="selectedFilter() === filter"
+                        [attr.aria-pressed]="selectedFilter() === filter" (click)="setFilter(filter)">{{ filter }}</button>
+                }
+            </div>
+        </div>
 
-    <section class="maintenance-note"><span>◷</span><div><strong>Mantenimientos preventivos</strong><p>El calendario ayuda a reservar repuestos antes de iniciar una intervención programada.</p></div><button type="button" class="text-link">Ver calendario →</button></section>
+        @if (preview()) {
+            <div class="table-wrap">
+                <app-data-table variant="machines" minWidth="58rem">
+                    <thead>
+                        <tr><th>Máquina</th><th>Sector</th><th data-align="center">Estado</th><th data-align="center">Incidencias</th><th data-align="center">Última revisión</th><th data-align="center"><span class="sr-only">Acciones</span></th></tr>
+                    </thead>
+                    <tbody>
+                        @for (machine of visibleMachines(); track machine.code) {
+                            <tr>
+                                <td><div class="machine-name"><span class="machine-icon"><app-icon [name]="machine.icon" class="size-4" /></span><div><strong>{{ machine.name }}</strong><small><span class="machine-code numeric">{{ machine.code }}</span> · {{ machine.type }}</small></div></div></td>
+                                <td>{{ machine.sector }}</td>
+                                <td data-align="center"><span hlmBadge [variant]="machine.tone === 'danger' ? 'destructive' : machine.tone === 'warning' ? 'outline' : 'secondary'">{{ machine.status }}</span></td>
+                                <td data-align="center"><strong class="incident-count numeric" [class.has-incidents]="machine.incidents > 0">{{ machine.incidents | number:'3.0-0' }}</strong></td>
+                                <td data-align="center">{{ machine.lastReview }}</td>
+                                <td data-align="center"><button hlmBtn variant="ghost" size="icon-xs" type="button" [attr.aria-label]="'Ver máquina ' + machine.name"><app-icon name="arrowUpRight" /></button></td>
+                            </tr>
+                        } @empty {
+                            <tr><td class="empty-state" colspan="6">No hay máquinas para este filtro.</td></tr>
+                        }
+                    </tbody>
+                </app-data-table>
+            </div>
+
+            <div class="machine-list" aria-label="Máquinas encontradas">
+                @for (machine of visibleMachines(); track machine.code) {
+                    <article class="mobile-machine-row">
+                        <div class="mobile-machine-main">
+                            <div class="machine-name"><span class="machine-icon"><app-icon [name]="machine.icon" class="size-4" /></span><div><strong>{{ machine.name }}</strong><small class="machine-code numeric">{{ machine.code }}</small></div></div>
+                            <span hlmBadge [variant]="machine.tone === 'danger' ? 'destructive' : machine.tone === 'warning' ? 'outline' : 'secondary'">{{ machine.status }}</span>
+                        </div>
+                        <div class="mobile-machine-meta">
+                            <span>{{ machine.type }} · {{ machine.sector }}</span>
+                            <span class="mobile-machine-count"><strong class="numeric">{{ machine.incidents | number:'3.0-0' }}</strong><small>inc.</small></span>
+                        </div>
+                    </article>
+                } @empty {
+                    <p class="empty-state">No hay máquinas para este filtro.</p>
+                }
+            </div>
+
+            <div class="machine-foot">
+                <span>Mostrando <strong class="numeric">{{ rangeStart() | number:'3.0-0' }}–{{ rangeEnd() | number:'3.0-0' }}</strong> de <span class="numeric">{{ filteredMachines().length | number:'3.0-0' }}</span> equipos</span>
+                <app-pagination [page]="page()" [pageCount]="pageCount()" (pageChange)="setPage($event)" />
+            </div>
+        } @else {
+            <p class="preview-loading" role="status">Cargando máquinas de muestra…</p>
+        }
+    </section>
 </div>
