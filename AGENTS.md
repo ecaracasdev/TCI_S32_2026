@@ -24,6 +24,7 @@ Decidido en el ADR `docs/T06-adr-arquitectura.md` (aprobado por el profesor), **
 - Branches: `<tipo>/<descripcion-corta>`.
 - PRs: mínimo 1 aprobación de alguien que no sea el autor. El autor nunca se automergea (lo impone tanto el charter como el ruleset de GitHub).
 - `main` está protegida por un ruleset de GitHub — no se permite push directo, solo merge de PR aprobados.
+- **Si el PR resuelve una issue del tablero**, la descripción tiene que incluir la palabra clave de cierre de GitHub **en inglés**, pegada al número, en su propia línea: `Closes #N` (o `Fixes #N` / `Resolves #N`). Un encabezado tipo `## Cierra\nIssue #N` no genera el link real — GitHub no lo reconoce y la issue no se cierra sola al mergear. Verificarlo después de crear el PR con `gh pr view <numero> --repo ecaracasdev/TCI_S32_2026 --json closingIssuesReferences` — si devuelve `[]`, no quedó linkeado.
 - **Nunca agregar atribución de IA** ("Generated with Claude Code", `Co-Authored-By: Claude...") en commits, PRs ni comentarios — en ningún repo, no solo en este.
 
 ## Gotchas técnicos conocidos
