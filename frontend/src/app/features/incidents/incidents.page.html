@@ -1,26 +1,154 @@
 <div class="incident-page mx-auto w-full max-w-screen-2xl px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
-    <section class="mb-6 flex flex-col items-start gap-5 sm:mb-8 sm:flex-row sm:items-start sm:justify-between"><div><p class="eyebrow mb-2 text-xs font-semibold uppercase tracking-widest text-muted-foreground">MANTENIMIENTO · NUEVO REPORTE</p><h1 class="text-2xl font-semibold tracking-tight sm:text-3xl">{{ config.title }}</h1><p class="page-description mt-2 max-w-2xl text-sm leading-6 text-muted-foreground">{{ config.description }}</p></div></section>
+  <section class="page-heading">
+    <p class="eyebrow">MANTENIMIENTO · NUEVO REPORTE</p>
+    <h1>{{ config.title }}</h1>
+    <p>{{ config.description }}</p>
+  </section>
 
-    @if (submitted()) {
-        <section hlmCard class="gap-0 submitted-card"><span class="submitted-check"><app-icon name="checkCircle" class="size-7" /></span><p class="eyebrow mb-2 text-xs font-semibold uppercase tracking-widest text-muted-foreground">REPORTE REGISTRADO</p><h2>Ya avisamos a mantenimiento</h2><p>Tu incidencia quedó en seguimiento con el código <strong>INC-0249</strong>. Podés continuar con otro reporte si hace falta.</p><button hlmBtn type="button" (click)="newReport()">Reportar otra incidencia</button></section>
-    } @else {
-        <div class="report-layout">
-            <form hlmCard class="gap-0 report-form" (submit)="submit($event)">
-                <div class="form-section-heading"><span class="step-number">01</span><div><h2 class="text-base font-semibold tracking-tight">¿Dónde está el problema?</h2><p class="mt-1 text-sm leading-5 text-muted-foreground">Identificá el equipo para asignar el reporte correctamente.</p></div></div>
-                <div class="machine-input-row"><div class="field-label machine-field"><label hlmLabel for="machineCode">Código de máquina</label><input id="machineCode" hlmInput class="w-full" name="machineCode" list="recent-machines" placeholder="Ej. FRAC-F02-001" [value]="machineCode()" (input)="updateMachineCode($event)" required><datalist id="recent-machines">@for (machine of recentMachines(); track machine.code) {<option [value]="machine.code">{{ machine.name }} · {{ machine.status }}</option>}</datalist><small>Elegí una máquina reciente o ingresá su código.</small></div><button hlmBtn class="scan-button" type="button"><app-icon name="qrCode" /><b>Escanear QR</b></button></div>
-                @if (selectedMachine(); as machine) {
-                    <div class="selected-machine"><span class="machine-pictogram"><app-icon name="wrench" class="size-4" /></span><div><strong>{{ machine.name }}</strong><small>{{ machine.sector }} · {{ machine.code }}</small></div><span hlmBadge variant="secondary" class="machine-status-chip" [class.status-chip--good]="machine.tone === 'good'" [class.status-chip--warning]="machine.tone === 'warning'" [class.status-chip--danger]="machine.tone === 'danger'">{{ machine.status }}</span></div>
-                }
-
-                <div class="form-divider"></div>
-                <div class="form-section-heading"><span class="step-number">02</span><div><h2 class="text-base font-semibold tracking-tight">Describí lo que observaste</h2><p class="mt-1 text-sm leading-5 text-muted-foreground">Incluí sonidos, cambios o condiciones que ayuden a diagnosticarlo.</p></div></div>
-                <div class="field-label mt-5"><label hlmLabel for="description">Descripción</label><textarea id="description" hlmInput class="min-h-28 w-full resize-y" name="description" placeholder="Por ejemplo: el motor comenzó a vibrar durante el arranque…" required></textarea></div>
-                <div class="field-label photo-upload"><label hlmLabel for="problemPhoto">Foto del problema <span class="optional-label">Opcional</span></label><input id="problemPhoto" class="file-input" type="file" accept="image/*" capture="environment"></div>
-
-                <div class="form-footer"><span><span class="required-dot">●</span> Los campos marcados son obligatorios</span><button hlmBtn class="submit-button" type="submit">Enviar reporte <app-icon name="arrowRight" class="size-4" /></button></div>
-            </form>
-
-            <aside class="report-aside"><article hlmCard class="gap-0 safety-card"><span class="safety-icon"><app-icon name="alert" class="size-4" /></span><p class="eyebrow mb-2 text-xs font-semibold uppercase tracking-widest text-muted-foreground">ATENCIÓN</p><h2>¿La máquina requiere detenerse?</h2><p>Si hay riesgo para las personas o la producción, avisá al encargado de turno antes de enviar el reporte.</p><span class="safety-contact">Avisá al encargado de turno <app-icon name="arrowRight" class="size-4" /></span></article><article hlmCard class="gap-0 tips-card"><h2 class="text-base font-semibold tracking-tight">Para un buen reporte</h2><div class="tip-list">@for (tip of config.tips; track tip.title) {<div class="tip-row"><span><app-icon name="check" class="size-3" /></span><div><strong>{{ tip.title }}</strong><p>{{ tip.text }}</p></div></div>}</div></article><p class="privacy-note">Las imágenes se comparten solo con el equipo de mantenimiento.</p></aside>
+  @if (submitted()) {
+    <section hlmCard class="submitted-card">
+      <span class="submitted-check"><app-icon name="checkCircle" class="size-7" /></span>
+      <p class="eyebrow">REPORTE REGISTRADO</p>
+      <h2>Ya avisamos a mantenimiento</h2>
+      <p>Tu incidencia quedó en seguimiento con el código <strong>INC-0249</strong>.</p>
+      <button hlmBtn type="button" (click)="newReport()">Reportar otra incidencia</button>
+    </section>
+  } @else {
+    <form hlmCard class="report-form" (submit)="submit($event)">
+      <section class="machine-step" aria-labelledby="machine-step-title">
+        <div class="step-heading">
+          <span class="step-number">01</span>
+          <div>
+            <h2 id="machine-step-title">Elegí la máquina</h2>
+            <p>Ingresá el código o leelo con la cámara.</p>
+          </div>
         </div>
-    }
+
+        <label hlmLabel for="machineCode">{{ config.machineLabel }}</label>
+        <input
+          id="machineCode"
+          hlmInput
+          class="machine-input"
+          name="machineCode"
+          autocomplete="off"
+          placeholder="{{ config.machinePlaceholder }}"
+          [value]="machineCode()"
+          (input)="updateMachineCode($event)"
+        >
+
+        @if (scannerOpen()) {
+          <div class="scanner-panel" aria-label="Lector de código QR">
+            <video #scannerVideo class="scanner-video" autoplay muted playsinline></video>
+            <div class="scanner-frame" aria-hidden="true"></div>
+            <div class="scanner-caption">
+              <app-icon name="scan" class="size-4" />
+              <span>Enfocá el código QR de la máquina</span>
+            </div>
+            @if (cameraMessage()) {
+              <p class="camera-message">{{ cameraMessage() }}</p>
+            }
+            <button hlmBtn variant="outline" type="button" class="scanner-close" (click)="toggleScanner()">Cerrar cámara</button>
+          </div>
+        } @else {
+          <button hlmBtn variant="outline" type="button" class="scan-button" (click)="toggleScanner()">
+            <app-icon name="qrCode" class="scan-icon" />
+            <span>{{ config.scanLabel }}</span>
+          </button>
+        }
+
+        @if (selectedMachine(); as machine) {
+          <div class="selected-machine">
+            <span class="machine-pictogram"><app-icon name="wrench" class="size-4" /></span>
+            <div class="machine-info">
+              <strong>{{ machine.name }}</strong>
+              <small>{{ machine.sector }} · <b>{{ machine.code }}</b></small>
+            </div>
+            <span
+              hlmBadge
+              variant="secondary"
+              class="machine-status-chip"
+              [class.status-chip--good]="machine.tone === 'good'"
+              [class.status-chip--warning]="machine.tone === 'warning'"
+              [class.status-chip--danger]="machine.tone === 'danger'"
+            >{{ machine.status }}</span>
+          </div>
+        } @else if (machineCode().trim()) {
+          <p class="machine-not-found">No encontramos esa máquina. Revisá el código e intentá nuevamente.</p>
+        }
+
+        @if (selectedMachine() && !reportDetailsOpen()) {
+          <button hlmBtn type="button" class="generate-button" (click)="openReportDetails()">
+            {{ config.reportLabel }}
+            <app-icon name="arrowRight" class="size-4" />
+          </button>
+        }
+      </section>
+
+      @if (reportDetailsOpen()) {
+        <section class="report-details" aria-labelledby="report-details-title">
+          <div class="step-heading">
+            <span class="step-number">02</span>
+            <div>
+              <h2 id="report-details-title">¿Qué pasó?</h2>
+              <p>Agregá una descripción breve para mantenimiento.</p>
+            </div>
+          </div>
+
+          <label hlmLabel for="description">{{ config.descriptionLabel }}</label>
+          <textarea
+            id="description"
+            hlmInput
+            class="description-input"
+            name="description"
+            placeholder="{{ config.descriptionPlaceholder }}"
+            required
+          ></textarea>
+
+          <button hlmBtn variant="outline" type="button" class="photo-button" (click)="openPhotoDialog()">
+            <app-icon name="camera" class="size-4" />
+            <span>{{ photoCount() ? 'Agregar otra foto' : 'Agregar foto' }}</span>
+            <small>Opcional{{ photoCount() ? ' · ' + photoCount() : '' }}</small>
+          </button>
+
+          <button hlmBtn type="submit" class="confirm-button">
+            Confirmar reporte
+            <app-icon name="arrowRight" class="size-4" />
+          </button>
+          <p class="privacy-note">El reporte y las imágenes se comparten con mantenimiento.</p>
+        </section>
+      }
+    </form>
+  }
+
+  @if (photoDialogOpen()) {
+    <div class="photo-backdrop" (click)="closePhotoDialog()">
+      <section
+        class="photo-dialog"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="photo-dialog-title"
+        (click)="$event.stopPropagation()"
+      >
+        <button class="dialog-close" type="button" aria-label="Cerrar" (click)="closePhotoDialog()">
+          <span aria-hidden="true">×</span>
+        </button>
+        <span class="dialog-camera"><app-icon name="camera" class="size-6" /></span>
+        <h2 id="photo-dialog-title">Agregar fotos</h2>
+        <p>Tomá una foto del problema o elegí imágenes para adjuntar al reporte.</p>
+        <label hlmBtn for="problemPhotos" class="take-photo-button">
+          Abrir cámara
+          <input
+            id="problemPhotos"
+            class="visually-hidden"
+            type="file"
+            accept="image/*"
+            capture="environment"
+            multiple
+            (change)="updatePhotoCount($event)"
+          >
+        </label>
+        <button hlmBtn variant="outline" type="button" class="cancel-photo-button" (click)="closePhotoDialog()">Cancelar</button>
+      </section>
+    </div>
+  }
 </div>
