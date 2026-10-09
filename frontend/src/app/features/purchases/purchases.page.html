@@ -1,15 +1,15 @@
 <div class="purchases-page mx-auto w-full max-w-screen-2xl px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
-    <section class="mb-6 flex flex-col items-start gap-5 sm:mb-8 sm:flex-row sm:items-end sm:justify-between">
+    <section class="mb-6 flex flex-col items-start gap-5 sm:mb-8">
         <div>
             <p class="eyebrow mb-2 text-xs font-semibold uppercase tracking-widest text-muted-foreground">ABASTECIMIENTO · REPOSICIÓN</p>
             <h1 class="text-2xl font-semibold tracking-tight sm:text-3xl">{{ config.title }}</h1>
             <p class="page-description mt-2 max-w-2xl text-sm leading-6 text-muted-foreground">{{ config.description }}</p>
         </div>
-        <button hlmBtn class="w-full sm:w-auto" type="button" (click)="createOrder()"><app-icon name="plus" /> Preparar pedido</button>
     </section>
 
-    @if (created()) {<div class="inline-success"><app-icon name="checkCircle" class="size-4" /> {{ config.preparedMessage }}</div>}
-    @if (orderSent()) {<div class="inline-success"><app-icon name="checkCircle" class="size-4" /> {{ config.sentMessage }}</div>}
+    @if (orderResult(); as result) {
+        <div class="order-result" role="status"><app-icon name="checkCircle" class="size-5" /><div><strong>Simulación completada · {{ result.code }}</strong><span>{{ result.itemCount }} repuestos · Prioridad {{ result.priority }}. {{ config.confirmedMessage }}</span></div></div>
+    }
 
     <section hlmCard class="gap-0 p-0 purchase-card">
         <div class="purchase-toolbar">
@@ -17,15 +17,20 @@
                 <h2 class="text-base font-semibold tracking-tight">Repuestos sugeridos</h2>
                 <p class="mt-1 text-sm leading-5 text-muted-foreground">La lista combina alertas de stock, requerimientos y previsión de necesidades.</p>
             </div>
-            <button hlmBtn size="sm" type="button"><app-icon name="plus" /> Agregar requerimiento</button>
         </div>
 
-        <div class="purchase-tabs" role="group" aria-label="Filtrar repuestos por nivel de stock">
+        <div class="purchase-tabs" role="group" [attr.aria-label]="config.filtersLabel">
             @for (filter of config.filters; track filter.value) {
                 <button type="button" [attr.aria-pressed]="activeFilter() === filter.value" [class.active]="activeFilter() === filter.value" (click)="setFilter(filter.value)">
                     <span>{{ filter.label }} ({{ countFor(filter.value) | number:'1.0-0' }})</span>
                 </button>
             }
+        </div>
+
+        <div class="purchase-list-toolbar">
+            <label class="purchase-search"><app-icon name="search" class="size-4" /><input type="search" [value]="getSearch(activeFilter())" [attr.aria-label]="config.searchLabel" [placeholder]="config.searchPlaceholder" (input)="updateSearch($event)"></label>
+            <label class="page-size-control"><span>{{ config.pageSizeLabel }}</span><select [value]="pageSize()" (change)="setPageSize($event)">@for (size of config.pageSizes; track size) {<option [value]="size">{{ size }}</option>}</select></label>
+            <span class="list-range">{{ rangeStart() | number:'1.0-0' }}–{{ rangeEnd() | number:'1.0-0' }} de {{ filteredItems().length | number:'1.0-0' }}</span>
         </div>
 
         <div class="purchase-card-list" aria-label="Repuestos sugeridos para reposición">
@@ -50,6 +55,8 @@
                         </div>
                     </div>
                 </article>
+            } @empty {
+                <div hlmCard class="gap-0 purchase-empty">No hay repuestos que coincidan con esta búsqueda.</div>
             }
         </div>
 
@@ -57,7 +64,7 @@
             <app-data-table variant="purchases" minWidth="72rem">
                 <thead>
                     <tr>
-                        <th data-align="center"><input type="checkbox" aria-label="Seleccionar todos los repuestos de esta pestaña" [checked]="allVisibleSelected()" [indeterminate]="selectedVisibleCount() > 0 && !allVisibleSelected()" (change)="toggleAll($event)"></th>
+                        <th data-align="center"><input type="checkbox" aria-label="Seleccionar todos los repuestos de esta página" [checked]="allVisibleSelected()" [indeterminate]="selectedVisibleCount() > 0 && !allVisibleSelected()" (change)="toggleAll($event)"></th>
                         <th>Repuesto</th>
                         <th>Motivo</th>
                         <th data-align="center">Disponible</th>
@@ -84,18 +91,25 @@
                             </td>
                             <td data-align="center"><span hlmBadge [variant]="item.urgency === 'Urgente' ? 'destructive' : 'secondary'">{{ item.urgency }}</span></td>
                         </tr>
-                    } @empty {
-                        <tr><td class="empty-state" colspan="7">No hay repuestos sugeridos para reponer.</td></tr>
+                        } @empty {
+                            <tr><td class="empty-state" colspan="7">No hay repuestos que coincidan con esta búsqueda.</td></tr>
                     }
                 </tbody>
             </app-data-table>
         </div>
 
+        <div class="list-pagination">
+            <span>Mostrando {{ rangeStart() | number:'1.0-0' }}–{{ rangeEnd() | number:'1.0-0' }} de {{ filteredItems().length | number:'1.0-0' }}</span>
+            <app-pagination [page]="pages()[activeFilter()]" [pageCount]="pageCount()" (pageChange)="setPage($event)" />
+        </div>
+
         <div class="order-footer">
-            <span><strong class="numeric">{{ selectedCount() | number:'3.0-0' }} repuestos</strong> seleccionados · Pedido sugerido <b>{{ orderPriority() }}</b><small>Vista demostrativa, sin registro ni envío.</small></span>
-            <button hlmBtn type="button" [disabled]="selectedCount() === 0" (click)="sendOrder()">Ver aviso de ejemplo <app-icon name="arrowRight" class="size-4" /></button>
+            <span><strong class="numeric">{{ selectedCount() | number:'3.0-0' }} repuestos</strong> seleccionados · Prioridad <b>{{ orderPriority() }}</b><small>La orden se revisa primero en modo simulación.</small></span>
+            <button hlmBtn type="button" [disabled]="selectedCount() === 0" (click)="openOrderReview()">Generar orden de compra <app-icon name="arrowRight" class="size-4" /></button>
         </div>
     </section>
+
+    <div class="requirement-action"><div><strong>¿Falta un repuesto en la lista?</strong><span>Agregá un requerimiento para incluirlo en la revisión.</span></div><button hlmBtn variant="secondary" type="button"><app-icon name="plus" /> Agregar requerimiento</button></div>
 
     <section class="purchase-bottom">
         <article hlmCard class="gap-0 delivery-card">
@@ -103,9 +117,15 @@
                 <div><p class="eyebrow mb-2 text-xs font-semibold uppercase tracking-widest text-muted-foreground">SEGUIMIENTO DE MUESTRA</p><h2 class="text-base font-semibold tracking-tight">Pedidos por recibir</h2></div>
                 <a class="text-link" routerLink="/stock">Ver inventario <app-icon name="arrowRight" class="size-3" /></a>
             </div>
-            <div class="delivery-row"><span class="delivery-icon"><app-icon name="package" class="size-4" /></span><div><strong>Pedido #PC-0084</strong><small>3 repuestos · Solicitado hoy, 07:54</small></div><span hlmBadge variant="secondary">Pendiente</span></div>
-            <div class="delivery-row"><span class="delivery-icon"><app-icon name="package" class="size-4" /></span><div><strong>Pedido #PC-0081</strong><small>5 repuestos · Solicitado ayer, 16:20</small></div><span hlmBadge variant="outline">En camino</span></div>
+            @for (order of config.orderHistory; track order.code) {
+                <div class="delivery-row"><span class="delivery-icon"><app-icon name="package" class="size-4" /></span><div><strong>Pedido #{{ order.code }}</strong><small>{{ order.items }} repuestos · Solicitado {{ order.date }}</small></div><span hlmBadge [variant]="order.status === 'Pendiente' ? 'secondary' : 'outline'">{{ order.status }}</span></div>
+            }
         </article>
         <article hlmCard class="gap-0 receive-card"><span class="receive-icon"><app-icon name="arrowDown" /></span><div><strong>¿Llegó una compra?</strong><p>La recepción física todavía no se registra en esta vista de muestra.</p><a routerLink="/stock">Ver inventario <app-icon name="arrowRight" class="size-3" /></a></div></article>
     </section>
+
+    @if (orderReviewOpen()) {
+        <app-order-review-dialog [items]="dryRunItems()" [priority]="orderPriority()" [history]="config.orderHistory"
+            (cancel)="cancelOrderReview()" (confirm)="confirmOrderSimulation()" />
+    }
 </div>

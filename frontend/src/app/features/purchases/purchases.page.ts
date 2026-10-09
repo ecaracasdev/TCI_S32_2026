@@ -6,14 +6,24 @@ import { HlmCardImports } from '@shared/ui/card';
 import { HlmBadgeImports } from '@shared/ui/badge';
 import { IconComponent } from '@shared/ui/icon';
 import { DataTableComponent } from '@shared/ui/table';
+import { PaginationComponent } from '@shared/ui/pagination';
+import { OrderReviewDialogComponent } from './components/order-review-dialog.component';
 
 type StockFilter = 'out' | 'low' | 'normal';
 
 const PURCHASES_CONFIG = {
   title: 'Lista de compras',
   description: 'Revisá los repuestos que llegaron al umbral mínimo y prepará su reposición.',
-  preparedMessage: 'Pedido de muestra preparado. Revisá las cantidades antes de continuar.',
-  sentMessage: 'Vista previa: se mostraría el aviso para las personas responsables.',
+  confirmedMessage: 'Simulación finalizada. No se registró ni se envió una orden real.',
+  filtersLabel: 'Filtrar repuestos por nivel de stock',
+  pageSizeLabel: 'Mostrar por página',
+  searchLabel: 'Buscar en esta categoría por código o nombre',
+  searchPlaceholder: 'Buscar por código o nombre',
+  orderHistory: [
+    { code: 'PC-0084', items: 3, date: 'Hoy · 07:54', status: 'Pendiente' },
+    { code: 'PC-0081', items: 5, date: 'Ayer · 16:20', status: 'En camino' },
+  ],
+  pageSizes: [10, 20] as const,
   filters: [
     { value: 'out', label: 'Sin stock' },
     { value: 'low', label: 'Bajo mínimo' },
@@ -30,20 +40,42 @@ const PURCHASES_CONFIG = {
 @Component({
   selector: 'app-purchases-page',
   standalone: true,
-  imports: [RouterLink, DecimalPipe, HlmButtonImports, HlmCardImports, HlmBadgeImports, IconComponent, DataTableComponent],
+  imports: [RouterLink, DecimalPipe, HlmButtonImports, HlmCardImports, HlmBadgeImports, IconComponent, DataTableComponent, PaginationComponent, OrderReviewDialogComponent],
   templateUrl: './purchases.page.html',
   styleUrl: './purchases.page.css',
 })
 export class PurchasesPage {
   protected readonly config = PURCHASES_CONFIG;
-  protected readonly created = signal(false);
-  protected readonly orderSent = signal(false);
+  protected readonly orderReviewOpen = signal(false);
+  protected readonly orderResult = signal<{ code: string; itemCount: number; priority: string } | null>(null);
   protected readonly activeFilter = signal<StockFilter>('out');
+  protected readonly searches = signal<Record<StockFilter, string>>({ out: '', low: '', normal: '' });
+  protected readonly pages = signal<Record<StockFilter, number>>({ out: 1, low: 1, normal: 1 });
+  protected readonly pageSize = signal<(typeof PURCHASES_CONFIG.pageSizes)[number]>(10);
   protected readonly selectedCodes = signal(new Set(PURCHASES_CONFIG.items.slice(0, 3).map((item) => item.code)));
-  protected readonly visibleItems = computed(() => PURCHASES_CONFIG.items.filter((item) => item.stockGroup === this.activeFilter()));
+  protected readonly filteredItems = computed(() => {
+    const filter = this.activeFilter();
+    const term = this.searches()[filter].trim().toLocaleLowerCase('es');
+    return PURCHASES_CONFIG.items.filter((item) => item.stockGroup === filter
+      && (!term || `${item.code} ${item.name}`.toLocaleLowerCase('es').includes(term)));
+  });
+  protected readonly pageCount = computed(() => Math.max(1, Math.ceil(this.filteredItems().length / this.pageSize())));
+  protected readonly visibleItems = computed(() => {
+    const start = (this.pages()[this.activeFilter()] - 1) * this.pageSize();
+    return this.filteredItems().slice(start, start + this.pageSize());
+  });
+  protected readonly rangeStart = computed(() => this.filteredItems().length ? (this.pages()[this.activeFilter()] - 1) * this.pageSize() + 1 : 0);
+  protected readonly rangeEnd = computed(() => Math.min(this.pages()[this.activeFilter()] * this.pageSize(), this.filteredItems().length));
   protected readonly selectedCount = computed(() => this.selectedCodes().size);
   protected readonly selectedVisibleCount = computed(() => this.visibleItems().filter((item) => this.selectedCodes().has(item.code)).length);
   protected readonly allVisibleSelected = computed(() => this.visibleItems().length > 0 && this.visibleItems().every((item) => this.selectedCodes().has(item.code)));
+  protected readonly selectedItems = computed(() => PURCHASES_CONFIG.items.filter((item) => this.selectedCodes().has(item.code)));
+  protected readonly dryRunItems = computed(() => this.selectedItems().map((item) => ({
+    code: item.code,
+    name: item.name,
+    reason: item.reason,
+    quantity: this.quantityFor(item.code),
+  })));
   protected readonly orderPriority = computed(() => {
     const selected = this.selectedCodes();
     if (selected.size === 0) return 'sin prioridad';
@@ -65,6 +97,29 @@ export class PurchasesPage {
 
   protected setFilter(filter: StockFilter): void {
     this.activeFilter.set(filter);
+  }
+
+  protected updateSearch(event: Event): void {
+    const value = (event.target as HTMLInputElement).value;
+    this.searches.update((searches) => ({ ...searches, [this.activeFilter()]: value }));
+    this.setCurrentPage(1);
+  }
+
+  protected setPageSize(event: Event): void {
+    this.pageSize.set(Number((event.target as HTMLSelectElement).value) as (typeof PURCHASES_CONFIG.pageSizes)[number]);
+    this.pages.set({ out: 1, low: 1, normal: 1 });
+  }
+
+  protected setPage(page: number): void {
+    this.setCurrentPage(Math.min(Math.max(page, 1), this.pageCount()));
+  }
+
+  protected getSearch(filter: StockFilter): string {
+    return this.searches()[filter];
+  }
+
+  private setCurrentPage(page: number): void {
+    this.pages.update((pages) => ({ ...pages, [this.activeFilter()]: page }));
   }
 
   protected toggleItem(code: string, event: Event): void {
@@ -94,11 +149,24 @@ export class PurchasesPage {
     }));
   }
 
-  protected createOrder(): void {
-    this.created.set(true);
+  protected openOrderReview(): void {
+    this.orderResult.set(null);
+    this.orderReviewOpen.set(true);
   }
 
-  protected sendOrder(): void {
-    this.orderSent.set(true);
+  protected cancelOrderReview(): void {
+    this.orderReviewOpen.set(false);
+  }
+
+  private simulationCount = 0;
+
+  protected confirmOrderSimulation(): void {
+    this.simulationCount += 1;
+    this.orderResult.set({
+      code: `SIM-OC-${String(this.simulationCount).padStart(3, '0')}`,
+      itemCount: this.selectedCount(),
+      priority: this.orderPriority(),
+    });
+    this.orderReviewOpen.set(false);
   }
 }

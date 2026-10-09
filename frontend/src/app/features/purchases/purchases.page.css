@@ -1,12 +1,20 @@
 .purchase-card { overflow: hidden; }
 .purchase-toolbar { display: grid; gap: 13px; padding: 17px 15px; }
-.purchase-toolbar > button { width: 100%; }
 .purchase-tabs { display: flex; gap: 4px; overflow-x: auto; margin: 0 12px 12px; padding: 4px; border: 1px solid var(--ui-border); border-radius: 10px; background: var(--ui-surface-muted); scrollbar-width: none; }
 .purchase-tabs::-webkit-scrollbar { display: none; }
 .purchase-tabs button { display: flex; min-width: 6.25rem; min-height: 40px; flex: 1 0 max-content; align-items: center; justify-content: center; gap: 7px; padding: 0 9px; border: 1px solid transparent; border-radius: 7px; background: transparent; color: var(--ui-text-muted); font: inherit; font-size: 0.7rem; font-weight: 600; white-space: nowrap; cursor: pointer; }
 .purchase-tabs button.active { border-color: var(--ui-border); background: var(--ui-surface); color: var(--ui-text); box-shadow: var(--ui-shadow); }
 .tab-count { color: inherit; font-size: 0.68rem; opacity: 0.72; }
+.purchase-list-toolbar { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 9px; padding: 0 12px 12px; }
+.purchase-search { position: relative; grid-column: 1 / -1; display: flex; align-items: center; }
+.purchase-search app-icon { position: absolute; left: 12px; color: var(--ui-text-muted); pointer-events: none; }
+.purchase-search input { width: 100%; min-height: 2.5rem; padding: 0 12px 0 2.25rem; border: 1px solid var(--ui-border); border-radius: .65rem; background: var(--ui-surface); color: var(--ui-text); font: inherit; font-size: .78rem; }
+.purchase-search input:focus-visible, .page-size-control select:focus-visible { outline: 2px solid var(--ui-focus); outline-offset: 2px; }
+.page-size-control { display: inline-flex; align-items: center; gap: .4rem; color: var(--ui-text-muted); font-size: .67rem; white-space: nowrap; }
+.page-size-control select { min-height: 2.25rem; padding: 0 .45rem; border: 1px solid var(--ui-border); border-radius: .55rem; background: var(--ui-surface); color: var(--ui-text); font: inherit; font-size: .72rem; }
+.list-range { justify-self: end; color: var(--ui-text-muted); font-size: .68rem; font-variant-numeric: tabular-nums; white-space: nowrap; }
 .purchase-card-list { display: grid; gap: 10px; padding: 0 12px 12px; }
+.purchase-empty { grid-column: 1 / -1; padding: 22px 14px; color: var(--ui-text-muted); text-align: center; }
 .purchase-item-card { min-width: 0; padding: 14px; }
 .purchase-item-card:nth-child(even) { background: color-mix(in oklch, var(--ui-surface-muted) 58%, var(--ui-surface)); }
 .purchase-item-heading { display: grid; grid-template-columns: auto minmax(0, 1fr); align-items: center; gap: 10px; }
@@ -22,6 +30,7 @@
 .purchase-item-facts > div > strong span { color: var(--ui-text-muted); font-size: 9px; font-weight: 500; }
 
 .table-wrap { display: none; }
+.list-pagination { display: flex; align-items: center; flex-direction: column; gap: .7rem; padding: .7rem 12px; border-top: 1px solid var(--ui-border); color: var(--ui-text-muted); font-size: .68rem; }
 .quantity-input { display: inline-flex; align-items: center; gap: 8px; padding: 4px; border: 1px solid var(--ui-border); border-radius: 8px; background: var(--ui-surface-muted); }
 .quantity-input button { display: grid; width: 28px; height: 28px; place-items: center; border: 0; border-radius: 5px; background: var(--ui-surface); color: var(--ui-text-muted); cursor: pointer; }
 .quantity-input strong { color: var(--ui-text); font-size: 10px; }
@@ -32,8 +41,17 @@
 .order-footer strong, .order-footer b { color: var(--ui-text); }
 .order-footer span small { color: var(--ui-text-muted); font-size: 9px; }
 .order-footer > button { width: 100%; }
-.inline-success { display: flex; align-items: flex-start; gap: 10px; margin: -4px 0 14px; padding: 12px 15px; border: 1px solid var(--ui-border); border-radius: 10px; background: var(--ui-surface-muted); color: var(--ui-primary); font-size: 11px; line-height: 1.5; }
-.inline-success span { display: grid; width: 20px; height: 20px; flex: 0 0 auto; place-items: center; border-radius: 50%; background: var(--ui-surface); font-weight: 800; }
+.order-result { display: flex; align-items: flex-start; gap: .7rem; margin: -4px 0 14px; padding: .85rem 1rem; border: 1px solid var(--ui-border); border-radius: .75rem; background: var(--ui-surface); color: var(--ui-success); font-size: .78rem; line-height: 1.5; }
+.order-result app-icon { flex: none; margin-top: .1rem; }
+.order-result div { display: grid; gap: .2rem; }
+.order-result strong { color: var(--ui-text); }
+.order-result span { color: var(--ui-text-muted); }
+.requirement-action { display: flex; align-items: stretch; flex-direction: column; gap: .75rem; margin-top: .75rem; padding: .9rem 1rem; border: 1px solid var(--ui-border); border-radius: .75rem; background: var(--ui-surface); }
+.requirement-action > div { display: grid; gap: .2rem; }
+.requirement-action strong { font-size: .8rem; }
+.requirement-action span { color: var(--ui-text-muted); font-size: .72rem; }
+.requirement-action button { width: 100%; }
+
 
 .purchase-bottom { display: grid; grid-template-columns: minmax(0, 1fr); gap: 12px; margin-top: 14px; }
 .delivery-card { padding: 16px 14px; }
@@ -54,12 +72,16 @@
 @media (min-width: 560px) {
   .purchase-item-facts { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .delivery-card { padding: 18px 20px; }
+  .requirement-action { align-items: center; flex-direction: row; justify-content: space-between; }
+  .requirement-action button { width: auto; }
 }
 
 @media (min-width: 800px) {
-  .purchase-toolbar { grid-template-columns: minmax(0, 1fr) auto; align-items: center; padding: 19px 20px; }
-  .purchase-toolbar > button { width: auto; }
+  .purchase-toolbar { padding: 19px 20px; }
   .purchase-tabs { margin-inline: 20px; }
+  .purchase-list-toolbar { grid-template-columns: minmax(15rem, 1fr) auto auto; padding-inline: 20px; }
+  .purchase-search { grid-column: auto; }
+  .list-pagination { align-items: center; flex-direction: row; justify-content: space-between; padding-inline: 20px; }
   .purchase-item-facts { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .order-footer { align-items: center; flex-direction: row; justify-content: space-between; padding: 14px 20px; }
   .order-footer > button { width: auto; }
