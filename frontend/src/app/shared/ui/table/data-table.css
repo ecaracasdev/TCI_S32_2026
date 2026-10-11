@@ -1,0 +1,13 @@
+.shared-table-scroll { width: 100%; overflow-x: auto; }
+.shared-data-table { width: 100%; min-width: var(--shared-table-min-width, 48rem); border-collapse: collapse; color: var(--ui-text); font-size: 0.875rem; text-align: left; }
+.shared-data-table--stock .part-name { min-width: 13rem; }
+.shared-data-table--machines .machine-name { min-width: 14rem; }
+.shared-data-table--purchases input[type="checkbox"] { width: 14px; height: 14px; accent-color: var(--ui-primary); }
+.shared-data-table th { padding: 0.9rem 1rem; border-bottom: 1px solid var(--ui-border); background: var(--ui-surface-muted); color: var(--ui-text-muted); font-size: 0.72rem; font-weight: 600; white-space: nowrap; }
+.shared-data-table td { padding: 0.95rem 1rem; border-bottom: 1px solid var(--ui-border); vertical-align: middle; }
+.shared-data-table tbody tr:nth-child(even) { background: color-mix(in oklch, var(--ui-surface-muted) 58%, var(--ui-surface)); }
+.shared-data-table tbody tr:hover { background: var(--ui-surface-muted); }
+.shared-data-table tbody tr:last-child td { border-bottom: 0; }
+.shared-data-table [data-align="center"] { text-align: center; }
+.shared-pagination { display: inline-flex; align-items: center; gap: 0.65rem; }
+.shared-pagination > span { min-width: 3.75rem; color: var(--ui-text-muted); font-size: 0.75rem; font-variant-numeric: tabular-nums; text-align: center; }

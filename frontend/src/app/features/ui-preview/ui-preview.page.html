@@ -1,0 +1,145 @@
+<div class="ui-catalog">
+  <header class="catalog-heading">
+    <div>
+      <p class="eyebrow">SISTEMA DE DISEÑO · TCI</p>
+      <h1>Componentes compartidos</h1>
+      <p class="intro-copy">
+        Catálogo visual de los componentes reutilizables y los estilos base del frontend.
+        Los datos de la tabla son ilustrativos.
+      </p>
+    </div>
+    <span hlmBadge variant="secondary">UI Preview</span>
+  </header>
+
+  <section class="catalog-section" aria-labelledby="tokens-title">
+    <div class="section-heading">
+      <div>
+        <p class="eyebrow">01 · FUNDAMENTOS</p>
+        <h2 id="tokens-title">Identidad visual</h2>
+      </div>
+      <p>Variables CSS compartidas en <code>styles.css</code>.</p>
+    </div>
+
+    <div class="token-grid">
+      @for (token of colorTokens; track token.variable) {
+        <article class="token-card">
+          <span class="color-swatch" [style.background]="'var(' + token.variable + ')'" aria-hidden="true"></span>
+          <span class="token-name">{{ token.label }}</span>
+          <code>{{ token.variable }}</code>
+        </article>
+      }
+    </div>
+
+    <div class="type-samples">
+      <span class="type-title">Tipografía</span>
+      <p class="type-heading">Mantenimiento de planta</p>
+      <p class="type-body">Texto de interfaz legible en móvil y escritorio.</p>
+      <p class="type-numeric numeric">0123456789 · 1.250 unidades</p>
+    </div>
+  </section>
+
+  <div class="component-grid">
+    <section hlmCard class="catalog-card" aria-labelledby="buttons-title">
+      <div hlmCardHeader>
+        <h2 hlmCardTitle id="buttons-title">Botones</h2>
+        <p hlmCardDescription>Variantes de acción y jerarquía.</p>
+      </div>
+      <div hlmCardContent class="example-stack">
+        <div class="button-row">
+          <button hlmBtn type="button">Primario</button>
+          <button hlmBtn variant="secondary" type="button">Secundario</button>
+          <button hlmBtn variant="outline" type="button">Contorno</button>
+        </div>
+        <div class="button-row">
+          <button hlmBtn variant="ghost" type="button">Sutil</button>
+          <button hlmBtn variant="destructive" type="button">Destructivo</button>
+          <button hlmBtn size="sm" type="button"><app-icon name="plus" /> Agregar</button>
+        </div>
+      </div>
+    </section>
+
+    <section hlmCard class="catalog-card" aria-labelledby="badges-title">
+      <div hlmCardHeader>
+        <h2 hlmCardTitle id="badges-title">Indicadores</h2>
+        <p hlmCardDescription>Estados informativos y de atención.</p>
+      </div>
+      <div hlmCardContent class="badge-row">
+        <span hlmBadge>Predeterminado</span>
+        <span hlmBadge variant="secondary">Disponible</span>
+        <span hlmBadge variant="outline">Bajo mínimo</span>
+        <span hlmBadge variant="destructive">Sin stock</span>
+      </div>
+    </section>
+
+    <section hlmCard class="catalog-card" aria-labelledby="forms-title">
+      <div hlmCardHeader>
+        <h2 hlmCardTitle id="forms-title">Campos de formulario</h2>
+        <p hlmCardDescription>Etiqueta y control con estilos consistentes.</p>
+      </div>
+      <div hlmCardContent class="form-example">
+        <label hlmLabel for="sample-part">Nombre del repuesto</label>
+        <input hlmInput id="sample-part" type="text" value="Filtro de ejemplo" />
+        <label hlmLabel for="sample-code">Código</label>
+        <input hlmInput id="sample-code" type="text" value="REP-001" />
+      </div>
+    </section>
+
+    <section hlmCard class="catalog-card" aria-labelledby="card-title">
+      <div hlmCardHeader>
+        <h2 hlmCardTitle id="card-title">Tarjeta</h2>
+        <p hlmCardDescription>Contenedor para agrupar información relacionada.</p>
+      </div>
+      <div hlmCardContent>
+        <div class="sample-summary">
+          <span class="summary-icon"><app-icon name="package" /></span>
+          <div>
+            <strong>Repuesto de ejemplo</strong>
+            <span>REP-001 · Ubicación A-01</span>
+          </div>
+          <span hlmBadge variant="secondary">Disponible</span>
+        </div>
+      </div>
+      <div hlmCardFooter class="card-footer">
+        <span>Stock de muestra</span>
+        <strong class="numeric">12 unidades</strong>
+      </div>
+    </section>
+  </div>
+
+  <section hlmCard class="catalog-card table-card" aria-labelledby="table-title">
+    <div hlmCardHeader>
+      <h2 hlmCardTitle id="table-title">Tabla y paginación</h2>
+      <p hlmCardDescription>Presentación adaptable para información tabular.</p>
+    </div>
+    <div hlmCardContent class="table-content">
+      <app-data-table minWidth="36rem">
+        <thead>
+          <tr><th>Repuesto</th><th>Código</th><th data-align="center">Stock</th><th>Estado</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Filtro de ejemplo</td><td class="numeric">REP-001</td><td data-align="center" class="numeric">12</td><td><span hlmBadge variant="secondary">Disponible</span></td></tr>
+          <tr><td>Correa de ejemplo</td><td class="numeric">REP-002</td><td data-align="center" class="numeric">2</td><td><span hlmBadge variant="outline">Bajo mínimo</span></td></tr>
+        </tbody>
+      </app-data-table>
+      <div class="pagination-row">
+        <span>Mostrando 1–2 de 6 elementos</span>
+        <app-pagination [page]="1" [pageCount]="3" />
+      </div>
+    </div>
+  </section>
+
+  <section hlmCard class="catalog-card" aria-labelledby="icons-title">
+    <div hlmCardHeader>
+      <h2 hlmCardTitle id="icons-title">Iconos</h2>
+      <p hlmCardDescription>Conjunto visual disponible para la interfaz.</p>
+    </div>
+    <div hlmCardContent class="icon-grid">
+      @for (icon of icons; track icon) {
+        <div class="icon-sample">
+          <app-icon [name]="icon" />
+          <code>{{ icon }}</code>
+        </div>
+      }
+    </div>
+  </section>
+</div>

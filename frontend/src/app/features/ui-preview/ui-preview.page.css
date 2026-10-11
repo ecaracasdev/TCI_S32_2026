@@ -1,0 +1,55 @@
+:host { display: block; }
+
+.ui-catalog { display: grid; width: min(100%, 76rem); gap: 1.25rem; margin-inline: auto; padding: 1.25rem 1rem 2rem; }
+.catalog-heading { display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: space-between; gap: 1rem; }
+.eyebrow { margin: 0; color: var(--ui-text-muted); font-size: .68rem; font-weight: 700; letter-spacing: .13em; }
+.catalog-heading h1 { margin: .35rem 0 0; font-size: clamp(1.6rem, 4vw, 2.15rem); letter-spacing: -.04em; }
+.intro-copy { max-width: 42rem; margin: .45rem 0 0; color: var(--ui-text-muted); font-size: .9rem; line-height: 1.55; }
+.catalog-section, .catalog-card { min-width: 0; border: 1px solid var(--ui-border); border-radius: var(--ui-radius); background: var(--ui-surface); box-shadow: var(--ui-shadow); }
+.catalog-section { display: grid; gap: 1rem; padding: 1rem; }
+.section-heading { display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: .5rem 1rem; }
+.section-heading h2 { margin: .3rem 0 0; font-size: 1.1rem; }
+.section-heading > p { margin: 0; color: var(--ui-text-muted); font-size: .78rem; }
+.token-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .6rem; }
+.token-card { display: grid; grid-template-columns: 2.25rem minmax(0, 1fr); align-items: center; column-gap: .65rem; row-gap: .12rem; min-width: 0; padding: .65rem; border: 1px solid var(--ui-border); border-radius: .65rem; }
+.color-swatch { grid-row: span 2; width: 2.25rem; height: 2.25rem; border: 1px solid var(--ui-border); border-radius: .55rem; }
+.token-name { font-size: .78rem; font-weight: 650; }
+.token-card code, code { color: var(--ui-text-muted); font-family: var(--ui-font-numeric); font-size: .65rem; }
+.type-samples { display: grid; gap: .15rem; padding-top: .8rem; border-top: 1px solid var(--ui-border); }
+.type-title { color: var(--ui-text-muted); font-size: .7rem; font-weight: 650; }
+.type-heading { margin: .35rem 0 0; font-size: 1.35rem; font-weight: 650; letter-spacing: -.025em; }
+.type-body, .type-numeric { margin: .15rem 0 0; color: var(--ui-text-muted); font-size: .82rem; }
+.component-grid { display: grid; gap: 1rem; }
+.catalog-card { gap: 0; padding: 1rem; }
+.catalog-card [hlmCardHeader] { padding: 0 0 .8rem; border-bottom: 1px solid var(--ui-border); }
+.catalog-card [hlmCardTitle] { font-size: 1rem; }
+.catalog-card [hlmCardDescription] { margin: .25rem 0 0; color: var(--ui-text-muted); font-size: .78rem; }
+.catalog-card [hlmCardContent] { padding: .9rem 0 0; }
+.example-stack { display: grid; gap: .8rem; }
+.button-row, .badge-row { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem; }
+.button-row app-icon { width: 1rem; height: 1rem; }
+.form-example { display: grid; gap: .45rem; }
+.form-example label:not(:first-child) { margin-top: .4rem; }
+.sample-summary { display: flex; flex-wrap: wrap; align-items: center; gap: .7rem; }
+.summary-icon { display: grid; width: 2.25rem; height: 2.25rem; flex: none; place-items: center; border: 1px solid var(--ui-border); border-radius: .65rem; background: var(--ui-surface-muted); }
+.summary-icon app-icon { width: 1rem; height: 1rem; }
+.sample-summary > div { display: grid; flex: 1; min-width: 7rem; gap: .15rem; }
+.sample-summary strong { font-size: .8rem; }
+.sample-summary > div span, .card-footer { color: var(--ui-text-muted); font-size: .72rem; }
+.card-footer { display: flex; justify-content: space-between; gap: .75rem; margin-top: .8rem; padding: .75rem 0 0; border-top: 1px solid var(--ui-border); }
+.card-footer strong { color: var(--ui-text); }
+.table-content { display: grid; gap: .8rem; }
+.pagination-row { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: .75rem; color: var(--ui-text-muted); font-size: .72rem; }
+.icon-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .5rem; }
+.icon-sample { display: flex; min-width: 0; align-items: center; gap: .6rem; padding: .65rem; border: 1px solid var(--ui-border); border-radius: .6rem; }
+.icon-sample app-icon { width: 1.1rem; height: 1.1rem; color: var(--ui-primary); }
+.icon-sample code { overflow: hidden; text-overflow: ellipsis; }
+
+@media (min-width: 640px) {
+  .ui-catalog { gap: 1.5rem; padding: 2rem 1.5rem 3rem; }
+  .catalog-section, .catalog-card { padding: 1.25rem; }
+  .token-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .component-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .table-card, .component-grid .catalog-card:nth-child(3) { grid-column: 1 / -1; }
+  .icon-grid { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+}

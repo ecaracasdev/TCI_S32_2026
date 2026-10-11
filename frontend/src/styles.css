@@ -1,1 +1,92 @@
+@import "@fontsource-variable/rubik";
+@import "@fontsource-variable/raleway";
 @import "tailwindcss";
+@import "@spartan-ng/brain/hlm-tailwind-preset.css";
+@import "./app/shared/ui/table/data-table.css";
+
+:root {
+  color-scheme: light;
+  --ui-font-sans: "Raleway Variable", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --ui-font-numeric: "Rubik", ui-sans-serif, system-ui, sans-serif;
+  --ui-background: oklch(0.975 0 0);
+  --ui-surface: oklch(1 0 0);
+  --ui-surface-muted: oklch(0.955 0 0);
+  --ui-text: oklch(0.16 0 0);
+  --ui-text-muted: oklch(0.43 0 0);
+  --ui-border: oklch(0.86 0 0);
+  --ui-primary: oklch(0.19 0 0);
+  --ui-primary-foreground: oklch(0.985 0 0);
+  --ui-secondary: oklch(0.92 0 0);
+  --ui-secondary-foreground: oklch(0.23 0 0);
+  --ui-danger: oklch(0.52 0.19 27);
+  --ui-success: oklch(0.48 0.08 150);
+  --ui-warning: oklch(0.55 0.09 85);
+  --ui-focus: oklch(0.42 0 0);
+  --ui-shadow: 0 1px 2px color-mix(in oklch, var(--ui-text) 6%, transparent);
+  --ui-radius: 0.75rem;
+  --ui-space-1: 0.25rem;
+  --ui-space-2: 0.5rem;
+  --ui-space-3: 0.75rem;
+  --ui-space-4: 1rem;
+  --ui-space-6: 1.5rem;
+  --ui-space-8: 2rem;
+
+  /* Tokens semánticos consumidos por los componentes de Spartan (estilo shadcn). */
+  --background: var(--ui-background);
+  --foreground: var(--ui-text);
+  --card: var(--ui-surface);
+  --card-foreground: var(--ui-text);
+  --popover: var(--ui-surface);
+  --popover-foreground: var(--ui-text);
+  --primary: var(--ui-primary);
+  --primary-foreground: var(--ui-primary-foreground);
+  --secondary: var(--ui-secondary);
+  --secondary-foreground: var(--ui-secondary-foreground);
+  --muted: var(--ui-surface-muted);
+  --muted-foreground: var(--ui-text-muted);
+  --accent: var(--ui-surface-muted);
+  --accent-foreground: var(--ui-text);
+  --destructive: var(--ui-danger);
+  --border: var(--ui-border);
+  --input: var(--ui-border);
+  --ring: var(--ui-focus);
+  --radius: var(--ui-radius);
+  --sidebar: var(--ui-surface);
+  --sidebar-foreground: var(--ui-text);
+  --sidebar-primary: var(--ui-primary);
+  --sidebar-primary-foreground: var(--ui-primary-foreground);
+  --sidebar-accent: var(--ui-surface-muted);
+  --sidebar-accent-foreground: var(--ui-text);
+  --sidebar-border: var(--ui-border);
+  --sidebar-ring: var(--ui-focus);
+  font-family: var(--ui-font-sans);
+}
+
+@theme inline {
+  --font-sans: var(--ui-font-sans);
+}
+
+.numeric { font-family: var(--ui-font-numeric); font-variant-numeric: lining-nums tabular-nums; font-feature-settings: "lnum" 1, "tnum" 1; }
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+    box-sizing: border-box;
+  }
+
+  body {
+    @apply m-0 min-w-80 bg-background font-sans text-foreground antialiased;
+  }
+
+  button,
+  input,
+  select,
+  textarea {
+    font: inherit;
+  }
+
+  button,
+  a {
+    -webkit-tap-highlight-color: transparent;
+  }
+}
