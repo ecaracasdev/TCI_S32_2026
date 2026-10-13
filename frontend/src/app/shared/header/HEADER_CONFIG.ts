@@ -1,16 +1,14 @@
 export const HEADER_CONFIG = {
     brand: {
-        name: 'Enterprise Name',
+        name: 'TCI · Mantenimiento de planta',
         homeUrl: '/',
     },
     navigation: [
-        { label: 'Inicio', href: '/' },
-        { label: 'Servicios', href: '#servicios' },
-        { label: 'Nosotros', href: '#nosotros' },
-        { label: 'Contacto', href: '#contacto' },
+        { label: 'Fundamentos', href: '#tokens-title' },
+        { label: 'Componentes', href: '#buttons-title' },
     ],
     cta: {
-        label: 'Solicitar presupuesto',
-        href: '#contacto',
+        label: 'Ver catálogo',
+        href: '#buttons-title',
     },
 };

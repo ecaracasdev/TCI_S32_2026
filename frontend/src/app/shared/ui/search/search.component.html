@@ -1,0 +1,17 @@
+<form class="search-form" role="search" aria-label="Buscar" (submit)="executeSearch($event)">
+  <label class="search-field">
+    <span>{{ label() }}</span>
+    <input
+      hlmInput
+      type="search"
+      [value]="query()"
+      [placeholder]="placeholder()"
+      (input)="updateQuery($event)"
+    />
+  </label>
+
+  <button hlmBtn type="submit">
+    <app-icon name="search" />
+    <span>Buscar</span>
+  </button>
+</form>

@@ -1,0 +1,14 @@
+<article
+  class="toast"
+  [attr.data-variant]="toast().variant"
+  [attr.role]="toast().variant === 'error' ? 'alert' : 'status'"
+  aria-atomic="true"
+>
+  <div class="toast-copy">
+    @if (toast().title) {
+      <strong>{{ toast().title }}</strong>
+    }
+    <span>{{ toast().message }}</span>
+  </div>
+  <button class="toast-close" type="button" aria-label="Cerrar aviso" (click)="close()">×</button>
+</article>

@@ -1,0 +1,39 @@
+:host {
+  position: fixed;
+  z-index: 2000;
+  top: 1rem;
+  right: 1rem;
+  width: min(24rem, calc(100vw - 2rem));
+  pointer-events: none;
+}
+
+.toast-stack {
+  display: grid;
+  gap: 0.65rem;
+}
+
+app-toast.toast-enter { animation: toast-appear 180ms ease-out both; }
+app-toast.toast-leave { animation: toast-disappear 220ms ease-in both; }
+
+@keyframes toast-appear {
+  from { opacity: 0; transform: translateX(0.75rem) scale(0.98); }
+  to { opacity: 1; transform: translateX(0) scale(1); }
+}
+
+@keyframes toast-disappear {
+  from { opacity: 1; transform: translateX(0) scale(1); }
+  to { opacity: 0; transform: translateX(0.5rem) scale(0.98); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  app-toast.toast-enter, app-toast.toast-leave { animation-duration: 1ms; }
+}
+
+@media (max-width: 640px) {
+  :host {
+    top: auto;
+    right: 0.75rem;
+    bottom: 0.75rem;
+    width: calc(100vw - 1.5rem);
+  }
+}

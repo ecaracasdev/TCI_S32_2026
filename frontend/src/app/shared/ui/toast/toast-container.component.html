@@ -1,0 +1,10 @@
+<div class="toast-stack" role="region" aria-label="Notificaciones">
+  @for (toast of toasts(); track toast.id) {
+    <app-toast
+      [toast]="toast"
+      (dismiss)="dismiss($event)"
+      animate.enter="toast-enter"
+      animate.leave="toast-leave"
+    />
+  }
+</div>

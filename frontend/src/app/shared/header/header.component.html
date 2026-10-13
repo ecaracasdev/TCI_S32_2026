@@ -8,7 +8,7 @@
             class="menu-toggle"
             type="button"
             [attr.aria-expanded]="isMenuOpen()"
-            aria-label="Toggle menu"
+            aria-label="Abrir o cerrar navegación"
             (click)="toggleMenu()"
         >
             <span></span>
@@ -16,7 +16,7 @@
             <span></span>
         </button>
 
-        <nav class="nav" [class.nav-open]="isMenuOpen()">
+        <nav class="nav" aria-label="Navegación del catálogo" [class.nav-open]="isMenuOpen()">
             @for (item of config.navigation; track item.label) {
                 <a class="nav-link" [href]="item.href" (click)="closeMenu()">
                     {{ item.label }}

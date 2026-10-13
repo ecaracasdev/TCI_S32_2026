@@ -1,3 +1,10 @@
+:host {
+    display: flex;
+    min-height: 100vh;
+    flex-direction: column;
+}
+
 .app-content {
-    min-height: calc(100vh - 73px);
+    flex: 1;
+    min-width: 0;
 }

@@ -11,7 +11,7 @@
     <span hlmBadge variant="secondary">UI Preview</span>
   </header>
 
-  <section class="catalog-section" aria-labelledby="tokens-title">
+  <section class="catalog-section" aria-labelledby="tokens-title" id="tokens">
     <div class="section-heading">
       <div>
         <p class="eyebrow">01 · FUNDAMENTOS</p>
@@ -39,6 +39,45 @@
   </section>
 
   <div class="component-grid">
+    <section hlmCard class="catalog-card search-card" aria-labelledby="search-title">
+      <div hlmCardHeader>
+        <h2 hlmCardTitle id="search-title">Búsqueda genérica</h2>
+        <p hlmCardDescription>La colección y la función de búsqueda se reciben desde quien usa el componente.</p>
+      </div>
+      <div hlmCardContent class="search-example">
+        <app-search
+          [collection]="sampleParts"
+          [searchFn]="searchParts"
+          label="Buscar repuesto"
+          placeholder="Nombre o código"
+        />
+        <ul class="search-results" aria-live="polite">
+          @for (part of searchResults(); track part.code) {
+            <li><strong>{{ part.name }}</strong><span class="numeric">{{ part.code }}</span></li>
+          } @empty {
+            <li class="empty-result">No se encontraron repuestos.</li>
+          }
+        </ul>
+      </div>
+    </section>
+
+    <section hlmCard class="catalog-card toast-card" aria-labelledby="toast-title">
+      <div hlmCardHeader>
+        <h2 hlmCardTitle id="toast-title">Toast Service</h2>
+        <p hlmCardDescription>Probá las variantes de notificaciones flotantes.</p>
+      </div>
+      <div hlmCardContent class="toast-example">
+        <div class="button-row">
+          <button hlmBtn type="button" (click)="showToast('info')">Informativo</button>
+          <button hlmBtn variant="secondary" type="button" (click)="showToast('success')">Éxito</button>
+          <button hlmBtn variant="outline" type="button" (click)="showToast('warning')">Advertencia</button>
+          <button hlmBtn variant="destructive" type="button" (click)="showToast('error')">Error</button>
+          <button hlmBtn variant="ghost" type="button" (click)="clearToasts()">Limpiar</button>
+        </div>
+        <p class="toast-hint">Los avisos se muestran sobre la pantalla y se desvanecen automáticamente.</p>
+      </div>
+    </section>
+
     <section hlmCard class="catalog-card" aria-labelledby="buttons-title">
       <div hlmCardHeader>
         <h2 hlmCardTitle id="buttons-title">Botones</h2>
