@@ -12,4 +12,5 @@ COPY . .
 
 EXPOSE 8300
 
-CMD ["uv", "run", "app.py", "--host", "0.0.0.0"]
+# --port fija el puerto del contenedor aunque config.toml diga otro, para que coincida con EXPOSE y docker-compose.yml.
+CMD ["uv", "run", "app.py", "--host", "0.0.0.0", "--port", "8300"]
