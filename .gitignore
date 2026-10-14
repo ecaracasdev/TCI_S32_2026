@@ -1,0 +1,14 @@
+# Sistema operativo / editor
+.DS_Store
+Thumbs.db
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json
+
+# Dependencias (cada subproyecto tiene su propio .gitignore más específico,
+# esto es la red de seguridad para cualquier node_modules suelto)
+node_modules/
+
+# Entornos locales
+.env
+.env.local
