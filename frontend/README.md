@@ -54,6 +54,17 @@ ng e2e
 
 Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
 
+## Docker
+
+To build and run this app standalone (production build served by nginx):
+
+```bash
+docker build -t tci-frontend .
+docker run -p 8080:80 tci-frontend
+```
+
+Then open `http://localhost:8080`. To run the whole stack (frontend + backend) together, use `docker compose up --build` from the repo root — see the main README.
+
 ## Additional Resources
 
 For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.

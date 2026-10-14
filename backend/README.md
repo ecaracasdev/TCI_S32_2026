@@ -25,6 +25,19 @@ pip install "fastapi[standard]" sqlalchemy aiosqlite jinja2 \
 
 ---
 
+## Docker
+
+Para correrlo suelto (sin el frontend), desde esta carpeta:
+
+```bash
+docker build -t tci-backend .
+docker run -p 8300:8300 tci-backend
+```
+
+Para levantar todo el stack (backend + frontend) juntos, usar `docker compose up --build` desde la raíz del repo — ver el README principal.
+
+---
+
 ## Configuración
 
 Copiá el archivo de configuración base y ajustá los valores:

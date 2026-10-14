@@ -80,6 +80,29 @@ Trabajamos con **forks + `upstream`** (el flujo de colaboración real del open s
 
 ---
 
+## 🐳 Cómo levantar el proyecto con Docker
+
+Desde un clone limpio, con Docker instalado y corriendo:
+
+```bash
+docker compose up --build
+```
+
+Esto levanta:
+
+| Servicio | URL | Qué es |
+| --- | --- | --- |
+| `backend` | http://localhost:8300 | API FastAPI. `/health` devuelve `OK`, `/` devuelve el estado de configuración. |
+| `frontend` | http://localhost:8080 | SPA Angular servida con nginx (build de producción). |
+
+Para pararlo: `docker compose down` desde la raíz del repo.
+
+> **En Mac con Colima:** si `docker compose up` falla porque el daemon no responde, asegurate de que Colima esté corriendo (`colima start`). Si `colima start` falla con `failed to attach disk "colima", in use by instance "colima"`, un simple `colima stop && colima start` no siempre alcanza — en ese caso `colima delete` (recrea la VM desde cero, perdés las imágenes cacheadas) seguido de `colima start` lo resuelve.
+
+Detalle de cada subproyecto por separado (sin Docker) en `backend/README.md` y `frontend/README.md`.
+
+---
+
 ## 🧩 Alcance académico
 
 | Resultado de aprendizaje | Qué toca                                        |
