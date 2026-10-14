@@ -1,0 +1,5527 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "TCI - API de Stock y Mantenimiento",
+    "description": "Contrato preliminar v0 derivado de docs/dominio/dominio.md y del esquema backend/db/main.dbml. Las operaciones son declarativas y todavía no están conectadas a servicios ni a persistencia.",
+    "version": "0.0.0"
+  },
+  "paths": {
+    "/api/v0/maquinas": {
+      "get": {
+        "tags": [
+          "Máquinas"
+        ],
+        "summary": "Listar máquinas",
+        "description": "Lista máquinas registradas con paginación por desplazamiento y límite.",
+        "operationId": "listar_maquinas_api_v0_maquinas_get",
+        "security": [
+          {
+            "Autenticación Bearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "default": 0,
+              "title": "Desplazamiento"
+            },
+            "description": "Cantidad de registros que se omiten antes de comenzar el resultado."
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 100,
+              "minimum": 1,
+              "default": 50,
+              "title": "Límite"
+            },
+            "description": "Cantidad máxima de resultados por página."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "La operación se completó correctamente.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaginaResponseDto_MaquinaResponseDto_"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Autenticación requerida.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Recurso inexistente.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflicto con el estado o stock actual.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Los datos enviados no cumplen el formato esperado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Máquinas"
+        ],
+        "summary": "Crear máquina",
+        "description": "Registra una máquina y sus datos iniciales de identificación.",
+        "operationId": "crear_maquina_api_v0_maquinas_post",
+        "security": [
+          {
+            "Autenticación Bearer": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MaquinaCreateDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "La operación se completó correctamente.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MaquinaResponseDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Autenticación requerida.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Recurso inexistente.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflicto con el estado o stock actual.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Los datos enviados no cumplen el formato esperado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v0/auth/me": {
+      "get": {
+        "tags": [
+          "Autenticación"
+        ],
+        "summary": "Consultar usuario autenticado",
+        "description": "Devuelve la identidad simulada y los roles de aplicación definidos para el contrato v0. La integración con un proveedor de identidad queda fuera del alcance de este borrador.",
+        "operationId": "consultar_usuario_autenticado_api_v0_auth_me_get",
+        "responses": {
+          "200": {
+            "description": "La operación se completó correctamente.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthUserResponseDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Autenticación requerida.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "Autenticación Bearer": []
+          }
+        ]
+      }
+    },
+    "/api/v0/maquinas/{maquina_id}": {
+      "get": {
+        "tags": [
+          "Máquinas"
+        ],
+        "summary": "Consultar máquina",
+        "description": "Obtiene el detalle de una máquina por su identificador.",
+        "operationId": "obtener_maquina_api_v0_maquinas__maquina_id__get",
+        "security": [
+          {
+            "Autenticación Bearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "maquina_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Identificador de máquina"
+            },
+            "description": "Identificador de la máquina consultada."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "La operación se completó correctamente.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MaquinaResponseDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Autenticación requerida.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Recurso inexistente.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflicto con el estado o stock actual.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Los datos enviados no cumplen el formato esperado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "Máquinas"
+        ],
+        "summary": "Actualizar máquina",
+        "description": "Actualiza parcialmente los datos editables de una máquina.",
+        "operationId": "actualizar_maquina_api_v0_maquinas__maquina_id__patch",
+        "security": [
+          {
+            "Autenticación Bearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "maquina_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Identificador de máquina"
+            },
+            "description": "Identificador de la máquina consultada."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MaquinaUpdateDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "La operación se completó correctamente.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MaquinaResponseDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Autenticación requerida.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Recurso inexistente.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflicto con el estado o stock actual.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Los datos enviados no cumplen el formato esperado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v0/tipos-maquina": {
+      "get": {
+        "tags": [
+          "Máquinas"
+        ],
+        "summary": "Listar tipos de máquina",
+        "description": "Lista los tipos de máquina disponibles para clasificar equipos.",
+        "operationId": "listar_tipos_maquina_api_v0_tipos_maquina_get",
+        "security": [
+          {
+            "Autenticación Bearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "default": 0,
+              "title": "Desplazamiento"
+            },
+            "description": "Cantidad de registros que se omiten antes de comenzar el resultado."
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 100,
+              "minimum": 1,
+              "default": 50,
+              "title": "Límite"
+            },
+            "description": "Cantidad máxima de resultados por página."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "La operación se completó correctamente.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaginaResponseDto_TipoMaquinaResponseDto_"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Autenticación requerida.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Recurso inexistente.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflicto con el estado o stock actual.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Los datos enviados no cumplen el formato esperado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Máquinas"
+        ],
+        "summary": "Crear tipo de máquina",
+        "description": "Crea un tipo de máquina para el catálogo del sistema.",
+        "operationId": "crear_tipo_maquina_api_v0_tipos_maquina_post",
+        "security": [
+          {
+            "Autenticación Bearer": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TipoMaquinaCreateDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "La operación se completó correctamente.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TipoMaquinaResponseDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Autenticación requerida.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Recurso inexistente.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflicto con el estado o stock actual.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Los datos enviados no cumplen el formato esperado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v0/repuestos": {
+      "get": {
+        "tags": [
+          "Repuestos"
+        ],
+        "summary": "Listar repuestos",
+        "description": "Lista repuestos y permite filtrar por texto y código identificador.",
+        "operationId": "listar_repuestos_api_v0_repuestos_get",
+        "security": [
+          {
+            "Autenticación Bearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "default": 0,
+              "title": "Desplazamiento"
+            },
+            "description": "Cantidad de registros que se omiten antes de comenzar el resultado."
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 100,
+              "minimum": 1,
+              "default": 50,
+              "title": "Límite"
+            },
+            "description": "Cantidad máxima de resultados por página."
+          },
+          {
+            "name": "buscar",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Nombre, descripción o código QR/de barras.",
+              "title": "Buscar"
+            },
+            "description": "Nombre, descripción o código QR/de barras."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "La operación se completó correctamente.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaginaResponseDto_RepuestoResponseDto_"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Autenticación requerida.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Recurso inexistente.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflicto con el estado o stock actual.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Los datos enviados no cumplen el formato esperado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Repuestos"
+        ],
+        "summary": "Crear repuesto",
+        "description": "Incorpora un repuesto al catálogo sin registrar existencias iniciales.",
+        "operationId": "crear_repuesto_api_v0_repuestos_post",
+        "security": [
+          {
+            "Autenticación Bearer": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RepuestoCreateDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "La operación se completó correctamente.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RepuestoResponseDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Autenticación requerida.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Recurso inexistente.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflicto con el estado o stock actual.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Los datos enviados no cumplen el formato esperado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v0/repuestos/{repuesto_id}": {
+      "get": {
+        "tags": [
+          "Repuestos"
+        ],
+        "summary": "Consultar repuesto",
+        "description": "Obtiene los datos y el resumen de stock de un repuesto.",
+        "operationId": "obtener_repuesto_api_v0_repuestos__repuesto_id__get",
+        "security": [
+          {
+            "Autenticación Bearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "repuesto_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Identificador de repuesto"
+            },
+            "description": "Identificador del repuesto consultado o usado como filtro."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "La operación se completó correctamente.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RepuestoResponseDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Autenticación requerida.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Recurso inexistente.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflicto con el estado o stock actual.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Los datos enviados no cumplen el formato esperado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "Repuestos"
+        ],
+        "summary": "Actualizar repuesto",
+        "description": "Actualiza parcialmente la información de catálogo de un repuesto.",
+        "operationId": "actualizar_repuesto_api_v0_repuestos__repuesto_id__patch",
+        "security": [
+          {
+            "Autenticación Bearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "repuesto_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Identificador de repuesto"
+            },
+            "description": "Identificador del repuesto consultado o usado como filtro."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RepuestoUpdateDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "La operación se completó correctamente.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RepuestoResponseDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Autenticación requerida.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Recurso inexistente.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflicto con el estado o stock actual.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Los datos enviados no cumplen el formato esperado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v0/repuestos/codigo/{codigo}": {
+      "get": {
+        "tags": [
+          "Repuestos"
+        ],
+        "summary": "Buscar repuesto por código",
+        "description": "Busca un repuesto por su código QR o de barras.",
+        "operationId": "buscar_repuesto_por_codigo_api_v0_repuestos_codigo__codigo__get",
+        "security": [
+          {
+            "Autenticación Bearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "codigo",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Código"
+            },
+            "description": "Código QR o de barras del repuesto."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "La operación se completó correctamente.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RepuestoResponseDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Autenticación requerida.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Recurso inexistente.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflicto con el estado o stock actual.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Los datos enviados no cumplen el formato esperado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v0/repuestos/{repuesto_id}/stock": {
+      "get": {
+        "tags": [
+          "Stock"
+        ],
+        "summary": "Consultar stock del repuesto",
+        "description": "Consulta las cantidades físicas, reservadas y disponibles por ubicación.",
+        "operationId": "consultar_stock_repuesto_api_v0_repuestos__repuesto_id__stock_get",
+        "security": [
+          {
+            "Autenticación Bearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "repuesto_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Identificador de repuesto"
+            },
+            "description": "Identificador del repuesto consultado o usado como filtro."
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "default": 0,
+              "title": "Desplazamiento"
+            },
+            "description": "Cantidad de registros que se omiten antes de comenzar el resultado."
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 100,
+              "minimum": 1,
+              "default": 50,
+              "title": "Límite"
+            },
+            "description": "Cantidad máxima de resultados por página."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "La operación se completó correctamente.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaginaResponseDto_StockUbicacionResponseDto_"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Autenticación requerida.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Recurso inexistente.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflicto con el estado o stock actual.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Los datos enviados no cumplen el formato esperado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v0/ubicaciones": {
+      "get": {
+        "tags": [
+          "Ubicaciones"
+        ],
+        "summary": "Listar ubicaciones",
+        "description": "Lista las ubicaciones que pueden contener existencias de repuestos.",
+        "operationId": "listar_ubicaciones_api_v0_ubicaciones_get",
+        "security": [
+          {
+            "Autenticación Bearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "default": 0,
+              "title": "Desplazamiento"
+            },
+            "description": "Cantidad de registros que se omiten antes de comenzar el resultado."
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 100,
+              "minimum": 1,
+              "default": 50,
+              "title": "Límite"
+            },
+            "description": "Cantidad máxima de resultados por página."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "La operación se completó correctamente.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaginaResponseDto_UbicacionResponseDto_"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Autenticación requerida.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Recurso inexistente.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflicto con el estado o stock actual.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Los datos enviados no cumplen el formato esperado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Ubicaciones"
+        ],
+        "summary": "Crear ubicación",
+        "description": "Crea una ubicación identificable para almacenar stock.",
+        "operationId": "crear_ubicacion_api_v0_ubicaciones_post",
+        "security": [
+          {
+            "Autenticación Bearer": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UbicacionCreateDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "La operación se completó correctamente.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UbicacionResponseDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Autenticación requerida.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Recurso inexistente.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflicto con el estado o stock actual.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Los datos enviados no cumplen el formato esperado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v0/incidencias": {
+      "post": {
+        "tags": [
+          "Incidencias"
+        ],
+        "summary": "Reportar incidencia",
+        "description": "Registra una incidencia sobre una máquina e incluye sus fotos opcionales.",
+        "operationId": "reportar_incidencia_api_v0_incidencias_post",
+        "security": [
+          {
+            "Autenticación Bearer": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/IncidenciaCreateDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "La operación se completó correctamente.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IncidenciaResponseDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Autenticación requerida.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Recurso inexistente.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflicto con el estado o stock actual.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Los datos enviados no cumplen el formato esperado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Incidencias"
+        ],
+        "summary": "Listar incidencias",
+        "description": "Lista incidencias y permite limitar los resultados por estado.",
+        "operationId": "listar_incidencias_api_v0_incidencias_get",
+        "security": [
+          {
+            "Autenticación Bearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "default": 0,
+              "title": "Desplazamiento"
+            },
+            "description": "Cantidad de registros que se omiten antes de comenzar el resultado."
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 100,
+              "minimum": 1,
+              "default": 50,
+              "title": "Límite"
+            },
+            "description": "Cantidad máxima de resultados por página."
+          },
+          {
+            "name": "estado",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Estado"
+            },
+            "description": "Filtra los resultados por estado actual."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "La operación se completó correctamente.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaginaResponseDto_IncidenciaResponseDto_"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Autenticación requerida.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Recurso inexistente.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflicto con el estado o stock actual.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Los datos enviados no cumplen el formato esperado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v0/incidencias/{incidencia_id}": {
+      "get": {
+        "tags": [
+          "Incidencias"
+        ],
+        "summary": "Consultar incidencia",
+        "description": "Obtiene el detalle, estado y evidencia asociada a una incidencia.",
+        "operationId": "obtener_incidencia_api_v0_incidencias__incidencia_id__get",
+        "security": [
+          {
+            "Autenticación Bearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "incidencia_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Identificador de incidencia"
+            },
+            "description": "Identificador de la incidencia consultada."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "La operación se completó correctamente.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IncidenciaResponseDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Autenticación requerida.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Recurso inexistente.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflicto con el estado o stock actual.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Los datos enviados no cumplen el formato esperado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v0/reparaciones/{reparacion_id}": {
+      "get": {
+        "tags": [
+          "Reparaciones"
+        ],
+        "summary": "Consultar reparación",
+        "description": "Obtiene el estado de una reparación, sus consumos y su informe final.",
+        "operationId": "obtener_reparacion_api_v0_reparaciones__reparacion_id__get",
+        "security": [
+          {
+            "Autenticación Bearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "reparacion_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Identificador de reparación"
+            },
+            "description": "Identificador de la reparación consultada."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "La operación se completó correctamente.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReparacionResponseDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Autenticación requerida.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Recurso inexistente.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflicto con el estado o stock actual.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Los datos enviados no cumplen el formato esperado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v0/reparaciones/{reparacion_id}/usos": {
+      "post": {
+        "tags": [
+          "Reparaciones"
+        ],
+        "summary": "Registrar uso de repuesto",
+        "description": "Registra el consumo de un repuesto durante una reparación.",
+        "operationId": "registrar_uso_repuesto_api_v0_reparaciones__reparacion_id__usos_post",
+        "security": [
+          {
+            "Autenticación Bearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "reparacion_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Identificador de reparación"
+            },
+            "description": "Identificador de la reparación consultada."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UsoRepuestoCreateDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "La operación se completó correctamente.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UsoRepuestoResponseDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Autenticación requerida.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Recurso inexistente.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflicto con el estado o stock actual.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Los datos enviados no cumplen el formato esperado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v0/reparaciones/{reparacion_id}/informe": {
+      "post": {
+        "tags": [
+          "Reparaciones"
+        ],
+        "summary": "Registrar informe de resolución",
+        "description": "Adjunta el resumen de resolución a una reparación.",
+        "operationId": "registrar_informe_resolucion_api_v0_reparaciones__reparacion_id__informe_post",
+        "security": [
+          {
+            "Autenticación Bearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "reparacion_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Identificador de reparación"
+            },
+            "description": "Identificador de la reparación consultada."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InformeResolucionCreateDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "La operación se completó correctamente.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InformeResolucionResponseDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Autenticación requerida.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Recurso inexistente.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflicto con el estado o stock actual.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Los datos enviados no cumplen el formato esperado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v0/pedidos-compra": {
+      "get": {
+        "tags": [
+          "Pedidos de compra"
+        ],
+        "summary": "Listar pedidos de compra",
+        "description": "Lista pedidos de compra y permite consultar un estado específico.",
+        "operationId": "listar_pedidos_compra_api_v0_pedidos_compra_get",
+        "security": [
+          {
+            "Autenticación Bearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "default": 0,
+              "title": "Desplazamiento"
+            },
+            "description": "Cantidad de registros que se omiten antes de comenzar el resultado."
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 100,
+              "minimum": 1,
+              "default": 50,
+              "title": "Límite"
+            },
+            "description": "Cantidad máxima de resultados por página."
+          },
+          {
+            "name": "estado",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "enum": [
+                    "creado",
+                    "pendiente_revision",
+                    "pendiente_aprobacion",
+                    "confirmado",
+                    "cancelado",
+                    "pendiente_recepcion",
+                    "recibido"
+                  ],
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Estado"
+            },
+            "description": "Filtra los resultados por estado actual."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "La operación se completó correctamente.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaginaResponseDto_PedidoCompraResponseDto_"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Autenticación requerida.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Recurso inexistente.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflicto con el estado o stock actual.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Los datos enviados no cumplen el formato esperado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Pedidos de compra"
+        ],
+        "summary": "Crear pedido de compra",
+        "description": "Solicita la compra de uno o más repuestos.",
+        "operationId": "crear_pedido_compra_api_v0_pedidos_compra_post",
+        "security": [
+          {
+            "Autenticación Bearer": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PedidoCompraCreateDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "La operación se completó correctamente.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PedidoCompraResponseDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Autenticación requerida.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Recurso inexistente.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflicto con el estado o stock actual.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Los datos enviados no cumplen el formato esperado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v0/pedidos-compra/{pedido_id}": {
+      "get": {
+        "tags": [
+          "Pedidos de compra"
+        ],
+        "summary": "Consultar pedido de compra",
+        "description": "Obtiene un pedido con sus partidas y recepciones registradas.",
+        "operationId": "obtener_pedido_compra_api_v0_pedidos_compra__pedido_id__get",
+        "security": [
+          {
+            "Autenticación Bearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "pedido_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Identificador de pedido"
+            },
+            "description": "Identificador del pedido de compra consultado."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "La operación se completó correctamente.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PedidoCompraResponseDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Autenticación requerida.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Recurso inexistente.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflicto con el estado o stock actual.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Los datos enviados no cumplen el formato esperado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v0/pedidos-compra/{pedido_id}/asignacion": {
+      "post": {
+        "tags": [
+          "Pedidos de compra"
+        ],
+        "summary": "Asignar pedido de compra",
+        "description": "Asigna el seguimiento del pedido a un usuario.",
+        "operationId": "asignar_pedido_compra_api_v0_pedidos_compra__pedido_id__asignacion_post",
+        "security": [
+          {
+            "Autenticación Bearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "pedido_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Identificador de pedido"
+            },
+            "description": "Identificador del pedido de compra consultado."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AsignarPedidoCompraDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "La operación se completó correctamente.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PedidoCompraResponseDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Autenticación requerida.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Recurso inexistente.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflicto con el estado o stock actual.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Los datos enviados no cumplen el formato esperado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v0/pedidos-compra/{pedido_id}/revision": {
+      "post": {
+        "tags": [
+          "Pedidos de compra"
+        ],
+        "summary": "Iniciar revisión de pedido de compra",
+        "description": "Solicita la revisión del pedido antes de su aprobación.",
+        "operationId": "iniciar_revision_pedido_api_v0_pedidos_compra__pedido_id__revision_post",
+        "security": [
+          {
+            "Autenticación Bearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "pedido_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Identificador de pedido"
+            },
+            "description": "Identificador del pedido de compra consultado."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RevisarPedidoCompraDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "La operación se completó correctamente.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PedidoCompraResponseDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Autenticación requerida.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Recurso inexistente.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflicto con el estado o stock actual.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Los datos enviados no cumplen el formato esperado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v0/pedidos-compra/{pedido_id}/aprobacion": {
+      "post": {
+        "tags": [
+          "Pedidos de compra"
+        ],
+        "summary": "Aprobar pedido de compra",
+        "description": "Aprueba el pedido revisado para habilitar su confirmación.",
+        "operationId": "aprobar_pedido_compra_api_v0_pedidos_compra__pedido_id__aprobacion_post",
+        "security": [
+          {
+            "Autenticación Bearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "pedido_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Identificador de pedido"
+            },
+            "description": "Identificador del pedido de compra consultado."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RevisarPedidoCompraDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "La operación se completó correctamente.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PedidoCompraResponseDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Autenticación requerida.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Recurso inexistente.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflicto con el estado o stock actual.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Los datos enviados no cumplen el formato esperado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v0/pedidos-compra/{pedido_id}/cancelacion": {
+      "post": {
+        "tags": [
+          "Pedidos de compra"
+        ],
+        "summary": "Cancelar pedido de compra",
+        "description": "Cancela el pedido y registra el motivo correspondiente.",
+        "operationId": "cancelar_pedido_compra_api_v0_pedidos_compra__pedido_id__cancelacion_post",
+        "security": [
+          {
+            "Autenticación Bearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "pedido_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Identificador de pedido"
+            },
+            "description": "Identificador del pedido de compra consultado."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CancelarPedidoCompraDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "La operación se completó correctamente.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PedidoCompraResponseDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Autenticación requerida.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Recurso inexistente.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflicto con el estado o stock actual.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Los datos enviados no cumplen el formato esperado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v0/pedidos-compra/{pedido_id}/confirmacion": {
+      "post": {
+        "tags": [
+          "Pedidos de compra"
+        ],
+        "summary": "Confirmar pedido de compra",
+        "description": "Confirma el pedido aprobado y lo deja pendiente de recepción.",
+        "operationId": "confirmar_pedido_compra_api_v0_pedidos_compra__pedido_id__confirmacion_post",
+        "security": [
+          {
+            "Autenticación Bearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "pedido_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Identificador de pedido"
+            },
+            "description": "Identificador del pedido de compra consultado."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "La operación se completó correctamente.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PedidoCompraResponseDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Autenticación requerida.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Recurso inexistente.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflicto con el estado o stock actual.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Los datos enviados no cumplen el formato esperado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v0/pedidos-compra/{pedido_id}/recepciones": {
+      "post": {
+        "tags": [
+          "Recepciones"
+        ],
+        "summary": "Registrar recepción de compra",
+        "description": "Registra cantidades recibidas y la ubicación de almacenamiento.",
+        "operationId": "registrar_recepcion_api_v0_pedidos_compra__pedido_id__recepciones_post",
+        "security": [
+          {
+            "Autenticación Bearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "pedido_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Identificador de pedido"
+            },
+            "description": "Identificador del pedido de compra consultado."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RecepcionCompraCreateDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "La operación se completó correctamente.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RecepcionCompraResponseDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Autenticación requerida.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Recurso inexistente.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflicto con el estado o stock actual.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Los datos enviados no cumplen el formato esperado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v0/reservas": {
+      "get": {
+        "tags": [
+          "Reservas"
+        ],
+        "summary": "Listar reservas",
+        "description": "Lista reservas de stock y permite consultar su estado.",
+        "operationId": "listar_reservas_api_v0_reservas_get",
+        "security": [
+          {
+            "Autenticación Bearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "default": 0,
+              "title": "Desplazamiento"
+            },
+            "description": "Cantidad de registros que se omiten antes de comenzar el resultado."
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 100,
+              "minimum": 1,
+              "default": 50,
+              "title": "Límite"
+            },
+            "description": "Cantidad máxima de resultados por página."
+          },
+          {
+            "name": "estado",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Estado"
+            },
+            "description": "Filtra los resultados por estado actual."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "La operación se completó correctamente.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaginaResponseDto_ReservaResponseDto_"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Autenticación requerida.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Recurso inexistente.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflicto con el estado o stock actual.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Los datos enviados no cumplen el formato esperado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Reservas"
+        ],
+        "summary": "Crear reserva",
+        "description": "Crea una reserva planificada de repuestos y ubicaciones.",
+        "operationId": "crear_reserva_api_v0_reservas_post",
+        "security": [
+          {
+            "Autenticación Bearer": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReservaCreateDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "La operación se completó correctamente.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReservaResponseDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Autenticación requerida.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Recurso inexistente.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflicto con el estado o stock actual.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Los datos enviados no cumplen el formato esperado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v0/reservas/{reserva_id}": {
+      "get": {
+        "tags": [
+          "Reservas"
+        ],
+        "summary": "Consultar reserva",
+        "description": "Obtiene una reserva con sus partidas y cantidades pendientes.",
+        "operationId": "obtener_reserva_api_v0_reservas__reserva_id__get",
+        "security": [
+          {
+            "Autenticación Bearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "reserva_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Identificador de reserva"
+            },
+            "description": "Identificador de la reserva consultada."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "La operación se completó correctamente.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReservaResponseDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Autenticación requerida.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Recurso inexistente.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflicto con el estado o stock actual.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Los datos enviados no cumplen el formato esperado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v0/reservas/{reserva_id}/liberacion": {
+      "post": {
+        "tags": [
+          "Reservas"
+        ],
+        "summary": "Liberar reserva",
+        "description": "Libera las cantidades reservadas que todavía no fueron consumidas.",
+        "operationId": "liberar_reserva_api_v0_reservas__reserva_id__liberacion_post",
+        "security": [
+          {
+            "Autenticación Bearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "reserva_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Identificador de reserva"
+            },
+            "description": "Identificador de la reserva consultada."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "La operación se completó correctamente.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReservaResponseDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Autenticación requerida.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Recurso inexistente.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflicto con el estado o stock actual.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Los datos enviados no cumplen el formato esperado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v0/reservas/{reserva_id}/ejecucion": {
+      "post": {
+        "tags": [
+          "Reservas"
+        ],
+        "summary": "Ejecutar reserva",
+        "description": "Registra el consumo efectivo de las partidas de una reserva.",
+        "operationId": "ejecutar_reserva_api_v0_reservas__reserva_id__ejecucion_post",
+        "security": [
+          {
+            "Autenticación Bearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "reserva_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Identificador de reserva"
+            },
+            "description": "Identificador de la reserva consultada."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EjecutarReservaDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "La operación se completó correctamente.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReservaResponseDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Autenticación requerida.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Recurso inexistente.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflicto con el estado o stock actual.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Los datos enviados no cumplen el formato esperado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v0/stock/alertas": {
+      "get": {
+        "tags": [
+          "Stock"
+        ],
+        "summary": "Listar alertas de stock",
+        "description": "Lista los repuestos cuyo stock disponible alcanzó el mínimo configurado.",
+        "operationId": "listar_alertas_stock_api_v0_stock_alertas_get",
+        "security": [
+          {
+            "Autenticación Bearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "default": 0,
+              "title": "Desplazamiento"
+            },
+            "description": "Cantidad de registros que se omiten antes de comenzar el resultado."
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 100,
+              "minimum": 1,
+              "default": 50,
+              "title": "Límite"
+            },
+            "description": "Cantidad máxima de resultados por página."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "La operación se completó correctamente.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaginaResponseDto_AlertaStockResponseDto_"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Autenticación requerida.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Recurso inexistente.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflicto con el estado o stock actual.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Los datos enviados no cumplen el formato esperado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v0/stock/movimientos": {
+      "get": {
+        "tags": [
+          "Stock"
+        ],
+        "summary": "Listar movimientos de stock",
+        "description": "Lista movimientos de stock, con filtros opcionales por repuesto y ubicación.",
+        "operationId": "listar_movimientos_stock_api_v0_stock_movimientos_get",
+        "security": [
+          {
+            "Autenticación Bearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "default": 0,
+              "title": "Desplazamiento"
+            },
+            "description": "Cantidad de registros que se omiten antes de comenzar el resultado."
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 100,
+              "minimum": 1,
+              "default": 50,
+              "title": "Límite"
+            },
+            "description": "Cantidad máxima de resultados por página."
+          },
+          {
+            "name": "repuesto_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Identificador de repuesto"
+            },
+            "description": "Identificador del repuesto consultado o usado como filtro."
+          },
+          {
+            "name": "ubicacion_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "integer",
+                  "minimum": 1
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Identificador de ubicación"
+            },
+            "description": "Identificador de la ubicación usada como filtro."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "La operación se completó correctamente.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaginaResponseDto_MovimientoStockResponseDto_"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Autenticación requerida.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Recurso inexistente.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflicto con el estado o stock actual.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Los datos enviados no cumplen el formato esperado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "AlertaStockResponseDto": {
+        "properties": {
+          "repuesto": {
+            "$ref": "#/components/schemas/RepuestoResumenDto"
+          },
+          "stock_disponible": {
+            "type": "integer",
+            "minimum": 0.0,
+            "title": "Stock Disponible"
+          },
+          "stock_minimo": {
+            "type": "integer",
+            "minimum": 0.0,
+            "title": "Stock Minimo"
+          }
+        },
+        "type": "object",
+        "required": [
+          "repuesto",
+          "stock_disponible",
+          "stock_minimo"
+        ],
+        "title": "AlertaStockResponseDto"
+      },
+      "AsignarPedidoCompraDto": {
+        "properties": {
+          "asignado_a_usuario_id": {
+            "type": "integer",
+            "exclusiveMinimum": 0.0,
+            "title": "Asignado A Usuario Id"
+          }
+        },
+        "type": "object",
+        "required": [
+          "asignado_a_usuario_id"
+        ],
+        "title": "AsignarPedidoCompraDto"
+      },
+      "AuthUserResponseDto": {
+        "properties": {
+          "user_id": {
+            "type": "string",
+            "title": "User Id",
+            "description": "Identificador de la persona autenticada."
+          },
+          "username": {
+            "type": "string",
+            "title": "Username",
+            "description": "Nombre de usuario para mostrar."
+          },
+          "roles": {
+            "items": {
+              "$ref": "#/components/schemas/RolUsuario"
+            },
+            "type": "array",
+            "title": "Roles",
+            "description": "Roles de aplicación asignados a la persona autenticada.",
+            "examples": [
+              [
+                "operario_maquina",
+                "empleado_mantenimiento",
+                "encargado_mantenimiento",
+                "gerencia_administracion"
+              ]
+            ]
+          }
+        },
+        "type": "object",
+        "required": [
+          "user_id",
+          "username",
+          "roles"
+        ],
+        "title": "AuthUserResponseDto",
+        "description": "Identidad y roles de la persona autenticada en el contrato v0."
+      },
+      "CancelarPedidoCompraDto": {
+        "properties": {
+          "motivo": {
+            "type": "string",
+            "minLength": 1,
+            "title": "Motivo"
+          }
+        },
+        "type": "object",
+        "required": [
+          "motivo"
+        ],
+        "title": "CancelarPedidoCompraDto"
+      },
+      "EjecutarReservaDto": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/EjecutarReservaItemDto"
+            },
+            "type": "array",
+            "minItems": 1,
+            "title": "Items"
+          }
+        },
+        "type": "object",
+        "required": [
+          "items"
+        ],
+        "title": "EjecutarReservaDto"
+      },
+      "EjecutarReservaItemDto": {
+        "properties": {
+          "item_reserva_id": {
+            "type": "integer",
+            "exclusiveMinimum": 0.0,
+            "title": "Item Reserva Id"
+          },
+          "cantidad_consumida": {
+            "type": "integer",
+            "exclusiveMinimum": 0.0,
+            "title": "Cantidad Consumida"
+          }
+        },
+        "type": "object",
+        "required": [
+          "item_reserva_id",
+          "cantidad_consumida"
+        ],
+        "title": "EjecutarReservaItemDto"
+      },
+      "ErrorResponseDto": {
+        "properties": {
+          "codigo": {
+            "type": "string",
+            "title": "Codigo"
+          },
+          "mensaje": {
+            "type": "string",
+            "title": "Mensaje"
+          }
+        },
+        "type": "object",
+        "required": [
+          "codigo",
+          "mensaje"
+        ],
+        "title": "ErrorResponseDto"
+      },
+      "FotoIncidenciaCreateDto": {
+        "properties": {
+          "contenido_base64": {
+            "type": "string",
+            "minLength": 1,
+            "title": "Contenido Base64"
+          },
+          "nombre_archivo": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 255
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Nombre Archivo"
+          },
+          "tipo_mime": {
+            "type": "string",
+            "maxLength": 100,
+            "minLength": 1,
+            "title": "Tipo Mime"
+          },
+          "capturada_en": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Capturada En"
+          }
+        },
+        "type": "object",
+        "required": [
+          "contenido_base64",
+          "tipo_mime"
+        ],
+        "title": "FotoIncidenciaCreateDto"
+      },
+      "FotoIncidenciaDto": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "nombre_archivo": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Nombre Archivo"
+          },
+          "tipo_mime": {
+            "type": "string",
+            "title": "Tipo Mime"
+          },
+          "capturada_en": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Capturada En"
+          },
+          "contenido_base64": {
+            "type": "string",
+            "title": "Contenido Base64"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "tipo_mime",
+          "contenido_base64"
+        ],
+        "title": "FotoIncidenciaDto"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "Error de validación HTTP",
+        "description": "Errores de validación detectados en la solicitud."
+      },
+      "IncidenciaCreateDto": {
+        "properties": {
+          "maquina_codigo": {
+            "type": "string",
+            "maxLength": 100,
+            "minLength": 1,
+            "title": "Maquina Codigo",
+            "description": "Código QR o de barras."
+          },
+          "descripcion": {
+            "type": "string",
+            "minLength": 1,
+            "title": "Descripcion"
+          },
+          "turno": {
+            "type": "string",
+            "enum": [
+              "manana",
+              "tarde",
+              "noche"
+            ],
+            "title": "Turno"
+          },
+          "fotos": {
+            "items": {
+              "$ref": "#/components/schemas/FotoIncidenciaCreateDto"
+            },
+            "type": "array",
+            "title": "Fotos"
+          }
+        },
+        "type": "object",
+        "required": [
+          "maquina_codigo",
+          "descripcion",
+          "turno"
+        ],
+        "title": "IncidenciaCreateDto"
+      },
+      "IncidenciaResponseDto": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "maquina_id": {
+            "type": "integer",
+            "title": "Maquina Id"
+          },
+          "maquina": {
+            "$ref": "#/components/schemas/MaquinaResponseDto"
+          },
+          "reportada_por_usuario_id": {
+            "type": "integer",
+            "title": "Reportada Por Usuario Id"
+          },
+          "descripcion": {
+            "type": "string",
+            "title": "Descripcion"
+          },
+          "estado": {
+            "type": "string",
+            "title": "Estado",
+            "description": "Valores sujetos a la máquina de estados T01."
+          },
+          "turno": {
+            "type": "string",
+            "enum": [
+              "manana",
+              "tarde",
+              "noche"
+            ],
+            "title": "Turno"
+          },
+          "reportada_en": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Reportada En"
+          },
+          "resuelta_en": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Resuelta En"
+          },
+          "fotos": {
+            "items": {
+              "$ref": "#/components/schemas/FotoIncidenciaDto"
+            },
+            "type": "array",
+            "title": "Fotos"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "maquina_id",
+          "maquina",
+          "reportada_por_usuario_id",
+          "descripcion",
+          "estado",
+          "turno",
+          "reportada_en"
+        ],
+        "title": "IncidenciaResponseDto"
+      },
+      "InformeResolucionCreateDto": {
+        "properties": {
+          "resumen": {
+            "type": "string",
+            "minLength": 1,
+            "title": "Resumen"
+          }
+        },
+        "type": "object",
+        "required": [
+          "resumen"
+        ],
+        "title": "InformeResolucionCreateDto"
+      },
+      "InformeResolucionResponseDto": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "reparacion_id": {
+            "type": "integer",
+            "title": "Reparacion Id"
+          },
+          "empleado_id": {
+            "type": "integer",
+            "title": "Empleado Id"
+          },
+          "resumen": {
+            "type": "string",
+            "title": "Resumen"
+          },
+          "creada_en": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Creada En"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "reparacion_id",
+          "empleado_id",
+          "resumen",
+          "creada_en"
+        ],
+        "title": "InformeResolucionResponseDto"
+      },
+      "ItemPedidoCompraCreateDto": {
+        "properties": {
+          "repuesto_id": {
+            "type": "integer",
+            "exclusiveMinimum": 0.0,
+            "title": "Repuesto Id"
+          },
+          "cantidad_solicitada": {
+            "type": "integer",
+            "exclusiveMinimum": 0.0,
+            "title": "Cantidad Solicitada"
+          }
+        },
+        "type": "object",
+        "required": [
+          "repuesto_id",
+          "cantidad_solicitada"
+        ],
+        "title": "ItemPedidoCompraCreateDto"
+      },
+      "ItemPedidoCompraResponseDto": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "repuesto": {
+            "$ref": "#/components/schemas/RepuestoResumenDto"
+          },
+          "cantidad_solicitada": {
+            "type": "integer",
+            "exclusiveMinimum": 0.0,
+            "title": "Cantidad Solicitada"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "repuesto",
+          "cantidad_solicitada"
+        ],
+        "title": "ItemPedidoCompraResponseDto"
+      },
+      "ItemRecepcionCompraCreateDto": {
+        "properties": {
+          "item_pedido_compra_id": {
+            "type": "integer",
+            "exclusiveMinimum": 0.0,
+            "title": "Item Pedido Compra Id"
+          },
+          "ubicacion_id": {
+            "type": "integer",
+            "exclusiveMinimum": 0.0,
+            "title": "Ubicacion Id"
+          },
+          "cantidad": {
+            "type": "integer",
+            "exclusiveMinimum": 0.0,
+            "title": "Cantidad"
+          }
+        },
+        "type": "object",
+        "required": [
+          "item_pedido_compra_id",
+          "ubicacion_id",
+          "cantidad"
+        ],
+        "title": "ItemRecepcionCompraCreateDto"
+      },
+      "ItemRecepcionCompraResponseDto": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "item_pedido_compra_id": {
+            "type": "integer",
+            "title": "Item Pedido Compra Id"
+          },
+          "ubicacion": {
+            "$ref": "#/components/schemas/UbicacionResumenDto"
+          },
+          "cantidad": {
+            "type": "integer",
+            "exclusiveMinimum": 0.0,
+            "title": "Cantidad"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "item_pedido_compra_id",
+          "ubicacion",
+          "cantidad"
+        ],
+        "title": "ItemRecepcionCompraResponseDto"
+      },
+      "ItemReservaCreateDto": {
+        "properties": {
+          "repuesto_id": {
+            "type": "integer",
+            "exclusiveMinimum": 0.0,
+            "title": "Repuesto Id"
+          },
+          "ubicacion_id": {
+            "type": "integer",
+            "exclusiveMinimum": 0.0,
+            "title": "Ubicacion Id"
+          },
+          "cantidad": {
+            "type": "integer",
+            "exclusiveMinimum": 0.0,
+            "title": "Cantidad"
+          }
+        },
+        "type": "object",
+        "required": [
+          "repuesto_id",
+          "ubicacion_id",
+          "cantidad"
+        ],
+        "title": "ItemReservaCreateDto"
+      },
+      "ItemReservaResponseDto": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "repuesto": {
+            "$ref": "#/components/schemas/RepuestoResumenDto"
+          },
+          "ubicacion": {
+            "$ref": "#/components/schemas/UbicacionResumenDto"
+          },
+          "cantidad": {
+            "type": "integer",
+            "exclusiveMinimum": 0.0,
+            "title": "Cantidad"
+          },
+          "cantidad_consumida": {
+            "type": "integer",
+            "minimum": 0.0,
+            "title": "Cantidad Consumida"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "repuesto",
+          "ubicacion",
+          "cantidad",
+          "cantidad_consumida"
+        ],
+        "title": "ItemReservaResponseDto"
+      },
+      "MaquinaCreateDto": {
+        "properties": {
+          "codigo": {
+            "type": "string",
+            "maxLength": 100,
+            "minLength": 1,
+            "title": "Codigo"
+          },
+          "tipo_maquina_id": {
+            "type": "integer",
+            "exclusiveMinimum": 0.0,
+            "title": "Tipo Maquina Id"
+          },
+          "numero_serie": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 100
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Numero Serie"
+          },
+          "fecha_instalacion": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Fecha Instalacion"
+          }
+        },
+        "type": "object",
+        "required": [
+          "codigo",
+          "tipo_maquina_id"
+        ],
+        "title": "MaquinaCreateDto"
+      },
+      "MaquinaResponseDto": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "codigo": {
+            "type": "string",
+            "title": "Codigo"
+          },
+          "tipo_maquina_id": {
+            "type": "integer",
+            "title": "Tipo Maquina Id"
+          },
+          "tipo_maquina": {
+            "$ref": "#/components/schemas/TipoMaquinaResumenDto"
+          },
+          "numero_serie": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Numero Serie"
+          },
+          "estado": {
+            "type": "string",
+            "title": "Estado",
+            "description": "Estado definido por la máquina de estados del dominio."
+          },
+          "fecha_instalacion": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Fecha Instalacion"
+          },
+          "creado_en": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Creado En"
+          },
+          "actualizado_en": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Actualizado En"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "codigo",
+          "tipo_maquina_id",
+          "tipo_maquina",
+          "estado",
+          "creado_en"
+        ],
+        "title": "MaquinaResponseDto"
+      },
+      "MaquinaUpdateDto": {
+        "properties": {
+          "codigo": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 100,
+                "minLength": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Codigo"
+          },
+          "tipo_maquina_id": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "exclusiveMinimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tipo Maquina Id"
+          },
+          "numero_serie": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 100
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Numero Serie"
+          },
+          "estado": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Estado"
+          },
+          "fecha_instalacion": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Fecha Instalacion"
+          }
+        },
+        "type": "object",
+        "title": "MaquinaUpdateDto"
+      },
+      "MovimientoStockResponseDto": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "repuesto": {
+            "$ref": "#/components/schemas/RepuestoResumenDto"
+          },
+          "ubicacion": {
+            "$ref": "#/components/schemas/UbicacionResumenDto"
+          },
+          "tipo_movimiento": {
+            "type": "string",
+            "enum": [
+              "entrada",
+              "salida",
+              "reserva",
+              "liberacion",
+              "consumo"
+            ],
+            "title": "Tipo Movimiento"
+          },
+          "cantidad": {
+            "type": "integer",
+            "exclusiveMinimum": 0.0,
+            "title": "Cantidad"
+          },
+          "variacion_fisica": {
+            "type": "integer",
+            "title": "Variacion Fisica"
+          },
+          "variacion_reservada": {
+            "type": "integer",
+            "title": "Variacion Reservada"
+          },
+          "realizado_por_usuario_id": {
+            "type": "integer",
+            "title": "Realizado Por Usuario Id"
+          },
+          "ocurrido_en": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Ocurrido En"
+          },
+          "motivo": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Motivo"
+          },
+          "item_recepcion_compra_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Item Recepcion Compra Id"
+          },
+          "uso_repuesto_reparacion_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Uso Repuesto Reparacion Id"
+          },
+          "item_reserva_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Item Reserva Id"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "repuesto",
+          "ubicacion",
+          "tipo_movimiento",
+          "cantidad",
+          "variacion_fisica",
+          "variacion_reservada",
+          "realizado_por_usuario_id",
+          "ocurrido_en"
+        ],
+        "title": "MovimientoStockResponseDto"
+      },
+      "PaginaResponseDto_AlertaStockResponseDto_": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/AlertaStockResponseDto"
+            },
+            "type": "array",
+            "title": "Items"
+          },
+          "total": {
+            "type": "integer",
+            "minimum": 0.0,
+            "title": "Total"
+          },
+          "offset": {
+            "type": "integer",
+            "minimum": 0.0,
+            "title": "Offset"
+          },
+          "limit": {
+            "type": "integer",
+            "exclusiveMinimum": 0.0,
+            "title": "Limit"
+          }
+        },
+        "type": "object",
+        "required": [
+          "items",
+          "total",
+          "offset",
+          "limit"
+        ],
+        "title": "PaginaResponseDto[AlertaStockResponseDto]"
+      },
+      "PaginaResponseDto_IncidenciaResponseDto_": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/IncidenciaResponseDto"
+            },
+            "type": "array",
+            "title": "Items"
+          },
+          "total": {
+            "type": "integer",
+            "minimum": 0.0,
+            "title": "Total"
+          },
+          "offset": {
+            "type": "integer",
+            "minimum": 0.0,
+            "title": "Offset"
+          },
+          "limit": {
+            "type": "integer",
+            "exclusiveMinimum": 0.0,
+            "title": "Limit"
+          }
+        },
+        "type": "object",
+        "required": [
+          "items",
+          "total",
+          "offset",
+          "limit"
+        ],
+        "title": "PaginaResponseDto[IncidenciaResponseDto]"
+      },
+      "PaginaResponseDto_MaquinaResponseDto_": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/MaquinaResponseDto"
+            },
+            "type": "array",
+            "title": "Items"
+          },
+          "total": {
+            "type": "integer",
+            "minimum": 0.0,
+            "title": "Total"
+          },
+          "offset": {
+            "type": "integer",
+            "minimum": 0.0,
+            "title": "Offset"
+          },
+          "limit": {
+            "type": "integer",
+            "exclusiveMinimum": 0.0,
+            "title": "Limit"
+          }
+        },
+        "type": "object",
+        "required": [
+          "items",
+          "total",
+          "offset",
+          "limit"
+        ],
+        "title": "PaginaResponseDto[MaquinaResponseDto]"
+      },
+      "PaginaResponseDto_MovimientoStockResponseDto_": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/MovimientoStockResponseDto"
+            },
+            "type": "array",
+            "title": "Items"
+          },
+          "total": {
+            "type": "integer",
+            "minimum": 0.0,
+            "title": "Total"
+          },
+          "offset": {
+            "type": "integer",
+            "minimum": 0.0,
+            "title": "Offset"
+          },
+          "limit": {
+            "type": "integer",
+            "exclusiveMinimum": 0.0,
+            "title": "Limit"
+          }
+        },
+        "type": "object",
+        "required": [
+          "items",
+          "total",
+          "offset",
+          "limit"
+        ],
+        "title": "PaginaResponseDto[MovimientoStockResponseDto]"
+      },
+      "PaginaResponseDto_PedidoCompraResponseDto_": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/PedidoCompraResponseDto"
+            },
+            "type": "array",
+            "title": "Items"
+          },
+          "total": {
+            "type": "integer",
+            "minimum": 0.0,
+            "title": "Total"
+          },
+          "offset": {
+            "type": "integer",
+            "minimum": 0.0,
+            "title": "Offset"
+          },
+          "limit": {
+            "type": "integer",
+            "exclusiveMinimum": 0.0,
+            "title": "Limit"
+          }
+        },
+        "type": "object",
+        "required": [
+          "items",
+          "total",
+          "offset",
+          "limit"
+        ],
+        "title": "PaginaResponseDto[PedidoCompraResponseDto]"
+      },
+      "PaginaResponseDto_RepuestoResponseDto_": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/RepuestoResponseDto"
+            },
+            "type": "array",
+            "title": "Items"
+          },
+          "total": {
+            "type": "integer",
+            "minimum": 0.0,
+            "title": "Total"
+          },
+          "offset": {
+            "type": "integer",
+            "minimum": 0.0,
+            "title": "Offset"
+          },
+          "limit": {
+            "type": "integer",
+            "exclusiveMinimum": 0.0,
+            "title": "Limit"
+          }
+        },
+        "type": "object",
+        "required": [
+          "items",
+          "total",
+          "offset",
+          "limit"
+        ],
+        "title": "PaginaResponseDto[RepuestoResponseDto]"
+      },
+      "PaginaResponseDto_ReservaResponseDto_": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/ReservaResponseDto"
+            },
+            "type": "array",
+            "title": "Items"
+          },
+          "total": {
+            "type": "integer",
+            "minimum": 0.0,
+            "title": "Total"
+          },
+          "offset": {
+            "type": "integer",
+            "minimum": 0.0,
+            "title": "Offset"
+          },
+          "limit": {
+            "type": "integer",
+            "exclusiveMinimum": 0.0,
+            "title": "Limit"
+          }
+        },
+        "type": "object",
+        "required": [
+          "items",
+          "total",
+          "offset",
+          "limit"
+        ],
+        "title": "PaginaResponseDto[ReservaResponseDto]"
+      },
+      "PaginaResponseDto_StockUbicacionResponseDto_": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/StockUbicacionResponseDto"
+            },
+            "type": "array",
+            "title": "Items"
+          },
+          "total": {
+            "type": "integer",
+            "minimum": 0.0,
+            "title": "Total"
+          },
+          "offset": {
+            "type": "integer",
+            "minimum": 0.0,
+            "title": "Offset"
+          },
+          "limit": {
+            "type": "integer",
+            "exclusiveMinimum": 0.0,
+            "title": "Limit"
+          }
+        },
+        "type": "object",
+        "required": [
+          "items",
+          "total",
+          "offset",
+          "limit"
+        ],
+        "title": "PaginaResponseDto[StockUbicacionResponseDto]"
+      },
+      "PaginaResponseDto_TipoMaquinaResponseDto_": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/TipoMaquinaResponseDto"
+            },
+            "type": "array",
+            "title": "Items"
+          },
+          "total": {
+            "type": "integer",
+            "minimum": 0.0,
+            "title": "Total"
+          },
+          "offset": {
+            "type": "integer",
+            "minimum": 0.0,
+            "title": "Offset"
+          },
+          "limit": {
+            "type": "integer",
+            "exclusiveMinimum": 0.0,
+            "title": "Limit"
+          }
+        },
+        "type": "object",
+        "required": [
+          "items",
+          "total",
+          "offset",
+          "limit"
+        ],
+        "title": "PaginaResponseDto[TipoMaquinaResponseDto]"
+      },
+      "PaginaResponseDto_UbicacionResponseDto_": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/UbicacionResponseDto"
+            },
+            "type": "array",
+            "title": "Items"
+          },
+          "total": {
+            "type": "integer",
+            "minimum": 0.0,
+            "title": "Total"
+          },
+          "offset": {
+            "type": "integer",
+            "minimum": 0.0,
+            "title": "Offset"
+          },
+          "limit": {
+            "type": "integer",
+            "exclusiveMinimum": 0.0,
+            "title": "Limit"
+          }
+        },
+        "type": "object",
+        "required": [
+          "items",
+          "total",
+          "offset",
+          "limit"
+        ],
+        "title": "PaginaResponseDto[UbicacionResponseDto]"
+      },
+      "PedidoCompraCreateDto": {
+        "properties": {
+          "urgencia": {
+            "type": "string",
+            "enum": [
+              "normal",
+              "urgente"
+            ],
+            "title": "Urgencia",
+            "default": "normal"
+          },
+          "motivo": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Motivo"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/ItemPedidoCompraCreateDto"
+            },
+            "type": "array",
+            "minItems": 1,
+            "title": "Items"
+          }
+        },
+        "type": "object",
+        "required": [
+          "items"
+        ],
+        "title": "PedidoCompraCreateDto"
+      },
+      "PedidoCompraResponseDto": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "creada_por_usuario_id": {
+            "type": "integer",
+            "title": "Creada Por Usuario Id"
+          },
+          "asignado_a_usuario_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Asignado A Usuario Id"
+          },
+          "revision_resuelta_por_usuario_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Revision Resuelta Por Usuario Id"
+          },
+          "revision_resuelta_en": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Revision Resuelta En"
+          },
+          "urgencia": {
+            "type": "string",
+            "enum": [
+              "normal",
+              "urgente"
+            ],
+            "title": "Urgencia"
+          },
+          "origen": {
+            "type": "string",
+            "enum": [
+              "manual",
+              "automatico"
+            ],
+            "title": "Origen"
+          },
+          "estado": {
+            "type": "string",
+            "enum": [
+              "creado",
+              "pendiente_revision",
+              "pendiente_aprobacion",
+              "confirmado",
+              "cancelado",
+              "pendiente_recepcion",
+              "recibido"
+            ],
+            "title": "Estado"
+          },
+          "motivo": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Motivo"
+          },
+          "motivo_cancelacion": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Motivo Cancelacion"
+          },
+          "creado_en": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Creado En"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/ItemPedidoCompraResponseDto"
+            },
+            "type": "array",
+            "title": "Items"
+          },
+          "recepciones": {
+            "items": {
+              "$ref": "#/components/schemas/RecepcionCompraResponseDto"
+            },
+            "type": "array",
+            "title": "Recepciones"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "creada_por_usuario_id",
+          "urgencia",
+          "origen",
+          "estado",
+          "creado_en"
+        ],
+        "title": "PedidoCompraResponseDto"
+      },
+      "RecepcionCompraCreateDto": {
+        "properties": {
+          "delegada_a_usuario_id": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "exclusiveMinimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Delegada A Usuario Id"
+          },
+          "notas": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Notas"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/ItemRecepcionCompraCreateDto"
+            },
+            "type": "array",
+            "minItems": 1,
+            "title": "Items"
+          }
+        },
+        "type": "object",
+        "required": [
+          "items"
+        ],
+        "title": "RecepcionCompraCreateDto"
+      },
+      "RecepcionCompraResponseDto": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "pedido_compra_id": {
+            "type": "integer",
+            "title": "Pedido Compra Id"
+          },
+          "recibida_por_usuario_id": {
+            "type": "integer",
+            "title": "Recibida Por Usuario Id"
+          },
+          "delegada_a_usuario_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Delegada A Usuario Id"
+          },
+          "recibida_en": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Recibida En"
+          },
+          "notas": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Notas"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/ItemRecepcionCompraResponseDto"
+            },
+            "type": "array",
+            "title": "Items"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "pedido_compra_id",
+          "recibida_por_usuario_id",
+          "recibida_en"
+        ],
+        "title": "RecepcionCompraResponseDto"
+      },
+      "ReparacionResponseDto": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "incidencia_id": {
+            "type": "integer",
+            "title": "Incidencia Id"
+          },
+          "empleado_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Empleado Id"
+          },
+          "estado": {
+            "type": "string",
+            "title": "Estado",
+            "description": "Estado sujeto a la máquina de estados del dominio."
+          },
+          "iniciada_en": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Iniciada En"
+          },
+          "completada_en": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Completada En"
+          },
+          "usos": {
+            "items": {
+              "$ref": "#/components/schemas/UsoRepuestoResponseDto"
+            },
+            "type": "array",
+            "title": "Usos"
+          },
+          "informe_resolucion": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/InformeResolucionResponseDto"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "incidencia_id",
+          "estado"
+        ],
+        "title": "ReparacionResponseDto"
+      },
+      "RepuestoCreateDto": {
+        "properties": {
+          "codigo": {
+            "type": "string",
+            "maxLength": 100,
+            "minLength": 1,
+            "title": "Codigo"
+          },
+          "nombre": {
+            "type": "string",
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Nombre"
+          },
+          "descripcion": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Descripcion"
+          },
+          "stock_minimo": {
+            "type": "integer",
+            "minimum": 0.0,
+            "title": "Stock Minimo",
+            "default": 0
+          }
+        },
+        "type": "object",
+        "required": [
+          "codigo",
+          "nombre"
+        ],
+        "title": "RepuestoCreateDto"
+      },
+      "RepuestoResponseDto": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "codigo": {
+            "type": "string",
+            "title": "Codigo"
+          },
+          "nombre": {
+            "type": "string",
+            "title": "Nombre"
+          },
+          "descripcion": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Descripcion"
+          },
+          "stock_minimo": {
+            "type": "integer",
+            "minimum": 0.0,
+            "title": "Stock Minimo"
+          },
+          "activo": {
+            "type": "boolean",
+            "title": "Activo"
+          },
+          "creado_en": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Creado En"
+          },
+          "actualizado_en": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Actualizado En"
+          },
+          "stock": {
+            "items": {
+              "$ref": "#/components/schemas/StockUbicacionResponseDto"
+            },
+            "type": "array",
+            "title": "Stock"
+          },
+          "stock_fisico_total": {
+            "type": "integer",
+            "title": "Stock Fisico Total",
+            "readOnly": true
+          },
+          "stock_reservado_total": {
+            "type": "integer",
+            "title": "Stock Reservado Total",
+            "readOnly": true
+          },
+          "stock_disponible_total": {
+            "type": "integer",
+            "title": "Stock Disponible Total",
+            "readOnly": true
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "codigo",
+          "nombre",
+          "stock_minimo",
+          "activo",
+          "creado_en",
+          "stock_fisico_total",
+          "stock_reservado_total",
+          "stock_disponible_total"
+        ],
+        "title": "RepuestoResponseDto"
+      },
+      "RepuestoResumenDto": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "codigo": {
+            "type": "string",
+            "title": "Codigo"
+          },
+          "nombre": {
+            "type": "string",
+            "title": "Nombre"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "codigo",
+          "nombre"
+        ],
+        "title": "RepuestoResumenDto"
+      },
+      "RepuestoUpdateDto": {
+        "properties": {
+          "codigo": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 100,
+                "minLength": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Codigo"
+          },
+          "nombre": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 200,
+                "minLength": 1
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Nombre"
+          },
+          "descripcion": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Descripcion"
+          },
+          "stock_minimo": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Stock Minimo"
+          },
+          "activo": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Activo"
+          }
+        },
+        "type": "object",
+        "title": "RepuestoUpdateDto"
+      },
+      "ReservaCreateDto": {
+        "properties": {
+          "titulo": {
+            "type": "string",
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Titulo"
+          },
+          "motivo": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Motivo"
+          },
+          "planificada_para": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Planificada Para"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/ItemReservaCreateDto"
+            },
+            "type": "array",
+            "minItems": 1,
+            "title": "Items"
+          }
+        },
+        "type": "object",
+        "required": [
+          "titulo",
+          "planificada_para",
+          "items"
+        ],
+        "title": "ReservaCreateDto"
+      },
+      "ReservaResponseDto": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "creada_por_usuario_id": {
+            "type": "integer",
+            "title": "Creada Por Usuario Id"
+          },
+          "titulo": {
+            "type": "string",
+            "title": "Titulo"
+          },
+          "motivo": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Motivo"
+          },
+          "planificada_para": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Planificada Para"
+          },
+          "estado": {
+            "type": "string",
+            "title": "Estado",
+            "description": "Valores sujetos a la máquina de estados de Reserva."
+          },
+          "autorizada_por_usuario_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Autorizada Por Usuario Id"
+          },
+          "liberada_por_usuario_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Liberada Por Usuario Id"
+          },
+          "creada_en": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Creada En"
+          },
+          "liberada_en": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Liberada En"
+          },
+          "ejecutada_en": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ejecutada En"
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/ItemReservaResponseDto"
+            },
+            "type": "array",
+            "title": "Items"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "creada_por_usuario_id",
+          "titulo",
+          "planificada_para",
+          "estado",
+          "creada_en"
+        ],
+        "title": "ReservaResponseDto"
+      },
+      "RevisarPedidoCompraDto": {
+        "properties": {
+          "observaciones": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Observaciones"
+          }
+        },
+        "type": "object",
+        "title": "RevisarPedidoCompraDto"
+      },
+      "RolUsuario": {
+        "type": "string",
+        "enum": [
+          "operario_maquina",
+          "empleado_mantenimiento",
+          "encargado_mantenimiento",
+          "gerencia_administracion"
+        ],
+        "title": "RolUsuario",
+        "description": "Roles de aplicación definidos por el dominio del TCI."
+      },
+      "StockUbicacionResponseDto": {
+        "properties": {
+          "ubicacion_id": {
+            "type": "integer",
+            "title": "Ubicacion Id"
+          },
+          "ubicacion": {
+            "$ref": "#/components/schemas/UbicacionResumenDto"
+          },
+          "cantidad_fisica": {
+            "type": "integer",
+            "minimum": 0.0,
+            "title": "Cantidad Fisica"
+          },
+          "cantidad_reservada": {
+            "type": "integer",
+            "minimum": 0.0,
+            "title": "Cantidad Reservada"
+          },
+          "cantidad_disponible": {
+            "type": "integer",
+            "title": "Cantidad Disponible",
+            "readOnly": true
+          }
+        },
+        "type": "object",
+        "required": [
+          "ubicacion_id",
+          "ubicacion",
+          "cantidad_fisica",
+          "cantidad_reservada",
+          "cantidad_disponible"
+        ],
+        "title": "StockUbicacionResponseDto"
+      },
+      "TipoMaquinaCreateDto": {
+        "properties": {
+          "nombre": {
+            "type": "string",
+            "maxLength": 100,
+            "minLength": 1,
+            "title": "Nombre"
+          },
+          "descripcion": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Descripcion"
+          }
+        },
+        "type": "object",
+        "required": [
+          "nombre"
+        ],
+        "title": "TipoMaquinaCreateDto"
+      },
+      "TipoMaquinaResponseDto": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "nombre": {
+            "type": "string",
+            "title": "Nombre"
+          },
+          "descripcion": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Descripcion"
+          },
+          "activo": {
+            "type": "boolean",
+            "title": "Activo"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "nombre",
+          "activo"
+        ],
+        "title": "TipoMaquinaResponseDto"
+      },
+      "TipoMaquinaResumenDto": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "nombre": {
+            "type": "string",
+            "title": "Nombre"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "nombre"
+        ],
+        "title": "TipoMaquinaResumenDto"
+      },
+      "UbicacionCreateDto": {
+        "properties": {
+          "codigo": {
+            "type": "string",
+            "maxLength": 50,
+            "minLength": 1,
+            "title": "Codigo",
+            "examples": [
+              "A-03-12"
+            ]
+          },
+          "descripcion": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 255
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Descripcion"
+          }
+        },
+        "type": "object",
+        "required": [
+          "codigo"
+        ],
+        "title": "UbicacionCreateDto"
+      },
+      "UbicacionResponseDto": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "codigo": {
+            "type": "string",
+            "title": "Codigo"
+          },
+          "descripcion": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Descripcion"
+          },
+          "activo": {
+            "type": "boolean",
+            "title": "Activo"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "codigo",
+          "activo"
+        ],
+        "title": "UbicacionResponseDto"
+      },
+      "UbicacionResumenDto": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "codigo": {
+            "type": "string",
+            "title": "Codigo"
+          },
+          "descripcion": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Descripcion"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "codigo"
+        ],
+        "title": "UbicacionResumenDto"
+      },
+      "UsoRepuestoCreateDto": {
+        "properties": {
+          "repuesto_id": {
+            "type": "integer",
+            "exclusiveMinimum": 0.0,
+            "title": "Repuesto Id"
+          },
+          "cantidad": {
+            "type": "integer",
+            "exclusiveMinimum": 0.0,
+            "title": "Cantidad"
+          },
+          "ubicacion_id": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "exclusiveMinimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ubicacion Id",
+            "description": "Ubicación preferida para descontar stock. Si se omite, el servicio define la asignación."
+          }
+        },
+        "type": "object",
+        "required": [
+          "repuesto_id",
+          "cantidad"
+        ],
+        "title": "UsoRepuestoCreateDto"
+      },
+      "UsoRepuestoResponseDto": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "reparacion_id": {
+            "type": "integer",
+            "title": "Reparacion Id"
+          },
+          "repuesto": {
+            "$ref": "#/components/schemas/RepuestoResumenDto"
+          },
+          "cantidad": {
+            "type": "integer",
+            "exclusiveMinimum": 0.0,
+            "title": "Cantidad"
+          },
+          "usada_por_usuario_id": {
+            "type": "integer",
+            "title": "Usada Por Usuario Id"
+          },
+          "usada_en": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Usada En"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "reparacion_id",
+          "repuesto",
+          "cantidad",
+          "usada_por_usuario_id",
+          "usada_en"
+        ],
+        "title": "UsoRepuestoResponseDto"
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Ubicación del dato"
+          },
+          "msg": {
+            "type": "string",
+            "title": "Mensaje"
+          },
+          "type": {
+            "type": "string",
+            "title": "Tipo de error"
+          },
+          "input": {
+            "title": "Valor recibido"
+          },
+          "ctx": {
+            "type": "object",
+            "title": "Contexto"
+          }
+        },
+        "type": "object",
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "Detalle del error de validación",
+        "description": "Describe un dato de la solicitud que no superó la validación."
+      }
+    },
+    "securitySchemes": {
+      "Autenticación Bearer": {
+        "type": "http",
+        "description": "Token Bearer requerido para acceder a las operaciones de la API.",
+        "scheme": "bearer"
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "Máquinas",
+      "description": "Consulta y mantenimiento de máquinas y sus tipos."
+    },
+    {
+      "name": "Repuestos",
+      "description": "Catálogo, búsqueda y datos generales de repuestos."
+    },
+    {
+      "name": "Stock",
+      "description": "Existencias por ubicación, alertas y trazabilidad de movimientos."
+    },
+    {
+      "name": "Ubicaciones",
+      "description": "Ubicaciones físicas disponibles para almacenar repuestos."
+    },
+    {
+      "name": "Incidencias",
+      "description": "Reporte y consulta de fallas detectadas en máquinas."
+    },
+    {
+      "name": "Reparaciones",
+      "description": "Seguimiento de reparaciones, consumos e informes de resolución."
+    },
+    {
+      "name": "Pedidos de compra",
+      "description": "Creación y gestión del ciclo de vida de pedidos de compra."
+    },
+    {
+      "name": "Recepciones",
+      "description": "Registro de artículos recibidos para un pedido de compra."
+    },
+    {
+      "name": "Reservas",
+      "description": "Planificación, liberación y ejecución de reservas de stock."
+    },
+    {
+      "name": "Autenticación",
+      "description": "Identidad y permisos del usuario autenticado."
+    }
+  ]
+}
