@@ -2,8 +2,8 @@
     position: sticky;
     top: 0;
     z-index: 1000;
-    border-bottom: 1px solid #e5e7eb;
-    background: #ffffff;
+    border-bottom: 1px solid var(--ui-border);
+    background: var(--ui-surface);
 }
 
 .header-container {
@@ -16,8 +16,8 @@
 }
 
 .brand {
-    color: #111827;
-    font-size: 1.1rem;
+    color: var(--ui-text);
+    font-size: 0.95rem;
     font-weight: 700;
     text-decoration: none;
     white-space: nowrap;
@@ -28,8 +28,8 @@
     margin-left: auto;
     width: 2.5rem;
     height: 2.5rem;
-    border: 1px solid #d1d5db;
-    border-radius: 0.5rem;
+    border: 1px solid var(--ui-border);
+    border-radius: var(--ui-radius);
     background: transparent;
     cursor: pointer;
     align-items: center;
@@ -42,7 +42,7 @@
     display: block;
     width: 1.1rem;
     height: 2px;
-    background: #111827;
+    background: var(--ui-text);
 }
 
 .nav {
@@ -53,30 +53,30 @@
 }
 
 .nav-link {
-    color: #374151;
+    color: var(--ui-text-muted);
     text-decoration: none;
     font-size: 0.95rem;
     font-weight: 500;
 }
 
 .nav-link:hover {
-    color: #111827;
+    color: var(--ui-primary);
 }
 
 .cta {
-    color: #ffffff;
-    background: #111827;
-    border: 1px solid #111827;
+    color: var(--ui-primary-foreground);
+    background: var(--ui-primary);
+    border: 1px solid var(--ui-primary);
     text-decoration: none;
     font-size: 0.9rem;
     font-weight: 600;
     padding: 0.6rem 1rem;
-    border-radius: 0.5rem;
+    border-radius: var(--ui-radius);
     white-space: nowrap;
 }
 
 .cta:hover {
-    background: #1f2937;
+    background: color-mix(in oklch, var(--ui-primary) 88%, white);
 }
 
 @media (max-width: 900px) {
@@ -96,7 +96,7 @@
         gap: 0.75rem;
         margin: 0;
         padding-top: 0.75rem;
-        border-top: 1px solid #e5e7eb;
+        border-top: 1px solid var(--ui-border);
     }
 
     .nav.nav-open {
