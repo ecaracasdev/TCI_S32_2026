@@ -42,6 +42,15 @@ Ejemplos:
 - `fix/T15-validacion-email`
 - `docs/T20-workflow-justificacion`
 
+## Redacción de tareas de frontend
+
+- Titular las tareas con el formato `[T##] Verbo + pantalla o funcionalidad`; comprobar que el número esté libre antes de crear la Issue.
+- Relacionar cada tarea con los requerimientos, casos de uso y vistas del dominio que correspondan.
+- Describir objetivo, alcance/operaciones, criterios de aceptación específicos y dependencias o decisiones pendientes.
+- Una pantalla puede incluir varias operaciones CRUD cuando forman un mismo flujo; no dividirla artificialmente por operación.
+- Mantener los criterios técnicos comunes en `frontend/SKILL.md`. Las tareas deben describir solo el comportamiento y las restricciones propias de su alcance.
+- Si el dominio no define una regla necesaria, dejarla como decisión pendiente en lugar de inventarla.
+
 ## Nadie pushea directo a `main`
 
 Todo cambio entra por **Pull Request**. La rama `main` está protegida: no acepta push directo, solo merges de PRs aprobados.
