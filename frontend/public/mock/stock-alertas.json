@@ -1,0 +1,22 @@
+{
+  "items": [
+    {
+      "repuesto": { "id": 142, "codigo": "REP-00142", "nombre": "Rodamiento 6205-2RS" },
+      "stock_disponible": 2,
+      "stock_minimo": 5
+    },
+    {
+      "repuesto": { "id": 87, "codigo": "REP-00087", "nombre": "Filtro de aceite FO-18" },
+      "stock_disponible": 4,
+      "stock_minimo": 6
+    },
+    {
+      "repuesto": { "id": 203, "codigo": "REP-00203", "nombre": "Correa dentada HTD-8M" },
+      "stock_disponible": 0,
+      "stock_minimo": 3
+    }
+  ],
+  "total": 3,
+  "offset": 0,
+  "limit": 50
+}
