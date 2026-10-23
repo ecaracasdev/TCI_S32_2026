@@ -1,0 +1,40 @@
+{
+  "items": [
+    {
+      "id": 2,
+      "codigo": "F-02",
+      "tipo_maquina_id": 1,
+      "tipo_maquina": { "id": 1, "nombre": "Fraccionador" },
+      "numero_serie": null,
+      "estado": "operativa",
+      "fecha_instalacion": null,
+      "creado_en": "2026-01-10T08:00:00Z",
+      "actualizado_en": null
+    },
+    {
+      "id": 4,
+      "codigo": "B-04",
+      "tipo_maquina_id": 2,
+      "tipo_maquina": { "id": 2, "nombre": "Banda transportadora" },
+      "numero_serie": null,
+      "estado": "operativa",
+      "fecha_instalacion": null,
+      "creado_en": "2026-01-10T08:00:00Z",
+      "actualizado_en": null
+    },
+    {
+      "id": 1,
+      "codigo": "C-01",
+      "tipo_maquina_id": 3,
+      "tipo_maquina": { "id": 3, "nombre": "Caldera" },
+      "numero_serie": null,
+      "estado": "operativa",
+      "fecha_instalacion": null,
+      "creado_en": "2026-01-10T08:00:00Z",
+      "actualizado_en": null
+    }
+  ],
+  "total": 3,
+  "offset": 0,
+  "limit": 20
+}
