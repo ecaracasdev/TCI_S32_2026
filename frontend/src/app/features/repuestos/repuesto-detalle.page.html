@@ -1,0 +1,133 @@
+<div class="mx-auto flex max-w-5xl flex-col gap-6 px-4 py-6 md:px-8 md:py-10">
+
+  <a routerLink="/stock" class="text-sm font-medium"><span aria-hidden="true">←</span> {{ config.detalle.volver }}</a>
+
+  @if (carga() === 'cargando') {
+    <p role="status" class="text-sm text-muted-foreground">{{ config.detalle.cargando }}</p>
+  } @else if (carga() === 'error') {
+    <div role="alert" class="flex flex-col items-start gap-3">
+      <p class="text-sm">{{ config.detalle.error }}</p>
+      <button hlmBtn variant="outline" size="sm" type="button" (click)="cargar()">{{ config.reintentar }}</button>
+    </div>
+  } @else {
+    @if (repuesto(); as r) {
+      <header class="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
+        <div>
+          <p class="numeric text-xs font-medium tracking-widest text-muted-foreground">{{ r.codigo }}</p>
+          <h1 class="text-3xl font-semibold md:text-4xl">{{ r.nombre }}</h1>
+          @if (r.descripcion) {
+            <p class="mt-2 text-muted-foreground">{{ r.descripcion }}</p>
+          }
+        </div>
+        <span hlmBadge [variant]="info(r).variante">{{ info(r).etiqueta }}</span>
+      </header>
+
+      <section hlmCard aria-labelledby="existencias-titulo">
+        <div hlmCardHeader>
+          <h2 hlmCardTitle id="existencias-titulo">{{ config.detalle.existencias }}</h2>
+        </div>
+        <div hlmCardContent>
+          <dl class="grid grid-cols-2 gap-4 md:grid-cols-4">
+            <div>
+              <dt class="text-xs text-muted-foreground">{{ config.detalle.fisico }}</dt>
+              <dd class="numeric text-2xl font-semibold">{{ r.stock_fisico_total }}</dd>
+            </div>
+            <div>
+              <dt class="text-xs text-muted-foreground">{{ config.detalle.reservado }}</dt>
+              <dd class="numeric text-2xl font-semibold">{{ r.stock_reservado_total }}</dd>
+            </div>
+            <div>
+              <dt class="text-xs text-muted-foreground">{{ config.detalle.disponible }}</dt>
+              <dd class="numeric text-2xl font-semibold">{{ r.stock_disponible_total }}</dd>
+            </div>
+            <div>
+              <dt class="text-xs text-muted-foreground">{{ config.detalle.minimo }}</dt>
+              <dd class="numeric text-2xl font-semibold">{{ r.stock_minimo }}</dd>
+            </div>
+          </dl>
+        </div>
+      </section>
+
+      <section hlmCard class="min-w-0" aria-labelledby="ubicaciones-titulo">
+        <div hlmCardHeader>
+          <h2 hlmCardTitle id="ubicaciones-titulo">{{ config.detalle.ubicaciones }}</h2>
+        </div>
+        <div hlmCardContent>
+          @if ((r.stock ?? []).length === 0) {
+            <p class="text-sm text-muted-foreground">{{ config.detalle.sinUbicaciones }}</p>
+          } @else {
+            <!-- Tablet y teléfono: tarjetas. Escritorio (desde lg): tabla. -->
+            <ul class="flex flex-col gap-3 lg:hidden">
+              @for (s of r.stock ?? []; track s.ubicacion_id) {
+                <li class="rounded-lg border border-border p-3">
+                  <p class="numeric text-sm font-medium">{{ s.ubicacion.codigo }}</p>
+                  @if (s.ubicacion.descripcion) {
+                    <p class="text-xs text-muted-foreground">{{ s.ubicacion.descripcion }}</p>
+                  }
+                  <dl class="mt-2 grid grid-cols-3 gap-2 text-center">
+                    <div>
+                      <dt class="text-xs text-muted-foreground">{{ config.columnas.fisico }}</dt>
+                      <dd class="numeric text-sm font-semibold">{{ s.cantidad_fisica }}</dd>
+                    </div>
+                    <div>
+                      <dt class="text-xs text-muted-foreground">{{ config.columnas.reservado }}</dt>
+                      <dd class="numeric text-sm">{{ s.cantidad_reservada }}</dd>
+                    </div>
+                    <div>
+                      <dt class="text-xs text-muted-foreground">{{ config.columnas.disponible }}</dt>
+                      <dd class="numeric text-sm font-semibold">{{ s.cantidad_disponible }}</dd>
+                    </div>
+                  </dl>
+                </li>
+              }
+            </ul>
+
+            <div class="hidden lg:block">
+              <app-data-table minWidth="28rem">
+                <thead>
+                  <tr>
+                    <th scope="col">{{ config.columnas.ubicacion }}</th>
+                    <th scope="col" data-align="center">{{ config.columnas.fisico }}</th>
+                    <th scope="col" data-align="center">{{ config.columnas.reservado }}</th>
+                    <th scope="col" data-align="center">{{ config.columnas.disponible }}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (s of r.stock ?? []; track s.ubicacion_id) {
+                    <tr>
+                      <td>
+                        <span class="numeric font-medium">{{ s.ubicacion.codigo }}</span>
+                        @if (s.ubicacion.descripcion) {
+                          <br /><span class="text-xs text-muted-foreground">{{ s.ubicacion.descripcion }}</span>
+                        }
+                      </td>
+                      <td data-align="center" class="numeric">{{ s.cantidad_fisica }}</td>
+                      <td data-align="center" class="numeric">{{ s.cantidad_reservada }}</td>
+                      <td data-align="center" class="numeric">{{ s.cantidad_disponible }}</td>
+                    </tr>
+                  }
+                </tbody>
+              </app-data-table>
+            </div>
+          }
+        </div>
+      </section>
+
+      <section hlmCard aria-labelledby="maquinas-titulo">
+        <div hlmCardHeader>
+          <h2 hlmCardTitle id="maquinas-titulo">{{ config.detalle.maquinas }}</h2>
+        </div>
+        <div hlmCardContent>
+          <ul class="flex flex-col gap-1 text-sm">
+            @for (m of r.maquinas_compatibles ?? []; track m.id) {
+              <li>{{ m.tipo_maquina.nombre }} <span class="numeric">{{ m.codigo }}</span></li>
+            } @empty {
+              <li class="text-muted-foreground">{{ config.detalle.sinMaquinas }}</li>
+            }
+          </ul>
+        </div>
+      </section>
+    }
+  }
+
+</div>

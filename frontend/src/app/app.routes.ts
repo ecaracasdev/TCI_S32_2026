@@ -4,6 +4,9 @@ import { environment } from '../environments/environment';
 import { InicioHttpService } from './features/inicio/inicio.http.service';
 import { InicioService } from './features/inicio/inicio.service';
 import { MockInicioService } from './features/inicio/mock-inicio.service';
+import { MockRepuestosService } from './features/repuestos/mock-repuestos.service';
+import { RepuestosHttpService } from './features/repuestos/repuestos.http.service';
+import { RepuestosService } from './features/repuestos/repuestos.service';
 
 export const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: 'ui-preview' },
@@ -15,6 +18,7 @@ export const routes: Routes = [
   {
     path: 'inicio',
     title: 'Inicio · TCI',
+    // Mock o real según environment.useMockData
     providers: [
       {
         provide: InicioService,
@@ -24,5 +28,30 @@ export const routes: Routes = [
     ],
     loadComponent: () => import('./features/inicio/inicio.page').then((page) => page.InicioPage),
   },
+  {
+    // T12: inventario de repuestos (listado y detalle). Mock o real según environment.useMockData
+    path: 'stock',
+    providers: [
+      {
+        provide: RepuestosService,
+        useFactory: () =>
+          environment.useMockData ? inject(MockRepuestosService) : inject(RepuestosHttpService),
+      },
+    ],
+    children: [
+      {
+        path: '',
+        title: 'Repuestos · TCI',
+        loadComponent: () => import('./features/repuestos/repuestos.page').then((page) => page.RepuestosPage),
+      },
+      {
+        path: ':id',
+        title: 'Detalle de repuesto · TCI',
+        loadComponent: () =>
+          import('./features/repuestos/repuesto-detalle.page').then((page) => page.RepuestoDetallePage),
+      },
+    ],
+  },
+  // El comodín va siempre al final: cualquier ruta nueva debe agregarse antes.
   { path: '**', redirectTo: 'ui-preview' },
 ];
