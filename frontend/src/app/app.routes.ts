@@ -7,6 +7,9 @@ import { MockInicioService } from './features/inicio/mock-inicio.service';
 import { MockRepuestosService } from './features/repuestos/mock-repuestos.service';
 import { RepuestosHttpService } from './features/repuestos/repuestos.http.service';
 import { RepuestosService } from './features/repuestos/repuestos.service';
+import { ReportarIncidenciaHttpService } from './features/reportar-incidencia/reportar-incidencia.http.service';
+import { ReportarIncidenciaService } from './features/reportar-incidencia/reportar-incidencia.service';
+import { MockReportarIncidenciaService } from './features/reportar-incidencia/mock-reportar-incidencia.service';
 
 export const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: 'ui-preview' },
@@ -51,6 +54,23 @@ export const routes: Routes = [
           import('./features/repuestos/repuesto-detalle.page').then((page) => page.RepuestoDetallePage),
       },
     ],
+  },
+  {
+    path: 'incidencias/nueva',
+    title: 'Reportar incidencia · TCI',
+    providers: [
+      {
+        provide: ReportarIncidenciaService,
+        useFactory: () =>
+          environment.useMockData
+            ? inject(MockReportarIncidenciaService)
+            : inject(ReportarIncidenciaHttpService),
+      },
+    ],
+    loadComponent: () =>
+      import('./features/reportar-incidencia/reportar-incidencia.page').then(
+        (page) => page.ReportarIncidenciaPage,
+      ),
   },
   // El comodín va siempre al final: cualquier ruta nueva debe agregarse antes.
   { path: '**', redirectTo: 'ui-preview' },
