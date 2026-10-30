@@ -10,6 +10,9 @@ import { RepuestosService } from './features/repuestos/repuestos.service';
 import { ReportarIncidenciaHttpService } from './features/reportar-incidencia/reportar-incidencia.http.service';
 import { ReportarIncidenciaService } from './features/reportar-incidencia/reportar-incidencia.service';
 import { MockReportarIncidenciaService } from './features/reportar-incidencia/mock-reportar-incidencia.service';
+import { RegistrarUsoHttpService } from './features/registrar-uso/registrar-uso.http.service';
+import { RegistrarUsoService } from './features/registrar-uso/registrar-uso.service';
+import { MockRegistrarUsoService } from './features/registrar-uso/mock-registrar-uso.service';
 
 export const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: 'ui-preview' },
@@ -71,6 +74,19 @@ export const routes: Routes = [
       import('./features/reportar-incidencia/reportar-incidencia.page').then(
         (page) => page.ReportarIncidenciaPage,
       ),
+  },
+  {
+    path: 'usos/nuevo',
+    title: 'Registrar uso de repuesto · TCI',
+    providers: [
+      {
+        provide: RegistrarUsoService,
+        useFactory: () =>
+          environment.useMockData ? inject(MockRegistrarUsoService) : inject(RegistrarUsoHttpService),
+      },
+    ],
+    loadComponent: () =>
+      import('./features/registrar-uso/registrar-uso.page').then((page) => page.RegistrarUsoPage),
   },
   // El comodín va siempre al final: cualquier ruta nueva debe agregarse antes.
   { path: '**', redirectTo: 'ui-preview' },
