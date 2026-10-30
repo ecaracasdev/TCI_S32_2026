@@ -1,0 +1,27 @@
+{
+  "items": [
+    {
+      "id": 101,
+      "incidencia_id": 248,
+      "empleado_id": null,
+      "estado": "en_curso",
+      "iniciada_en": "2026-10-20T09:00:00Z",
+      "completada_en": null,
+      "usos": [],
+      "informe_resolucion": null
+    },
+    {
+      "id": 102,
+      "incidencia_id": 247,
+      "empleado_id": null,
+      "estado": "en_curso",
+      "iniciada_en": "2026-10-20T09:00:00Z",
+      "completada_en": null,
+      "usos": [],
+      "informe_resolucion": null
+    }
+  ],
+  "total": 2,
+  "offset": 0,
+  "limit": 20
+}
