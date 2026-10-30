@@ -1,0 +1,152 @@
+<div class="mx-auto flex max-w-7xl flex-col gap-6 px-4 py-6 md:px-8 md:py-10">
+
+  <header>
+    <p class="text-xs font-medium tracking-widest text-muted-foreground">{{ config.eyebrow }}</p>
+    <h1 class="text-3xl font-semibold md:text-5xl">{{ config.titulo }}</h1>
+    <p class="mt-2 text-muted-foreground">{{ config.descripcion }}</p>
+  </header>
+
+  <section hlmCard class="min-w-0" aria-labelledby="existencias-titulo">
+    <div hlmCardHeader>
+      <div class="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
+        <div>
+          <h2 hlmCardTitle id="existencias-titulo">{{ config.existencias }}</h2>
+          <p hlmCardDescription><span class="numeric">{{ cifra(filtrados().length) }}</span> {{ config.enEstaVista }}</p>
+        </div>
+        <div class="w-full md:max-w-xs">
+          <app-search
+            [collection]="repuestos()"
+            [searchFn]="buscar"
+            [label]="config.buscar"
+            [placeholder]="config.buscarPlaceholder"
+          />
+        </div>
+      </div>
+    </div>
+
+    <div hlmCardContent class="flex flex-col gap-4">
+      <!-- Filtro por estado, con contadores -->
+      <div role="group" [attr.aria-label]="config.filtrar" class="grid grid-cols-2 gap-1 rounded-lg bg-muted p-1 md:grid-cols-4">
+        @for (f of filtros; track f.id) {
+          <button
+            hlmBtn
+            size="sm"
+            type="button"
+            [variant]="filtro() === f.id ? 'outline' : 'ghost'"
+            [attr.aria-pressed]="filtro() === f.id"
+            (click)="elegirFiltro(f.id)"
+          >
+            {{ f.etiqueta }} (<span class="numeric">{{ conteos()[f.id] }}</span>)
+          </button>
+        }
+      </div>
+
+      @if (carga() === 'cargando') {
+        <p role="status" class="text-sm text-muted-foreground">{{ config.cargando }}</p>
+      } @else if (carga() === 'error') {
+        <div role="alert" class="flex flex-col items-start gap-3">
+          <p class="text-sm">{{ config.error }}</p>
+          <button hlmBtn variant="outline" size="sm" type="button" (click)="cargar()">{{ config.reintentar }}</button>
+        </div>
+      } @else if (filtrados().length === 0) {
+        <p class="text-sm text-muted-foreground">{{ config.vacio }}</p>
+      } @else {
+        <!-- Tablet y teléfono: tarjetas. Escritorio (desde lg): tabla. -->
+        <ul class="flex flex-col gap-3 lg:hidden">
+          @for (r of visibles(); track r.id) {
+            <li class="flex flex-col gap-3 rounded-lg border border-border p-3">
+              <a [routerLink]="['/stock', r.id]" class="flex items-start gap-3">
+                <span class="flex size-10 shrink-0 items-center justify-center rounded-lg border border-border" aria-hidden="true">
+                  <app-icon name="package" />
+                </span>
+                <div class="min-w-0 flex-1">
+                  <p class="truncate text-sm font-medium">{{ r.nombre }}</p>
+                  <p class="numeric text-xs text-muted-foreground">{{ r.codigo }}</p>
+                </div>
+                <span hlmBadge [variant]="info(r).variante">{{ info(r).etiqueta }}</span>
+              </a>
+              <dl class="grid grid-cols-3 gap-2 text-center">
+                <div>
+                  <dt class="text-xs text-muted-foreground">{{ config.columnas.fisico }}</dt>
+                  <dd class="numeric text-sm font-semibold">{{ cifra(r.stock_fisico_total) }}</dd>
+                </div>
+                <div>
+                  <dt class="text-xs text-muted-foreground">{{ config.columnas.reservado }}</dt>
+                  <dd class="numeric text-sm">{{ cifra(r.stock_reservado_total) }}</dd>
+                </div>
+                <div>
+                  <dt class="text-xs text-muted-foreground">{{ config.columnas.disponible }}</dt>
+                  <dd class="numeric text-sm font-semibold">{{ cifra(r.stock_disponible_total) }}</dd>
+                  <dd class="numeric text-xs text-muted-foreground">{{ config.minimo }} {{ cifra(r.stock_minimo) }}</dd>
+                </div>
+              </dl>
+              <div class="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
+                @for (u of ubicaciones(r); track u) {
+                  <span class="numeric rounded border border-border px-1.5 py-0.5">{{ u }}</span>
+                }
+                @if (maquinas(r)) {
+                  <span>{{ maquinas(r) }}</span>
+                }
+              </div>
+            </li>
+          }
+        </ul>
+
+        <div class="hidden lg:block">
+          <app-data-table minWidth="48rem">
+            <thead>
+              <tr>
+                <th scope="col">{{ config.columnas.repuesto }}</th>
+                <th scope="col">{{ config.columnas.maquinas }}</th>
+                <th scope="col" data-align="center">{{ config.columnas.fisico }}</th>
+                <th scope="col" data-align="center">{{ config.columnas.reservado }}</th>
+                <th scope="col" data-align="center">{{ config.columnas.disponible }}</th>
+                <th scope="col">{{ config.columnas.ubicacion }}</th>
+                <th scope="col">{{ config.columnas.estado }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (r of visibles(); track r.id) {
+                <tr>
+                  <td>
+                    <a [routerLink]="['/stock', r.id]" class="font-medium hover:underline">{{ r.nombre }}</a><br />
+                    <span class="numeric text-xs text-muted-foreground">{{ r.codigo }}@if (r.descripcion) { · {{ r.descripcion }} }</span>
+                  </td>
+                  <td>{{ maquinas(r) || config.sinDato }}</td>
+                  <td data-align="center" class="numeric font-semibold">{{ cifra(r.stock_fisico_total) }}</td>
+                  <td data-align="center" class="numeric">{{ cifra(r.stock_reservado_total) }}</td>
+                  <td data-align="center">
+                    <span class="numeric font-semibold">{{ cifra(r.stock_disponible_total) }}</span><br />
+                    <span class="numeric text-xs text-muted-foreground">{{ config.minimo }} {{ cifra(r.stock_minimo) }}</span>
+                  </td>
+                  <td>
+                    <span class="flex flex-wrap gap-1">
+                      @for (u of ubicaciones(r); track u) {
+                        <span class="numeric rounded border border-border px-1.5 py-0.5 text-xs">{{ u }}</span>
+                      } @empty {
+                        {{ config.sinDato }}
+                      }
+                    </span>
+                  </td>
+                  <td><span hlmBadge [variant]="info(r).variante">{{ info(r).etiqueta }}</span></td>
+                </tr>
+              }
+            </tbody>
+          </app-data-table>
+        </div>
+
+        <!-- Paginación -->
+        <div class="flex flex-col gap-3 text-sm text-muted-foreground md:flex-row md:items-center md:justify-between">
+          <p>
+            {{ config.mostrando }}
+            <span class="numeric">{{ cifra(desde()) }}–{{ cifra(hasta()) }}</span>
+            {{ config.de }}
+            <span class="numeric">{{ cifra(filtrados().length) }}</span>
+          </p>
+          <app-pagination [page]="paginaActual()" [pageCount]="totalPaginas()" (pageChange)="irAPagina($event)" />
+        </div>
+      }
+    </div>
+  </section>
+
+</div>

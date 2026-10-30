@@ -1,0 +1,160 @@
+{
+  "items": [
+    {
+      "id": 142,
+      "codigo": "REP-00142",
+      "nombre": "Rodamiento 6205-2RS",
+      "descripcion": "Rodamiento rígido de bolas · sellado",
+      "stock_minimo": 5,
+      "activo": true,
+      "creado_en": "2026-01-10T08:00:00Z",
+      "actualizado_en": null,
+      "stock": [
+        {
+          "ubicacion_id": 1,
+          "ubicacion": { "id": 1, "codigo": "A-03-12", "descripcion": "Estante A, nivel 3" },
+          "cantidad_fisica": 2,
+          "cantidad_reservada": 0,
+          "cantidad_disponible": 2
+        }
+      ],
+      "stock_fisico_total": 2,
+      "stock_reservado_total": 0,
+      "stock_disponible_total": 2,
+      "maquinas_compatibles": [
+        { "id": 2, "codigo": "F-02", "tipo_maquina": { "nombre": "Fraccionador" } },
+        { "id": 4, "codigo": "B-04", "tipo_maquina": { "nombre": "Banda transportadora" } }
+      ]
+    },
+    {
+      "id": 87,
+      "codigo": "REP-00087",
+      "nombre": "Filtro de aceite FO-18",
+      "descripcion": "Filtro hidráulico de retorno",
+      "stock_minimo": 6,
+      "activo": true,
+      "creado_en": "2026-01-10T08:00:00Z",
+      "actualizado_en": null,
+      "stock": [
+        {
+          "ubicacion_id": 2,
+          "ubicacion": { "id": 2, "codigo": "B-01-04", "descripcion": "Estante B, nivel 1" },
+          "cantidad_fisica": 4,
+          "cantidad_reservada": 0,
+          "cantidad_disponible": 4
+        }
+      ],
+      "stock_fisico_total": 4,
+      "stock_reservado_total": 0,
+      "stock_disponible_total": 4,
+      "maquinas_compatibles": [
+        { "id": 1, "codigo": "C-01", "tipo_maquina": { "nombre": "Caldera" } },
+        { "id": 5, "codigo": "C-02", "tipo_maquina": { "nombre": "Caldera" } }
+      ]
+    },
+    {
+      "id": 203,
+      "codigo": "REP-00203",
+      "nombre": "Correa dentada HTD-8M",
+      "descripcion": "Paso 8 mm · ancho 20 mm",
+      "stock_minimo": 3,
+      "activo": true,
+      "creado_en": "2026-01-10T08:00:00Z",
+      "actualizado_en": null,
+      "stock": [
+        {
+          "ubicacion_id": 3,
+          "ubicacion": { "id": 3, "codigo": "A-02-08", "descripcion": "Estante A, nivel 2" },
+          "cantidad_fisica": 0,
+          "cantidad_reservada": 0,
+          "cantidad_disponible": 0
+        }
+      ],
+      "stock_fisico_total": 0,
+      "stock_reservado_total": 0,
+      "stock_disponible_total": 0,
+      "maquinas_compatibles": [
+        { "id": 4, "codigo": "B-04", "tipo_maquina": { "nombre": "Banda transportadora" } }
+      ]
+    },
+    {
+      "id": 31,
+      "codigo": "REP-00031",
+      "nombre": "Junta tórica NBR 40 mm",
+      "descripcion": "Caucho nitrilo · alta presión",
+      "stock_minimo": 8,
+      "activo": true,
+      "creado_en": "2026-01-10T08:00:00Z",
+      "actualizado_en": null,
+      "stock": [
+        {
+          "ubicacion_id": 4,
+          "ubicacion": { "id": 4, "codigo": "C-02-11", "descripcion": "Estante C, nivel 2" },
+          "cantidad_fisica": 18,
+          "cantidad_reservada": 4,
+          "cantidad_disponible": 14
+        }
+      ],
+      "stock_fisico_total": 18,
+      "stock_reservado_total": 4,
+      "stock_disponible_total": 14,
+      "maquinas_compatibles": [
+        { "id": 3, "codigo": "F-01", "tipo_maquina": { "nombre": "Fraccionador" } },
+        { "id": 2, "codigo": "F-02", "tipo_maquina": { "nombre": "Fraccionador" } }
+      ]
+    },
+    {
+      "id": 106,
+      "codigo": "REP-00106",
+      "nombre": "Sensor de temperatura PT100",
+      "descripcion": "Sonda industrial · acero inoxidable",
+      "stock_minimo": 3,
+      "activo": true,
+      "creado_en": "2026-01-10T08:00:00Z",
+      "actualizado_en": null,
+      "stock": [
+        {
+          "ubicacion_id": 5,
+          "ubicacion": { "id": 5, "codigo": "B-04-02", "descripcion": "Estante B, nivel 4" },
+          "cantidad_fisica": 7,
+          "cantidad_reservada": 2,
+          "cantidad_disponible": 5
+        }
+      ],
+      "stock_fisico_total": 7,
+      "stock_reservado_total": 2,
+      "stock_disponible_total": 5,
+      "maquinas_compatibles": [
+        { "id": 1, "codigo": "C-01", "tipo_maquina": { "nombre": "Caldera" } }
+      ]
+    },
+    {
+      "id": 58,
+      "codigo": "REP-00058",
+      "nombre": "Válvula de seguridad 1/2 in",
+      "descripcion": "Válvula de alivio · bronce",
+      "stock_minimo": 4,
+      "activo": true,
+      "creado_en": "2026-01-10T08:00:00Z",
+      "actualizado_en": null,
+      "stock": [
+        {
+          "ubicacion_id": 6,
+          "ubicacion": { "id": 6, "codigo": "D-01-05", "descripcion": "Estante D, nivel 1" },
+          "cantidad_fisica": 3,
+          "cantidad_reservada": 0,
+          "cantidad_disponible": 3
+        }
+      ],
+      "stock_fisico_total": 3,
+      "stock_reservado_total": 0,
+      "stock_disponible_total": 3,
+      "maquinas_compatibles": [
+        { "id": 1, "codigo": "C-01", "tipo_maquina": { "nombre": "Caldera" } }
+      ]
+    }
+  ],
+  "total": 6,
+  "offset": 0,
+  "limit": 50
+}
