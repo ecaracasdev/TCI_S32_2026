@@ -24,7 +24,7 @@ export const routes: Routes = [
   {
     path: '',
     pathMatch: 'full',
-    redirectTo: 'ui-preview',
+    redirectTo: 'inicio',
   },
 
   {
@@ -200,6 +200,10 @@ export const routes: Routes = [
 
   {
     path: '**',
-    redirectTo: 'ui-preview',
+    title: 'Pantalla en desarrollo · TCI',
+    loadComponent: () =>
+      import('./features/en-desarrollo/en-desarrollo.page').then(
+        (page) => page.EnDesarrolloPage,
+      ),
   },
 ];
