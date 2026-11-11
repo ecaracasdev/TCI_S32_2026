@@ -3,32 +3,7 @@
   "compilerOptions": {
     "baseUrl": "./",
     "outDir": "./out-tsc/app",
-    "types": [],
-    "paths": {
-      "@shared/ui/button": [
-        "src/app/shared/ui/button/src/index.ts"
-      ],
-      "@shared/ui/card": ["src/app/shared/ui/card/src/index.ts"],
-      "@shared/ui/badge": ["src/app/shared/ui/badge/src/index.ts"],
-      "@shared/ui/input": ["src/app/shared/ui/input/src/index.ts"],
-      "@shared/ui/label": ["src/app/shared/ui/label/src/index.ts"],
-      "@shared/ui/icon": ["src/app/shared/ui/icon/index.ts"],
-      "@shared/ui/utils": [
-        "src/app/shared/ui/utils/src/index.ts"
-      ],
-      "@core/*": [
-        "src/app/core/*"
-      ],
-      "@features/*": [
-        "src/app/features/*"
-      ],
-      "@env/*": [
-        "src/environments/*"
-      ],
-      "@shared/*": [
-        "src/app/shared/*"
-      ]
-    }
+    "types": []
   },
   "include": [
     "src/**/*.ts",
