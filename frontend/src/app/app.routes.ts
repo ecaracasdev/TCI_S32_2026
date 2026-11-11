@@ -118,6 +118,27 @@ export const routes: Routes = [
       ),
   },
 
+  // Va antes que 'incidencias': si no, 'nueva' se toma como el :id del detalle.
+  {
+    path: 'incidencias/nueva',
+    title: 'Reportar incidencia · TCI',
+    providers: [
+      {
+        provide: ReportarIncidenciaService,
+        useFactory: () =>
+          environment.useMockData
+            ? inject(MockReportarIncidenciaService)
+            : inject(ReportarIncidenciaHttpService),
+      },
+    ],
+    loadComponent: () =>
+      import(
+        './features/reportar-incidencia/reportar-incidencia.page'
+      ).then(
+        (page) => page.ReportarIncidenciaPage,
+      ),
+  },
+
   {
     path: 'incidencias',
     providers: [
@@ -151,26 +172,6 @@ export const routes: Routes = [
           ),
       },
     ],
-  },
-
-  {
-    path: 'incidencias/nueva',
-    title: 'Reportar incidencia · TCI',
-    providers: [
-      {
-        provide: ReportarIncidenciaService,
-        useFactory: () =>
-          environment.useMockData
-            ? inject(MockReportarIncidenciaService)
-            : inject(ReportarIncidenciaHttpService),
-      },
-    ],
-    loadComponent: () =>
-      import(
-        './features/reportar-incidencia/reportar-incidencia.page'
-      ).then(
-        (page) => page.ReportarIncidenciaPage,
-      ),
   },
 
   {
