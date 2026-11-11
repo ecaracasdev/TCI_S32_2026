@@ -16,6 +16,9 @@ import { RegistrarUsoService } from './features/registrar-uso/registrar-uso.serv
 import { ConsultaIncidenciasHttpService } from './features/consulta-incidencias/consulta-incidencias.http.service';
 import { MockConsultaIncidenciasService } from './features/consulta-incidencias/mock-consulta-incidencias.service';
 import { ConsultaIncidenciasService } from './features/consulta-incidencias/consulta-incidencias.service';
+import { MaquinasHttpService } from './features/maquinas/maquinas.http.service';
+import { MockMaquinasService } from './features/maquinas/mock-maquinas.service';
+import { MaquinasService } from './features/maquinas/maquinas.service';
 
 export const routes: Routes = [
   {
@@ -28,9 +31,7 @@ export const routes: Routes = [
     path: 'ui-preview',
     title: 'Componentes visuales · TCI',
     loadComponent: () =>
-      import('./features/ui-preview/ui-preview.page').then(
-        (page) => page.UiPreviewPage,
-      ),
+      import('./features/ui-preview/ui-preview.page').then((page) => page.UiPreviewPage),
   },
 
   {
@@ -40,15 +41,10 @@ export const routes: Routes = [
       {
         provide: InicioService,
         useFactory: () =>
-          environment.useMockData
-            ? inject(MockInicioService)
-            : inject(InicioHttpService),
+          environment.useMockData ? inject(MockInicioService) : inject(InicioHttpService),
       },
     ],
-    loadComponent: () =>
-      import('./features/inicio/inicio.page').then(
-        (page) => page.InicioPage,
-      ),
+    loadComponent: () => import('./features/inicio/inicio.page').then((page) => page.InicioPage),
   },
 
   {
@@ -57,9 +53,7 @@ export const routes: Routes = [
       {
         provide: RepuestosService,
         useFactory: () =>
-          environment.useMockData
-            ? inject(MockRepuestosService)
-            : inject(RepuestosHttpService),
+          environment.useMockData ? inject(MockRepuestosService) : inject(RepuestosHttpService),
       },
     ],
     children: [
@@ -67,9 +61,7 @@ export const routes: Routes = [
         path: '',
         title: 'Repuestos · TCI',
         loadComponent: () =>
-          import('./features/repuestos/repuestos.page').then(
-            (page) => page.RepuestosPage,
-          ),
+          import('./features/repuestos/repuestos.page').then((page) => page.RepuestosPage),
       },
       {
         path: ':id',
@@ -88,15 +80,11 @@ export const routes: Routes = [
       {
         provide: RepuestosService,
         useFactory: () =>
-          environment.useMockData
-            ? inject(MockRepuestosService)
-            : inject(RepuestosHttpService),
+          environment.useMockData ? inject(MockRepuestosService) : inject(RepuestosHttpService),
       },
     ],
     loadComponent: () =>
-      import(
-        './features/reposicion-repuestos/reposicion-repuestos.page'
-      ).then(
+      import('./features/reposicion-repuestos/reposicion-repuestos.page').then(
         (page) => page.ReposicionRepuestosPage,
       ),
   },
@@ -107,15 +95,37 @@ export const routes: Routes = [
       {
         provide: RepuestosService,
         useFactory: () =>
-          environment.useMockData
-            ? inject(MockRepuestosService)
-            : inject(RepuestosHttpService),
+          environment.useMockData ? inject(MockRepuestosService) : inject(RepuestosHttpService),
       },
     ],
-    loadComponent: () =>
-      import('./features/compras/compras.page').then(
-        (page) => page.ComprasPage,
-      ),
+    loadComponent: () => import('./features/compras/compras.page').then((page) => page.ComprasPage),
+  },
+
+  {
+    path: 'maquinas',
+    providers: [
+      {
+        provide: MaquinasService,
+        useFactory: () =>
+          environment.useMockData ? inject(MockMaquinasService) : inject(MaquinasHttpService),
+      },
+    ],
+    children: [
+      {
+        path: '',
+        title: 'Máquinas · TCI',
+        loadComponent: () =>
+          import('./features/maquinas/maquinas.page').then((page) => page.MaquinasPage),
+      },
+      {
+        path: ':id',
+        title: 'Detalle de máquina · TCI',
+        loadComponent: () =>
+          import('./features/maquinas/maquina-detalle.page').then(
+            (page) => page.MaquinaDetallePage,
+          ),
+      },
+    ],
   },
 
   // Va antes que 'incidencias': si no, 'nueva' se toma como el :id del detalle.
@@ -132,9 +142,7 @@ export const routes: Routes = [
       },
     ],
     loadComponent: () =>
-      import(
-        './features/reportar-incidencia/reportar-incidencia.page'
-      ).then(
+      import('./features/reportar-incidencia/reportar-incidencia.page').then(
         (page) => page.ReportarIncidenciaPage,
       ),
   },
@@ -155,9 +163,7 @@ export const routes: Routes = [
         path: '',
         title: 'Consulta de incidencias · TCI',
         loadComponent: () =>
-          import(
-            './features/consulta-incidencias/consulta-incidencias.page'
-          ).then(
+          import('./features/consulta-incidencias/consulta-incidencias.page').then(
             (page) => page.ConsultaIncidenciasPage,
           ),
       },
@@ -165,9 +171,7 @@ export const routes: Routes = [
         path: ':id',
         title: 'Detalle de incidencia · TCI',
         loadComponent: () =>
-          import(
-            './features/consulta-incidencias/incidencia-detalle.page'
-          ).then(
+          import('./features/consulta-incidencias/incidencia-detalle.page').then(
             (page) => page.IncidenciaDetallePage,
           ),
       },
@@ -187,9 +191,7 @@ export const routes: Routes = [
       },
     ],
     loadComponent: () =>
-      import('./features/registrar-uso/registrar-uso.page').then(
-        (page) => page.RegistrarUsoPage,
-      ),
+      import('./features/registrar-uso/registrar-uso.page').then((page) => page.RegistrarUsoPage),
   },
 
   {

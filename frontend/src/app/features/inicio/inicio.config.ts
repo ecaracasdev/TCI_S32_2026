@@ -6,6 +6,7 @@ export const INICIO_CONFIG = {
   titulo: 'Inicio del sistema',
   descripcion: 'Accedé rápidamente a las tareas de mantenimiento de la planta.',
   reportar: 'Reportar incidencia',
+  verMaquinas: 'Consultar máquinas',
   reintentar: 'Reintentar',
   demo: 'Datos de demostración: no se guardan en el backend ni se envían notificaciones.',
   incidencias: {
@@ -15,7 +16,12 @@ export const INICIO_CONFIG = {
     cargando: 'Cargando incidencias…',
     error: 'No se pudieron cargar las incidencias.',
     vacio: 'No hay incidencias recientes.',
-    columnas: { maquina: 'Máquina', incidencia: 'Incidencia', reportada: 'Reportada', estado: 'Estado' },
+    columnas: {
+      maquina: 'Máquina',
+      incidencia: 'Incidencia',
+      reportada: 'Reportada',
+      estado: 'Estado',
+    },
   },
   repuestos: {
     titulo: 'Repuestos por reponer',
@@ -30,11 +36,15 @@ export const INICIO_CONFIG = {
   },
   turnos: {
     titulo: 'Operación continua, tres turnos',
-    texto: 'El próximo cambio de turno está previsto para las 14:00. Los reportes mantienen su trazabilidad.',
+    texto:
+      'El próximo cambio de turno está previsto para las 14:00. Los reportes mantienen su trazabilidad.',
   },
 } as const;
 
-export const ESTADOS_INCIDENCIA: Record<string, { etiqueta: string; variante: BadgeVariants['variant'] }> = {
+export const ESTADOS_INCIDENCIA: Record<
+  string,
+  { etiqueta: string; variante: BadgeVariants['variant'] }
+> = {
   en_triage: { etiqueta: 'En triage', variante: 'outline' },
   en_reparacion: { etiqueta: 'En reparación', variante: 'secondary' },
 };

@@ -32,9 +32,42 @@
       "fecha_instalacion": null,
       "creado_en": "2026-01-10T08:00:00Z",
       "actualizado_en": null
+    },
+    {
+      "id": 3,
+      "codigo": "P-03",
+      "tipo_maquina_id": 4,
+      "tipo_maquina": { "id": 4, "nombre": "Prensa hidráulica" },
+      "numero_serie": "PH-2021-003",
+      "estado": "detenida",
+      "fecha_instalacion": "2021-06-15T12:00:00Z",
+      "creado_en": "2026-01-10T08:00:00Z",
+      "actualizado_en": "2026-10-28T15:20:00Z"
+    },
+    {
+      "id": 5,
+      "codigo": "M-05",
+      "tipo_maquina_id": 5,
+      "tipo_maquina": { "id": 5, "nombre": "Mezcladora industrial" },
+      "numero_serie": "MI-2019-005",
+      "estado": "en_mantenimiento",
+      "fecha_instalacion": "2019-04-02T12:00:00Z",
+      "creado_en": "2026-01-10T08:00:00Z",
+      "actualizado_en": "2026-11-02T09:10:00Z"
+    },
+    {
+      "id": 6,
+      "codigo": "E-06",
+      "tipo_maquina_id": 6,
+      "tipo_maquina": { "id": 6, "nombre": "Elevador de carga" },
+      "numero_serie": null,
+      "estado": "en_calibracion",
+      "fecha_instalacion": "2023-08-20T12:00:00Z",
+      "creado_en": "2026-01-10T08:00:00Z",
+      "actualizado_en": null
     }
   ],
-  "total": 3,
+  "total": 6,
   "offset": 0,
   "limit": 20
 }
