@@ -1,0 +1,188 @@
+{
+  "items": [
+    {
+      "id": 101,
+      "creada_por_usuario_id": 4,
+      "asignado_a_usuario_id": 7,
+      "revision_resuelta_por_usuario_id": null,
+      "revision_resuelta_en": null,
+      "urgencia": "normal",
+      "origen": "manual",
+      "estado": "creado",
+      "motivo": "Reposición preventiva de filtros",
+      "motivo_cancelacion": null,
+      "creado_en": "2026-10-28T09:30:00Z",
+      "items": [
+        {
+          "id": 1001,
+          "repuesto": { "id": 10, "codigo": "FIL-020", "nombre": "Filtro de aceite" },
+          "cantidad_solicitada": 8
+        }
+      ],
+      "recepciones": []
+    },
+    {
+      "id": 102,
+      "creada_por_usuario_id": 5,
+      "asignado_a_usuario_id": null,
+      "revision_resuelta_por_usuario_id": null,
+      "revision_resuelta_en": null,
+      "urgencia": "urgente",
+      "origen": "automatico",
+      "estado": "pendiente_revision",
+      "motivo": "Stock por debajo del mínimo",
+      "motivo_cancelacion": null,
+      "creado_en": "2026-10-29T11:15:00Z",
+      "items": [
+        {
+          "id": 1002,
+          "repuesto": { "id": 11, "codigo": "RUL-008", "nombre": "Rodamiento sellado" },
+          "cantidad_solicitada": 12
+        }
+      ],
+      "recepciones": []
+    },
+    {
+      "id": 103,
+      "creada_por_usuario_id": 4,
+      "asignado_a_usuario_id": 8,
+      "revision_resuelta_por_usuario_id": 8,
+      "revision_resuelta_en": "2026-10-30T14:00:00Z",
+      "urgencia": "normal",
+      "origen": "manual",
+      "estado": "pendiente_aprobacion",
+      "motivo": null,
+      "motivo_cancelacion": null,
+      "creado_en": "2026-10-30T10:20:00Z",
+      "items": [
+        {
+          "id": 1003,
+          "repuesto": { "id": 12, "codigo": "COR-004", "nombre": "Correa de transmisión" },
+          "cantidad_solicitada": 4
+        }
+      ],
+      "recepciones": []
+    },
+    {
+      "id": 104,
+      "creada_por_usuario_id": 6,
+      "asignado_a_usuario_id": 8,
+      "revision_resuelta_por_usuario_id": 8,
+      "revision_resuelta_en": "2026-10-31T08:10:00Z",
+      "urgencia": "urgente",
+      "origen": "automatico",
+      "estado": "confirmado",
+      "motivo": "Repuesto crítico para línea de producción",
+      "motivo_cancelacion": null,
+      "creado_en": "2026-10-31T07:45:00Z",
+      "items": [
+        {
+          "id": 1004,
+          "repuesto": { "id": 13, "codigo": "MOT-011", "nombre": "Motor trifásico" },
+          "cantidad_solicitada": 1
+        }
+      ],
+      "recepciones": []
+    },
+    {
+      "id": 105,
+      "creada_por_usuario_id": 4,
+      "asignado_a_usuario_id": null,
+      "revision_resuelta_por_usuario_id": 9,
+      "revision_resuelta_en": "2026-11-01T12:00:00Z",
+      "urgencia": "normal",
+      "origen": "manual",
+      "estado": "cancelado",
+      "motivo": null,
+      "motivo_cancelacion": "Pedido duplicado",
+      "creado_en": "2026-11-01T09:00:00Z",
+      "items": [
+        {
+          "id": 1005,
+          "repuesto": { "id": 14, "codigo": "JUN-006", "nombre": "Juego de juntas" },
+          "cantidad_solicitada": 3
+        }
+      ],
+      "recepciones": []
+    },
+    {
+      "id": 106,
+      "creada_por_usuario_id": 6,
+      "asignado_a_usuario_id": 7,
+      "revision_resuelta_por_usuario_id": 7,
+      "revision_resuelta_en": "2026-11-02T10:00:00Z",
+      "urgencia": "urgente",
+      "origen": "manual",
+      "estado": "pendiente_recepcion",
+      "motivo": null,
+      "motivo_cancelacion": null,
+      "creado_en": "2026-11-02T08:30:00Z",
+      "items": [
+        {
+          "id": 1006,
+          "repuesto": { "id": 15, "codigo": "BOM-003", "nombre": "Bomba hidráulica" },
+          "cantidad_solicitada": 2
+        }
+      ],
+      "recepciones": [
+        {
+          "id": 2001,
+          "pedido_compra_id": 106,
+          "recibida_por_usuario_id": 4,
+          "delegada_a_usuario_id": null,
+          "recibida_en": "2026-11-04T15:40:00Z",
+          "notas": "Recepción parcial",
+          "items": [
+            {
+              "id": 3001,
+              "item_pedido_compra_id": 1006,
+              "ubicacion": { "id": 2, "codigo": "DEP-02", "descripcion": "Depósito central" },
+              "cantidad": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 107,
+      "creada_por_usuario_id": 5,
+      "asignado_a_usuario_id": 7,
+      "revision_resuelta_por_usuario_id": 7,
+      "revision_resuelta_en": "2026-11-03T08:10:00Z",
+      "urgencia": "normal",
+      "origen": "automatico",
+      "estado": "recibido",
+      "motivo": "Reposición completada por nivel mínimo",
+      "motivo_cancelacion": null,
+      "creado_en": "2026-11-03T07:20:00Z",
+      "items": [
+        {
+          "id": 1007,
+          "repuesto": { "id": 16, "codigo": "VAL-009", "nombre": "Válvula de retención" },
+          "cantidad_solicitada": 5
+        }
+      ],
+      "recepciones": [
+        {
+          "id": 2002,
+          "pedido_compra_id": 107,
+          "recibida_por_usuario_id": 4,
+          "delegada_a_usuario_id": 6,
+          "recibida_en": "2026-11-06T13:25:00Z",
+          "notas": null,
+          "items": [
+            {
+              "id": 3002,
+              "item_pedido_compra_id": 1007,
+              "ubicacion": { "id": 1, "codigo": "DEP-01", "descripcion": "Depósito de mantenimiento" },
+              "cantidad": 5
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "total": 7,
+  "offset": 0,
+  "limit": 50
+}
