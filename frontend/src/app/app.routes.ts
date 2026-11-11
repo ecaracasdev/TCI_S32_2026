@@ -88,6 +88,25 @@ export const routes: Routes = [
   },
 
   {
+    path: 'reposicion',
+    providers: [
+      {
+        provide: RepuestosService,
+        useFactory: () =>
+          environment.useMockData
+            ? inject(MockRepuestosService)
+            : inject(RepuestosHttpService),
+      },
+    ],
+    loadComponent: () =>
+      import(
+        './features/reposicion-repuestos/reposicion-repuestos.page'
+      ).then(
+        (page) => page.ReposicionRepuestosPage,
+      ),
+  },
+
+  {
     path: 'incidencias',
     providers: [
       {
