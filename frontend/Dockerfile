@@ -11,5 +11,6 @@ RUN npm run build
 FROM nginx:alpine
 
 COPY --from=build /app/dist/ng-21-app-template/browser /usr/share/nginx/html
+COPY nginx.conf /etc/nginx/conf.d/default.conf
 
 EXPOSE 80
