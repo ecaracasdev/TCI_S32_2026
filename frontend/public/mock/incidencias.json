@@ -7,12 +7,10 @@
         "id": 2,
         "codigo": "F-02",
         "tipo_maquina_id": 1,
-        "tipo_maquina": { "id": 1, "nombre": "Fraccionador" },
-        "numero_serie": null,
-        "estado": "operativa",
-        "fecha_instalacion": null,
-        "creado_en": "2026-01-10T08:00:00Z",
-        "actualizado_en": null
+        "tipo_maquina": {
+          "id": 1,
+          "nombre": "Fraccionador"
+        }
       },
       "reportada_por_usuario_id": 1,
       "descripcion": "Vibración anormal en motor",
@@ -29,17 +27,15 @@
         "id": 4,
         "codigo": "B-04",
         "tipo_maquina_id": 2,
-        "tipo_maquina": { "id": 2, "nombre": "Banda transportadora" },
-        "numero_serie": null,
-        "estado": "operativa",
-        "fecha_instalacion": null,
-        "creado_en": "2026-01-10T08:00:00Z",
-        "actualizado_en": null
+        "tipo_maquina": {
+          "id": 2,
+          "nombre": "Banda transportadora"
+        }
       },
       "reportada_por_usuario_id": 2,
       "descripcion": "Desalineación de banda",
       "estado": "en_reparacion",
-      "turno": "manana",
+      "turno": "tarde",
       "reportada_en": "2026-10-20T08:22:00Z",
       "resuelta_en": null,
       "fotos": []
@@ -51,23 +47,47 @@
         "id": 1,
         "codigo": "C-01",
         "tipo_maquina_id": 3,
-        "tipo_maquina": { "id": 3, "nombre": "Caldera" },
-        "numero_serie": null,
-        "estado": "operativa",
-        "fecha_instalacion": null,
-        "creado_en": "2026-01-10T08:00:00Z",
-        "actualizado_en": null
+        "tipo_maquina": {
+          "id": 3,
+          "nombre": "Caldera"
+        }
       },
       "reportada_por_usuario_id": 3,
       "descripcion": "Fuga en válvula de presión",
       "estado": "en_triage",
-      "turno": "manana",
+      "turno": "noche",
       "reportada_en": "2026-10-20T08:00:00Z",
       "resuelta_en": null,
       "fotos": []
+    },
+    {
+      "id": 245,
+      "maquina_id": 5,
+      "maquina": {
+        "id": 5,
+        "codigo": "F-03",
+        "tipo_maquina_id": 1,
+        "tipo_maquina": {
+          "id": 1,
+          "nombre": "Fraccionador"
+        }
+      },
+      "reportada_por_usuario_id": 4,
+      "descripcion": "Temperatura elevada en cabezal",
+      "estado": "en_triage",
+      "turno": "manana",
+      "reportada_en": "2026-10-19T11:30:00Z",
+      "resuelta_en": null,
+      "fotos": [
+        {
+          "nombre_archivo": "temperatura.jpg",
+          "tipo_mime": "image/jpeg",
+          "contenido_base64": ""
+        }
+      ]
     }
   ],
-  "total": 3,
+  "total": 4,
   "offset": 0,
   "limit": 50
 }

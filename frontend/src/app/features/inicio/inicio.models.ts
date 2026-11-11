@@ -22,7 +22,7 @@ export interface AlertaStockDto {
   stock_minimo: number;
 }
 
-export const LIMITE_RESUMEN = 5;
+export const LIMITE_RESUMEN = 3;
 
 export function masRecientes(items: IncidenciaDto[]): IncidenciaDto[] {
   return [...items]

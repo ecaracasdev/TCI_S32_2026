@@ -1,0 +1,120 @@
+@if (carga() === 'cargando') {
+
+  <p>
+    Cargando incidencia...
+  </p>
+
+} @else if (carga() === 'error') {
+
+  <p>
+    No se pudo cargar la incidencia.
+  </p>
+
+} @else if (incidencia(); as inc) {
+
+  <div class="mx-auto max-w-5xl px-4 py-8">
+
+    <a
+      hlmBtn
+      variant="outline"
+      routerLink="/incidencias">
+
+      ← Volver a incidencias
+
+    </a>
+
+    <h1 class="mt-6 text-3xl font-semibold">
+
+      Incidencia INC-{{ inc.id }}
+
+    </h1>
+
+    <section hlmCard class="mt-6">
+
+      <div hlmCardContent>
+
+        <div class="space-y-4">
+
+          <p>
+            <strong>Máquina:</strong>
+            {{ nombreMaquina(inc) }}
+          </p>
+
+          <p>
+            <strong>Fecha:</strong>
+            {{ fecha(inc.reportada_en) }}
+          </p>
+
+          <p>
+            <strong>Turno:</strong>
+            {{ turno(inc.turno) }}
+          </p>
+
+          <p>
+
+            <strong>Estado:</strong>
+
+            <span
+              hlmBadge
+              [variant]="estado(inc.estado).variante">
+
+              {{ estado(inc.estado).etiqueta }}
+
+            </span>
+
+          </p>
+
+          <p>
+            <strong>Descripción:</strong>
+          </p>
+
+          <p>
+            {{ inc.descripcion }}
+          </p>
+
+        </div>
+
+      </div>
+
+    </section>
+
+    <section hlmCard class="mt-6">
+
+      <div hlmCardContent>
+
+        <h2 class="mb-4 text-xl font-semibold">
+
+          Evidencias
+
+        </h2>
+
+        @if (inc.fotos.length === 0) {
+
+          <p>
+            Sin evidencias adjuntas.
+          </p>
+
+        } @else {
+
+          <div class="grid gap-4 md:grid-cols-2">
+
+            @for (foto of inc.fotos; track $index) {
+
+              <img
+                [src]="'data:' + foto.tipo_mime + ';base64,' + foto.contenido_base64"
+                [alt]="foto.nombre_archivo"
+                class="rounded-lg border">
+
+            }
+
+          </div>
+
+        }
+
+      </div>
+
+    </section>
+
+  </div>
+
+}
