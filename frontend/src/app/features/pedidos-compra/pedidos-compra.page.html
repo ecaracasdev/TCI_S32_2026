@@ -1,0 +1,98 @@
+<div class="mx-auto flex max-w-7xl flex-col gap-6 px-4 py-6 md:px-8 md:py-10">
+  <div>
+    <a hlmBtn variant="outline" routerLink="/inicio">← Volver al inicio</a>
+  </div>
+
+  <header>
+    <h1 class="text-3xl font-semibold">{{ config.titulo }}</h1>
+    <p class="mt-2 text-muted-foreground">{{ config.descripcion }}</p>
+  </header>
+
+  <section hlmCard>
+    <div hlmCardContent>
+      @if (carga() === 'cargando') {
+        <p role="status">{{ config.cargando }}</p>
+      } @else if (carga() === 'error') {
+        <div role="alert" class="flex flex-col items-start gap-3">
+          <p>{{ config.error }}</p>
+          <button hlmBtn variant="outline" type="button" (click)="cargar()">
+            {{ config.reintentar }}
+          </button>
+        </div>
+      } @else if (pedidos().length === 0) {
+        <p>{{ config.vacio }}</p>
+      } @else {
+        <ul class="flex flex-col gap-3 lg:hidden">
+          @for (pedido of pedidos(); track pedido.id) {
+            <li class="rounded-lg border border-border p-4">
+              <a [routerLink]="['/pedidos-compra', pedido.id]" class="flex flex-col gap-3">
+                <div class="flex items-center justify-between gap-3">
+                  <span class="font-semibold">Pedido #{{ pedido.id }}</span>
+                  <span hlmBadge [variant]="estado(pedido.estado).variante">
+                    {{ estado(pedido.estado).etiqueta }}
+                  </span>
+                </div>
+                <div class="flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
+                  <span>{{ fecha(pedido.creado_en) }}</span>
+                  <span aria-hidden="true">·</span>
+                  <span>{{ origen(pedido.origen) }}</span>
+                  <span aria-hidden="true">·</span>
+                  <span>{{ pedido.items?.length ?? 0 }} líneas</span>
+                </div>
+                <span hlmBadge [variant]="urgencia(pedido.urgencia).variante">
+                  {{ urgencia(pedido.urgencia).etiqueta }}
+                </span>
+              </a>
+            </li>
+          }
+        </ul>
+
+        <div class="hidden lg:block">
+          <app-data-table minWidth="58rem">
+            <thead>
+              <tr>
+                <th scope="col">{{ config.columnas.pedido }}</th>
+                <th scope="col">{{ config.columnas.creado }}</th>
+                <th scope="col">{{ config.columnas.origen }}</th>
+                <th scope="col" data-align="center">{{ config.columnas.items }}</th>
+                <th scope="col">{{ config.columnas.urgencia }}</th>
+                <th scope="col">{{ config.columnas.estado }}</th>
+                <th scope="col">{{ config.columnas.accion }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (pedido of pedidos(); track pedido.id) {
+                <tr>
+                  <td class="font-medium">#{{ pedido.id }}</td>
+                  <td>{{ fecha(pedido.creado_en) }}</td>
+                  <td>{{ origen(pedido.origen) }}</td>
+                  <td data-align="center">{{ pedido.items?.length ?? 0 }}</td>
+                  <td>
+                    <span hlmBadge [variant]="urgencia(pedido.urgencia).variante">
+                      {{ urgencia(pedido.urgencia).etiqueta }}
+                    </span>
+                  </td>
+                  <td>
+                    <span hlmBadge [variant]="estado(pedido.estado).variante">
+                      {{ estado(pedido.estado).etiqueta }}
+                    </span>
+                  </td>
+                  <td>
+                    <a
+                      hlmBtn
+                      size="sm"
+                      variant="outline"
+                      [routerLink]="['/pedidos-compra', pedido.id]"
+                    >
+                      Ver detalle →
+                    </a>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </app-data-table>
+        </div>
+      }
+    </div>
+  </section>
+</div>
