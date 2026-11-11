@@ -34,6 +34,35 @@ export const PEDIDOS_COMPRA_CONFIG = {
     cantidad: 'Cantidad solicitada',
     ubicacion: 'Ubicación',
     recibida: 'Recibida',
+    registrarRecepcion: 'Registrar recepción',
+  },
+  recepcion: {
+    titulo: 'Registrar recepción',
+    descripcion:
+      'Cargá el stock físico recibido y la ubicación de cada línea. Podés registrar una recepción parcial si todavía no llegó todo el pedido.',
+    demo: 'Datos de demostración: la recepción no se guarda en el backend ni actualiza el pedido real.',
+    cargando: 'Cargando pedido...',
+    error: 'No se pudo cargar el pedido de compra.',
+    errorEnviar: 'No se pudo registrar la recepción.',
+    sinPendientes: 'Este pedido no tiene líneas pendientes de recibir.',
+    noDisponible:
+      'Solo se puede registrar una recepción sobre un pedido confirmado o pendiente de recepción.',
+    columnas: {
+      repuesto: 'Repuesto',
+      solicitado: 'Solicitado',
+      recibidoPrevio: 'Recibido previamente',
+      pendiente: 'Pendiente',
+      cantidadRecibida: 'Cantidad a recibir',
+      ubicacion: 'Ubicación',
+    },
+    elegirUbicacion: 'Elegí una ubicación',
+    delegarA: 'Delegar a (ID de usuario, opcional)',
+    notas: 'Notas (opcional)',
+    enviar: 'Registrar recepción',
+    enviando: 'Registrando...',
+    cantidadInvalida: 'La cantidad no puede superar lo pendiente de recibir.',
+    faltaUbicacion: 'Elegí una ubicación para cada cantidad cargada.',
+    volver: 'Volver al pedido',
   },
 } as const;
 

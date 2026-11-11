@@ -129,6 +129,14 @@ export const routes: Routes = [
             (page) => page.PedidoCompraDetallePage,
           ),
       },
+      {
+        path: ':id/recepcion',
+        title: 'Registrar recepción · TCI',
+        loadComponent: () =>
+          import('./features/pedidos-compra/recepcion-compra.page').then(
+            (page) => page.RecepcionCompraPage,
+          ),
+      },
     ],
   },
 

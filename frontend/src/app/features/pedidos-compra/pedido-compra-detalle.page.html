@@ -24,6 +24,11 @@
       <span hlmBadge [variant]="urgencia(orden.urgencia).variante">
         {{ urgencia(orden.urgencia).etiqueta }}
       </span>
+      @if (puedeRegistrarRecepcion(orden)) {
+        <a hlmBtn class="ml-auto" [routerLink]="['/pedidos-compra', orden.id, 'recepcion']">
+          {{ config.detalle.registrarRecepcion }}
+        </a>
+      }
     </header>
 
     <section hlmCard>

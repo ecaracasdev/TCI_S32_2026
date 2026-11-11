@@ -1,0 +1,12 @@
+{
+  "items": [
+    { "id": 1, "codigo": "A-01-01", "descripcion": "Estante A, fila 1, nivel 1" },
+    { "id": 2, "codigo": "A-01-02", "descripcion": "Estante A, fila 1, nivel 2" },
+    { "id": 3, "codigo": "A-03-12", "descripcion": "Estante A, fila 3, nivel 12" },
+    { "id": 4, "codigo": "B-02-05", "descripcion": "Estante B, fila 2, nivel 5" },
+    { "id": 5, "codigo": "C-01-01", "descripcion": "Estante C, fila 1, nivel 1" }
+  ],
+  "total": 5,
+  "offset": 0,
+  "limit": 20
+}

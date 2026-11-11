@@ -1,0 +1,127 @@
+@if (carga() === 'cargando') {
+  <div class="mx-auto max-w-4xl px-4 py-8">
+    <p role="status">{{ config.recepcion.cargando }}</p>
+  </div>
+} @else if (carga() === 'error') {
+  <div class="mx-auto flex max-w-4xl flex-col items-start gap-4 px-4 py-8">
+    <p role="alert">{{ config.recepcion.error }}</p>
+    <button hlmBtn variant="outline" type="button" (click)="cargar()">
+      {{ config.reintentar }}
+    </button>
+    <a hlmBtn variant="outline" [routerLink]="['/pedidos-compra', pedidoId]">
+      {{ config.recepcion.volver }}
+    </a>
+  </div>
+} @else if (pedido(); as orden) {
+  <div class="mx-auto flex max-w-4xl flex-col gap-6 px-4 py-8 md:px-8">
+    <div>
+      <a hlmBtn variant="outline" [routerLink]="['/pedidos-compra', pedidoId]">
+        ← {{ config.recepcion.volver }}
+      </a>
+    </div>
+
+    <header>
+      <h1 class="text-3xl font-semibold">{{ config.recepcion.titulo }} — Pedido #{{ orden.id }}</h1>
+      <p class="mt-2 text-muted-foreground">{{ config.recepcion.descripcion }}</p>
+      @if (esDemo) {
+        <p role="note" class="mt-2 text-sm text-muted-foreground">{{ config.recepcion.demo }}</p>
+      }
+    </header>
+
+    <section hlmCard>
+      <div hlmCardContent class="flex flex-col gap-4">
+        @if (lineasPendientes().length === 0) {
+          <p class="text-sm text-muted-foreground">{{ config.recepcion.sinPendientes }}</p>
+        } @else {
+          <app-data-table minWidth="46rem">
+            <thead>
+              <tr>
+                <th scope="col">{{ config.recepcion.columnas.repuesto }}</th>
+                <th scope="col" data-align="center">{{ config.recepcion.columnas.solicitado }}</th>
+                <th scope="col" data-align="center">
+                  {{ config.recepcion.columnas.recibidoPrevio }}
+                </th>
+                <th scope="col" data-align="center">{{ config.recepcion.columnas.pendiente }}</th>
+                <th scope="col">{{ config.recepcion.columnas.cantidadRecibida }}</th>
+                <th scope="col">{{ config.recepcion.columnas.ubicacion }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (linea of lineasPendientes(); track linea.item.id) {
+                <tr>
+                  <td class="font-medium">
+                    {{ linea.item.repuesto.nombre }}
+                    <span class="block text-sm text-muted-foreground">{{
+                      linea.item.repuesto.codigo
+                    }}</span>
+                  </td>
+                  <td data-align="center">{{ linea.item.cantidad_solicitada }}</td>
+                  <td data-align="center">{{ linea.recibidoPrevio }}</td>
+                  <td data-align="center">{{ linea.pendiente }}</td>
+                  <td>
+                    <input
+                      hlmInput
+                      type="number"
+                      min="0"
+                      [max]="linea.pendiente"
+                      [value]="cantidad(linea.item.id)"
+                      (input)="cambiarCantidad(linea.item.id, $any($event.target).value)"
+                    />
+                  </td>
+                  <td>
+                    <select
+                      hlmInput
+                      [value]="ubicacion(linea.item.id) ?? ''"
+                      (change)="cambiarUbicacion(linea.item.id, $any($event.target).value)"
+                    >
+                      <option value="">{{ config.recepcion.elegirUbicacion }}</option>
+                      @for (ubic of ubicaciones(); track ubic.id) {
+                        <option [value]="ubic.id">{{ ubic.codigo }}</option>
+                      }
+                    </select>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </app-data-table>
+
+          <div class="grid gap-4 sm:grid-cols-2">
+            <div class="flex flex-col gap-1.5">
+              <label hlmLabel for="delegado">{{ config.recepcion.delegarA }}</label>
+              <input
+                hlmInput
+                id="delegado"
+                type="number"
+                min="1"
+                [value]="delegadoA()"
+                (input)="cambiarDelegado($any($event.target).value)"
+              />
+            </div>
+            <div class="flex flex-col gap-1.5">
+              <label hlmLabel for="notas">{{ config.recepcion.notas }}</label>
+              <input
+                hlmInput
+                id="notas"
+                type="text"
+                [value]="notas()"
+                (input)="cambiarNotas($any($event.target).value)"
+              />
+            </div>
+          </div>
+
+          @if (errores().length > 0) {
+            <ul role="alert" class="flex flex-col gap-1 text-sm text-destructive">
+              @for (error of errores(); track error) {
+                <li>{{ error }}</li>
+              }
+            </ul>
+          }
+
+          <button hlmBtn type="button" [disabled]="enviando()" (click)="enviar()">
+            {{ enviando() ? config.recepcion.enviando : config.recepcion.enviar }}
+          </button>
+        }
+      </div>
+    </section>
+  </div>
+}
