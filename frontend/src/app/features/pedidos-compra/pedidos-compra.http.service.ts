@@ -7,14 +7,14 @@ import { PedidosCompraService } from './pedidos-compra.service';
 
 @Injectable({ providedIn: 'root' })
 export class PedidosCompraHttpService extends PedidosCompraService {
-    private readonly http = inject(HttpClient);
-    private readonly url = `${environment.apiUrl}/api/v0/pedidos-compra`;
+  private readonly http = inject(HttpClient);
+  private readonly url = `${environment.apiUrl}/api/v0/pedidos-compra`;
 
-    listar(): Observable<PedidoCompraDto[]> {
-        return this.http.get<Pagina<PedidoCompraDto>>(this.url).pipe(map((pagina) => pagina.items));
-    }
+  listar(): Observable<PedidoCompraDto[]> {
+    return this.http.get<Pagina<PedidoCompraDto>>(this.url).pipe(map((pagina) => pagina.items));
+  }
 
-    obtenerPorId(id: number): Observable<PedidoCompraDto> {
-        return this.http.get<PedidoCompraDto>(`${this.url}/${id}`);
-    }
+  obtenerPorId(id: number): Observable<PedidoCompraDto> {
+    return this.http.get<PedidoCompraDto>(`${this.url}/${id}`);
+  }
 }

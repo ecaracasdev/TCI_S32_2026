@@ -31,8 +31,12 @@
         <h2 hlmCardTitle>Información del pedido</h2>
       </div>
       <div hlmCardContent class="grid gap-4 sm:grid-cols-2">
-        <p><strong>{{ config.detalle.creado }}:</strong> {{ fecha(orden.creado_en) }}</p>
-        <p><strong>{{ config.detalle.origen }}:</strong> {{ origen(orden.origen) }}</p>
+        <p>
+          <strong>{{ config.detalle.creado }}:</strong> {{ fecha(orden.creado_en) }}
+        </p>
+        <p>
+          <strong>{{ config.detalle.origen }}:</strong> {{ origen(orden.origen) }}
+        </p>
         <p>
           <strong>{{ config.detalle.urgencia }}:</strong>
           <span hlmBadge [variant]="urgencia(orden.urgencia).variante">
@@ -46,10 +50,14 @@
           </span>
         </p>
         @if (orden.motivo) {
-          <p class="sm:col-span-2"><strong>{{ config.detalle.motivo }}:</strong> {{ orden.motivo }}</p>
+          <p class="sm:col-span-2">
+            <strong>{{ config.detalle.motivo }}:</strong> {{ orden.motivo }}
+          </p>
         }
         @if (orden.motivo_cancelacion) {
-          <p class="sm:col-span-2"><strong>{{ config.detalle.motivoCancelacion }}:</strong> {{ orden.motivo_cancelacion }}</p>
+          <p class="sm:col-span-2">
+            <strong>{{ config.detalle.motivoCancelacion }}:</strong> {{ orden.motivo_cancelacion }}
+          </p>
         }
       </div>
     </section>
@@ -64,13 +72,18 @@
         } @else {
           <ul class="flex flex-col divide-y divide-border">
             @for (item of orden.items; track item.id) {
-              <li class="flex flex-wrap items-center justify-between gap-3 py-4 first:pt-0 last:pb-0">
+              <li
+                class="flex flex-wrap items-center justify-between gap-3 py-4 first:pt-0 last:pb-0"
+              >
                 <div class="min-w-0">
                   <p class="font-medium">{{ item.repuesto.nombre }}</p>
                   <p class="text-sm text-muted-foreground">{{ item.repuesto.codigo }}</p>
                 </div>
                 <div class="flex flex-wrap items-center gap-3 text-sm">
-                  <span>{{ config.detalle.cantidad }}: <strong>{{ item.cantidad_solicitada }}</strong></span>
+                  <span
+                    >{{ config.detalle.cantidad }}:
+                    <strong>{{ item.cantidad_solicitada }}</strong></span
+                  >
                   <span hlmBadge [variant]="urgencia(orden.urgencia).variante">
                     {{ urgencia(orden.urgencia).etiqueta }}
                   </span>
@@ -93,7 +106,9 @@
           <ul class="flex flex-col gap-5">
             @for (recepcion of orden.recepciones; track recepcion.id) {
               <li class="border-b border-border pb-5 last:border-0 last:pb-0">
-                <p class="font-medium">{{ config.detalle.recibida }}: {{ fecha(recepcion.recibida_en) }}</p>
+                <p class="font-medium">
+                  {{ config.detalle.recibida }}: {{ fecha(recepcion.recibida_en) }}
+                </p>
                 @if (recepcion.notas) {
                   <p class="mt-1 text-sm text-muted-foreground">{{ recepcion.notas }}</p>
                 }

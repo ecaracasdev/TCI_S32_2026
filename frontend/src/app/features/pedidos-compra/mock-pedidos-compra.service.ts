@@ -6,22 +6,20 @@ import { PedidosCompraService } from './pedidos-compra.service';
 
 @Injectable({ providedIn: 'root' })
 export class MockPedidosCompraService extends PedidosCompraService {
-    private readonly http = inject(HttpClient);
-    private readonly fixture = 'mock/pedidos-compra.json';
+  private readonly http = inject(HttpClient);
+  private readonly fixture = 'mock/pedidos-compra.json';
 
-    listar(): Observable<PedidoCompraDto[]> {
-        return this.http
-            .get<Pagina<PedidoCompraDto>>(this.fixture)
-            .pipe(map((pagina) => pagina.items));
-    }
+  listar(): Observable<PedidoCompraDto[]> {
+    return this.http.get<Pagina<PedidoCompraDto>>(this.fixture).pipe(map((pagina) => pagina.items));
+  }
 
-    obtenerPorId(id: number): Observable<PedidoCompraDto> {
-        return this.http.get<Pagina<PedidoCompraDto>>(this.fixture).pipe(
-            map((pagina) => {
-                const pedido = pagina.items.find((item) => item.id === id);
-                if (!pedido) throw new Error(`No existe el pedido ${id}`);
-                return pedido;
-            }),
-        );
-    }
+  obtenerPorId(id: number): Observable<PedidoCompraDto> {
+    return this.http.get<Pagina<PedidoCompraDto>>(this.fixture).pipe(
+      map((pagina) => {
+        const pedido = pagina.items.find((item) => item.id === id);
+        if (!pedido) throw new Error(`No existe el pedido ${id}`);
+        return pedido;
+      }),
+    );
+  }
 }
