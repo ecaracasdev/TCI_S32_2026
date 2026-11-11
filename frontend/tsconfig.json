@@ -31,7 +31,19 @@
       "@shared/ui/label": [
         "./src/app/shared/ui/label/src/index.ts"
       ],
-      "@shared/ui/icon": ["./src/app/shared/ui/icon/index.ts"]
+      "@shared/ui/icon": ["./src/app/shared/ui/icon/index.ts"],
+      "@core/*": [
+        "./src/app/core/*"
+      ],
+      "@features/*": [
+        "./src/app/features/*"
+      ],
+      "@env/*": [
+        "./src/environments/*"
+      ],
+      "@shared/*": [
+        "./src/app/shared/*"
+      ]
     }
   },
   "angularCompilerOptions": {
