@@ -55,6 +55,7 @@ class Secrets(ConfigurationSection):
     """Application secrets."""
 
     SECRET_KEY: str = config_field(secret=True)
+    CLAVE_JWT: str = config_field("", secret=True)
 
 
 class AuthOAuth(ConfigurationSection):
@@ -116,6 +117,29 @@ class AuthKeycloak(ConfigurationSection):
     SWAGGER_CLIENT_ID: str = config_field("")
 
 
+class AutenticacionJWT(ConfigurationSection):
+    """Configuración del emisor JWT local."""
+
+    HABILITADO: bool = config_field(False)
+    EMISOR: str = config_field("urn:tci:auth:local")
+    AUDIENCIA: str = config_field("urn:tci:api")
+    DURACION_TOKEN_MINUTOS: int = config_field(30)
+    ALGORITMO: str = config_field("HS256")
+    ALGORITMOS_PERMITIDOS: list[str] = config_field(
+        default_factory=lambda: ["HS256", "HS384", "HS512"]
+    )
+    RUTAS_EXCLUIDAS: list[str] = config_field(
+        default_factory=lambda: [
+            r"^/$",
+            r"^/health$",
+            r"^/docs(?:/.*)?$",
+            r"^/redoc(?:/.*)?$",
+            r"^/openapi\.json$",
+            r"^/auth/token$",
+        ]
+    )
+
+
 class Auth(ConfigurationSection):
     """Authentication configuration."""
 
@@ -128,6 +152,7 @@ class Auth(ConfigurationSection):
     SESSION_HTTPS_ONLY: bool = config_field(False)
     OAUTH: AuthOAuth = config_field(default_factory=AuthOAuth)
     KEYCLOAK: AuthKeycloak = config_field(default_factory=AuthKeycloak)
+    JWT: AutenticacionJWT = config_field(default_factory=AutenticacionJWT)
 
 
 class Server(ConfigurationSection):

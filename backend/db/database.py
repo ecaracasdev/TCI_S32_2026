@@ -2,7 +2,8 @@ from __future__ import annotations
 from collections.abc import AsyncGenerator
 from utils import get_config, get_logger
 from .db_models import Base
-from sqlalchemy import text
+from sqlalchemy import inspect, text
+from sqlalchemy.engine import Connection
 from sqlalchemy.ext.asyncio import (
     AsyncEngine,
     AsyncSession,
@@ -62,8 +63,43 @@ def get_sessionmaker() -> async_sessionmaker[AsyncSession]:
 async def init_db() -> None:
     """Crea todas las tablas definidas en Base. Llamar desde lifespan."""
     async with get_engine().begin() as conn:
+        await conn.run_sync(_renombrar_tablas_autenticacion)
         await conn.run_sync(Base.metadata.create_all)
     logger.debug(f"Tables: {list(Base.metadata.tables.keys())}")
+
+
+def _renombrar_tablas_autenticacion(connection: Connection) -> None:
+    """Migra los nombres ingleses anteriores sin perder usuarios ni asignaciones."""
+
+    tablas = set(inspect(connection).get_table_names())
+    if "users" in tablas and "usuarios" in tablas:
+        raise RuntimeError(
+            "Existen las tablas 'users' y 'usuarios'. "
+            "Unifica o respalda los datos antes de iniciar el backend."
+        )
+    if "users" in tablas:
+        connection.exec_driver_sql('ALTER TABLE "users" RENAME TO "usuarios"')
+        tablas.remove("users")
+        tablas.add("usuarios")
+
+    tablas_pivot_anteriores = [
+        nombre for nombre in ("role_x_user_db", "usuarios_roles") if nombre in tablas
+    ]
+    if len(tablas_pivot_anteriores) > 1 or (
+        tablas_pivot_anteriores and "usuarios_x_roles" in tablas
+    ):
+        raise RuntimeError(
+            "Hay varias tablas de asignación usuario-rol. "
+            "Unifica o respalda los datos antes de iniciar el backend."
+        )
+    if tablas_pivot_anteriores:
+        nombre_anterior = tablas_pivot_anteriores[0]
+        nombre_nuevo = "usuarios_x_roles"
+        connection.exec_driver_sql(
+            f'ALTER TABLE "{nombre_anterior}" RENAME TO "{nombre_nuevo}"'
+        )
+        tablas.remove(nombre_anterior)
+        tablas.add(nombre_nuevo)
 
 
 async def dispose_db() -> None:

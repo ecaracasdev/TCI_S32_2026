@@ -9,10 +9,12 @@
 
 [secrets]
     SECRET_KEY = "123456"
+    # Completar en cada config.<environment>.toml antes de habilitar JWT local.
+    CLAVE_JWT = ""
 
 [database]
     DB_TYPE = "sqlite3"
-    DB_DRIVER = "..."
+    DB_DRIVER = "aiosqlite"
     DB_USER = "..."
     DB_PASSWORD = "..."
     DB_HOST = "localhost"
@@ -79,3 +81,18 @@
         EXCLUDE_PATTERNS = ["^/$", "^/health$", "^/docs$", "^/openapi.json$", "^/redoc$"]
         ADD_SWAGGER_AUTH = false
         SWAGGER_CLIENT_ID = ""
+
+    # JWT local y roles guardados en la base de datos. No habilitar junto con Keycloak.
+    [auth.JWT]
+        HABILITADO = false
+        DURACION_TOKEN_MINUTOS = 30
+        ALGORITMO = "HS256"
+        ALGORITMOS_PERMITIDOS = ["HS256", "HS384", "HS512"]
+        RUTAS_EXCLUIDAS = [
+            "^/$",
+            "^/health$",
+            "^/docs(?:/.*)?$",
+            "^/redoc(?:/.*)?$",
+            "^/openapi\\.json$",
+            "^/auth/token$",
+        ]

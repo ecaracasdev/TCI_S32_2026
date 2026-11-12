@@ -1,13 +1,13 @@
-from .product_db import ProductDb
-from .role_db import RoleDb
-from .role_x_user_db import RoleXUserDb
-from .user_db import UserDb
 from .base_db import Base
+from .usuario_x_rol_db import usuarios_x_roles
+from .product_db import ProductDb
+from .rol_db import RolDb
+from .usuario_db import UsuarioDb
 
 __all__ = [
     "Base",
     "ProductDb",
-    "RoleDb",
-    "RoleXUserDb",
-    "UserDb",
+    "RolDb",
+    "UsuarioDb",
+    "usuarios_x_roles",
 ]
