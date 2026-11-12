@@ -19,6 +19,9 @@ import { ConsultaIncidenciasService } from './features/consulta-incidencias/cons
 import { PedidosCompraHttpService } from './features/pedidos-compra/pedidos-compra.http.service';
 import { MockPedidosCompraService } from './features/pedidos-compra/mock-pedidos-compra.service';
 import { PedidosCompraService } from './features/pedidos-compra/pedidos-compra.service';
+import { MaquinasHttpService } from './features/maquinas/maquinas.http.service';
+import { MockMaquinasService } from './features/maquinas/mock-maquinas.service';
+import { MaquinasService } from './features/maquinas/maquinas.service';
 
 export const routes: Routes = [
   {
@@ -196,6 +199,33 @@ export const routes: Routes = [
     ],
     loadComponent: () =>
       import('./features/registrar-uso/registrar-uso.page').then((page) => page.RegistrarUsoPage),
+  },
+
+  {
+    path: 'maquinas',
+    providers: [
+      {
+        provide: MaquinasService,
+        useFactory: () =>
+          environment.useMockData ? inject(MockMaquinasService) : inject(MaquinasHttpService),
+      },
+    ],
+    children: [
+      {
+        path: '',
+        title: 'Máquinas · TCI',
+        loadComponent: () =>
+          import('./features/maquinas/maquinas.page').then((page) => page.MaquinasPage),
+      },
+      {
+        path: ':id',
+        title: 'Detalle de máquina · TCI',
+        loadComponent: () =>
+          import('./features/maquinas/maquina-detalle.page').then(
+            (page) => page.MaquinaDetallePage,
+          ),
+      },
+    ],
   },
 
   {

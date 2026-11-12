@@ -6,6 +6,7 @@ export const INICIO_CONFIG = {
   titulo: 'Inicio del sistema',
   descripcion: 'Accedé rápidamente a las tareas de mantenimiento de la planta.',
   reportar: 'Reportar incidencia',
+  verMaquinas: 'Consultar máquinas',
   reintentar: 'Reintentar',
   demo: 'Datos de demostración: no se guardan en el backend ni se envían notificaciones.',
   incidencias: {
