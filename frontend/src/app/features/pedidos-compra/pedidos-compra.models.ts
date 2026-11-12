@@ -29,15 +29,29 @@ export interface ItemPedidoCompraDto {
   cantidad_solicitada: number;
 }
 
+export interface UbicacionDto {
+  id: number;
+  codigo: string;
+  descripcion?: string | null;
+}
+
 export interface ItemRecepcionCompraDto {
   id: number;
   item_pedido_compra_id: number;
-  ubicacion: {
-    id: number;
-    codigo: string;
-    descripcion?: string | null;
-  };
+  ubicacion: UbicacionDto;
   cantidad: number;
+}
+
+export interface ItemRecepcionCompraCreateDto {
+  item_pedido_compra_id: number;
+  ubicacion_id: number;
+  cantidad: number;
+}
+
+export interface RecepcionCompraCreateDto {
+  delegada_a_usuario_id?: number | null;
+  notas?: string | null;
+  items: ItemRecepcionCompraCreateDto[];
 }
 
 export interface RecepcionCompraDto {

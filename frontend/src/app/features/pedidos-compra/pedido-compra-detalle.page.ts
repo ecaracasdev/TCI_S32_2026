@@ -64,4 +64,8 @@ export class PedidoCompraDetallePage {
   protected fecha(valor: string): string {
     return new Date(valor).toLocaleString('es-AR');
   }
+
+  protected puedeRegistrarRecepcion(pedido: PedidoCompraDto): boolean {
+    return pedido.estado === 'confirmado' || pedido.estado === 'pendiente_recepcion';
+  }
 }
