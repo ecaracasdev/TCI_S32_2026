@@ -150,9 +150,12 @@
         }
       </div>
 
-      <div hlmCardFooter>
+      <div hlmCardFooter class="flex-col gap-2 sm:flex-row">
         <a hlmBtn variant="secondary" class="w-full justify-between" routerLink="/compras">
           {{ config.repuestos.revisarCompras }} <span aria-hidden="true">→</span>
+        </a>
+        <a hlmBtn variant="outline" class="w-full justify-between" routerLink="/pedidos-compra">
+          {{ config.repuestos.verPedidos }} <span aria-hidden="true">→</span>
         </a>
       </div>
     </section>

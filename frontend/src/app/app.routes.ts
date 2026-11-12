@@ -16,6 +16,9 @@ import { RegistrarUsoService } from './features/registrar-uso/registrar-uso.serv
 import { ConsultaIncidenciasHttpService } from './features/consulta-incidencias/consulta-incidencias.http.service';
 import { MockConsultaIncidenciasService } from './features/consulta-incidencias/mock-consulta-incidencias.service';
 import { ConsultaIncidenciasService } from './features/consulta-incidencias/consulta-incidencias.service';
+import { PedidosCompraHttpService } from './features/pedidos-compra/pedidos-compra.http.service';
+import { MockPedidosCompraService } from './features/pedidos-compra/mock-pedidos-compra.service';
+import { PedidosCompraService } from './features/pedidos-compra/pedidos-compra.service';
 import { MaquinasHttpService } from './features/maquinas/maquinas.http.service';
 import { MockMaquinasService } from './features/maquinas/mock-maquinas.service';
 import { MaquinasService } from './features/maquinas/maquinas.service';
@@ -24,7 +27,7 @@ export const routes: Routes = [
   {
     path: '',
     pathMatch: 'full',
-    redirectTo: 'ui-preview',
+    redirectTo: 'inicio',
   },
 
   {
@@ -102,27 +105,31 @@ export const routes: Routes = [
   },
 
   {
-    path: 'maquinas',
+    path: 'pedidos-compra',
     providers: [
       {
-        provide: MaquinasService,
+        provide: PedidosCompraService,
         useFactory: () =>
-          environment.useMockData ? inject(MockMaquinasService) : inject(MaquinasHttpService),
+          environment.useMockData
+            ? inject(MockPedidosCompraService)
+            : inject(PedidosCompraHttpService),
       },
     ],
     children: [
       {
         path: '',
-        title: 'Máquinas · TCI',
+        title: 'Pedidos de compra · TCI',
         loadComponent: () =>
-          import('./features/maquinas/maquinas.page').then((page) => page.MaquinasPage),
+          import('./features/pedidos-compra/pedidos-compra.page').then(
+            (page) => page.PedidosCompraPage,
+          ),
       },
       {
         path: ':id',
-        title: 'Detalle de máquina · TCI',
+        title: 'Detalle de pedido · TCI',
         loadComponent: () =>
-          import('./features/maquinas/maquina-detalle.page').then(
-            (page) => page.MaquinaDetallePage,
+          import('./features/pedidos-compra/pedido-compra-detalle.page').then(
+            (page) => page.PedidoCompraDetallePage,
           ),
       },
     ],
@@ -195,7 +202,38 @@ export const routes: Routes = [
   },
 
   {
+    path: 'maquinas',
+    providers: [
+      {
+        provide: MaquinasService,
+        useFactory: () =>
+          environment.useMockData ? inject(MockMaquinasService) : inject(MaquinasHttpService),
+      },
+    ],
+    children: [
+      {
+        path: '',
+        title: 'Máquinas · TCI',
+        loadComponent: () =>
+          import('./features/maquinas/maquinas.page').then((page) => page.MaquinasPage),
+      },
+      {
+        path: ':id',
+        title: 'Detalle de máquina · TCI',
+        loadComponent: () =>
+          import('./features/maquinas/maquina-detalle.page').then(
+            (page) => page.MaquinaDetallePage,
+          ),
+      },
+    ],
+  },
+
+  {
     path: '**',
-    redirectTo: 'ui-preview',
+    title: 'Pantalla en desarrollo · TCI',
+    loadComponent: () =>
+      import('./features/en-desarrollo/en-desarrollo.page').then(
+        (page) => page.EnDesarrolloPage,
+      ),
   },
 ];

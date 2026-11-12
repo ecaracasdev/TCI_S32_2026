@@ -28,6 +28,7 @@ export const INICIO_CONFIG = {
     descripcion: 'Disponibilidad igual o menor al mínimo',
     inventario: 'Inventario',
     revisarCompras: 'Revisar lista de compras',
+    verPedidos: 'Consultar pedidos de compra',
     minimo: 'Mín.',
     cargando: 'Cargando repuestos…',
     error: 'No se pudieron cargar los repuestos.',

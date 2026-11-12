@@ -1,0 +1,132 @@
+@if (carga() === 'cargando') {
+  <div class="mx-auto max-w-5xl px-4 py-8">
+    <p role="status">{{ config.detalle.cargando }}</p>
+  </div>
+} @else if (carga() === 'error') {
+  <div class="mx-auto flex max-w-5xl flex-col items-start gap-4 px-4 py-8">
+    <p role="alert">{{ config.detalle.error }}</p>
+    <button hlmBtn variant="outline" type="button" (click)="cargar()">
+      {{ config.reintentar }}
+    </button>
+    <a hlmBtn variant="outline" routerLink="/pedidos-compra">{{ config.volver }}</a>
+  </div>
+} @else if (pedido(); as orden) {
+  <div class="mx-auto flex max-w-5xl flex-col gap-6 px-4 py-8 md:px-8">
+    <div>
+      <a hlmBtn variant="outline" routerLink="/pedidos-compra">← {{ config.volver }}</a>
+    </div>
+
+    <header class="flex flex-wrap items-center gap-3">
+      <h1 class="text-3xl font-semibold">Pedido #{{ orden.id }}</h1>
+      <span hlmBadge [variant]="estado(orden.estado).variante">
+        {{ estado(orden.estado).etiqueta }}
+      </span>
+      <span hlmBadge [variant]="urgencia(orden.urgencia).variante">
+        {{ urgencia(orden.urgencia).etiqueta }}
+      </span>
+    </header>
+
+    <section hlmCard>
+      <div hlmCardHeader>
+        <h2 hlmCardTitle>Información del pedido</h2>
+      </div>
+      <div hlmCardContent class="grid gap-4 sm:grid-cols-2">
+        <p>
+          <strong>{{ config.detalle.creado }}:</strong> {{ fecha(orden.creado_en) }}
+        </p>
+        <p>
+          <strong>{{ config.detalle.origen }}:</strong> {{ origen(orden.origen) }}
+        </p>
+        <p>
+          <strong>{{ config.detalle.urgencia }}:</strong>
+          <span hlmBadge [variant]="urgencia(orden.urgencia).variante">
+            {{ urgencia(orden.urgencia).etiqueta }}
+          </span>
+        </p>
+        <p>
+          <strong>{{ config.detalle.estado }}:</strong>
+          <span hlmBadge [variant]="estado(orden.estado).variante">
+            {{ estado(orden.estado).etiqueta }}
+          </span>
+        </p>
+        @if (orden.motivo) {
+          <p class="sm:col-span-2">
+            <strong>{{ config.detalle.motivo }}:</strong> {{ orden.motivo }}
+          </p>
+        }
+        @if (orden.motivo_cancelacion) {
+          <p class="sm:col-span-2">
+            <strong>{{ config.detalle.motivoCancelacion }}:</strong> {{ orden.motivo_cancelacion }}
+          </p>
+        }
+      </div>
+    </section>
+
+    <section hlmCard>
+      <div hlmCardHeader>
+        <h2 hlmCardTitle>{{ config.detalle.lineas }}</h2>
+      </div>
+      <div hlmCardContent>
+        @if (!orden.items?.length) {
+          <p class="text-sm text-muted-foreground">{{ config.detalle.sinLineas }}</p>
+        } @else {
+          <ul class="flex flex-col divide-y divide-border">
+            @for (item of orden.items; track item.id) {
+              <li
+                class="flex flex-wrap items-center justify-between gap-3 py-4 first:pt-0 last:pb-0"
+              >
+                <div class="min-w-0">
+                  <p class="font-medium">{{ item.repuesto.nombre }}</p>
+                  <p class="text-sm text-muted-foreground">{{ item.repuesto.codigo }}</p>
+                </div>
+                <div class="flex flex-wrap items-center gap-3 text-sm">
+                  <span
+                    >{{ config.detalle.cantidad }}:
+                    <strong>{{ item.cantidad_solicitada }}</strong></span
+                  >
+                  <span hlmBadge [variant]="urgencia(orden.urgencia).variante">
+                    {{ urgencia(orden.urgencia).etiqueta }}
+                  </span>
+                </div>
+              </li>
+            }
+          </ul>
+        }
+      </div>
+    </section>
+
+    <section hlmCard>
+      <div hlmCardHeader>
+        <h2 hlmCardTitle>{{ config.detalle.recepciones }}</h2>
+      </div>
+      <div hlmCardContent>
+        @if (!orden.recepciones?.length) {
+          <p class="text-sm text-muted-foreground">{{ config.detalle.sinRecepciones }}</p>
+        } @else {
+          <ul class="flex flex-col gap-5">
+            @for (recepcion of orden.recepciones; track recepcion.id) {
+              <li class="border-b border-border pb-5 last:border-0 last:pb-0">
+                <p class="font-medium">
+                  {{ config.detalle.recibida }}: {{ fecha(recepcion.recibida_en) }}
+                </p>
+                @if (recepcion.notas) {
+                  <p class="mt-1 text-sm text-muted-foreground">{{ recepcion.notas }}</p>
+                }
+                @if (recepcion.items?.length) {
+                  <ul class="mt-3 flex flex-col gap-2">
+                    @for (item of recepcion.items; track item.id) {
+                      <li class="flex flex-wrap justify-between gap-2 text-sm">
+                        <span>{{ config.detalle.ubicacion }}: {{ item.ubicacion.codigo }}</span>
+                        <span>{{ item.cantidad }} unidades</span>
+                      </li>
+                    }
+                  </ul>
+                }
+              </li>
+            }
+          </ul>
+        }
+      </div>
+    </section>
+  </div>
+}
