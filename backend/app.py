@@ -18,9 +18,14 @@ def create_app(app_name: str = "app", description: str = "---", cfg: Config = No
         KeycloakConfiguration,
         setup_keycloak_middleware,
     )
-    from routers import routers
+    from routers import auth_router, autenticacion_router, routers
     from services import get_auth_service, get_db_service
     from auth_utils import map_keycloak_user
+    from db.database import dispose_db, init_db
+    from autenticacion_middleware import (
+        AutenticacionJWTMiddleware,
+        validar_configuracion_jwt,
+    )
     if cfg is None:
         get_logger().critical("Archivo de Configuración No cargado, no se puede crear la APP")
         exit()
@@ -32,13 +37,14 @@ def create_app(app_name: str = "app", description: str = "---", cfg: Config = No
             # Inicialización de recursos (DB pool, caché, etc.)
             db_service = get_db_service()
             auth_service = get_auth_service()
-            
+            await init_db()
             logger.info("Startup OK")
         except Exception as e:
             logger.critical(f"Startup failed: {e}")
             raise  # no silenciar — que falle fuerte y temprano
         yield
         # Teardown
+        await dispose_db()
         logger.info("Shutdown OK")
         
     def _build_cors_origins(cors_urls: list[str]) -> list[str]:
@@ -57,6 +63,10 @@ def create_app(app_name: str = "app", description: str = "---", cfg: Config = No
     def _load_routers(app: FastAPI, restrict_modules: list[str] = []) -> int:
         active = 0
         for router in routers:
+            if router is auth_router and cfg.auth.JWT.HABILITADO:
+                continue
+            if router is autenticacion_router and not cfg.auth.JWT.HABILITADO:
+                continue
             if router.prefix.strip("/") in restrict_modules:
                 continue
             app.include_router(router)
@@ -75,7 +85,13 @@ def create_app(app_name: str = "app", description: str = "---", cfg: Config = No
 
     auth_cfg = get_config().auth
     keycloak_cfg = auth_cfg.KEYCLOAK
-    if auth_cfg.ENABLED and keycloak_cfg.ENABLED:
+    jwt_cfg = auth_cfg.JWT
+    if auth_cfg.ENABLED and jwt_cfg.HABILITADO and keycloak_cfg.ENABLED:
+        raise ValueError("No se pueden habilitar simultáneamente JWT local y Keycloak.")
+    if jwt_cfg.HABILITADO:
+        validar_configuracion_jwt(get_config())
+        app.add_middleware(AutenticacionJWTMiddleware, configuracion=get_config())
+    elif auth_cfg.ENABLED and keycloak_cfg.ENABLED:
         keycloak_configuration = KeycloakConfiguration(
             url=keycloak_cfg.URL,
             realm=keycloak_cfg.REALM,
