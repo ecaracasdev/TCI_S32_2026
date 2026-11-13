@@ -1,5 +1,410 @@
+// Las restricciones CHECK se documentan en comentarios para visores DBML antiguos. SQLModel las aplica.
+Project plant_maintenance_inventory {
+  database_type: 'SQLite'
+  Note: 'Modelo inicial para stock, mantenimiento y RBAC básico. Compatible con SQLite en desarrollo y PostgreSQL en producción.'
+}
 
-Project Template {
-  database_type: 'Sqlite'
-  Note: 'Plantilla de Código para el SCHEMA DE LA BASE DE DATOS'
+// -----------------------------------------------------------------------------
+// Identidad y autorización
+// La autorización del MVP se resuelve por roles. Las operaciones sensibles se
+// validan en la capa de servicios y no solo en la interfaz.
+// -----------------------------------------------------------------------------
+
+Table usuarios {
+  id integer [pk, increment]
+  nombre varchar(100) [not null]
+  apellido varchar(100) [not null]
+  genero varchar(1) [not null]
+  correo varchar(255) [not null, unique]
+  hash_contrasena varchar(255) [not null]
+  verificado boolean [not null, default: false]
+
+  Note: 'Tabla canónica de identidad para el dominio. Los roles sugeridos son operario, empleado_mantenimiento, encargado_mantenimiento y consulta.'
+}
+
+Table roles {
+  id integer [pk, increment]
+  nombre varchar(100) [not null, unique]
+  descripcion varchar(255)
+}
+
+Table usuarios_x_roles {
+  usuario_id integer [not null]
+  rol_id integer [not null]
+
+  Indexes {
+    (usuario_id, rol_id) [pk]
+    rol_id
+  }
+
+  Note: 'Tabla puente de identidad. Un usuario puede tener más de un rol.'
+}
+
+// -----------------------------------------------------------------------------
+// Catálogo de máquinas y repuestos
+// -----------------------------------------------------------------------------
+
+Table tipos_maquina {
+  id integer [pk, increment]
+  nombre varchar(100) [not null, unique]
+  descripcion text
+  activo boolean [not null, default: true]
+}
+
+Table maquinas {
+  id integer [pk, increment]
+  codigo varchar(100) [not null, unique]
+  tipo_maquina_id integer [not null]
+  numero_serie varchar(100) [unique]
+  estado varchar(50) [not null, default: 'activa']
+  fecha_instalacion datetime
+  creado_en datetime [not null, default: `CURRENT_TIMESTAMP`]
+  actualizado_en datetime
+
+  Note: 'codigo es el identificador QR o de barras. Los estados se definen en la máquina de estados del dominio.'
+}
+
+Table ubicaciones {
+  id integer [pk, increment]
+  codigo varchar(50) [not null, unique]
+  descripcion varchar(255)
+  activo boolean [not null, default: true]
+
+  Note: 'Ubicación física de una pieza (por ejemplo A-03-12). El stock se registra por repuesto y ubicación.'
+}
+
+Table repuestos {
+  id integer [pk, increment]
+  codigo varchar(100) [not null, unique]
+  nombre varchar(200) [not null]
+  descripcion text
+  stock_minimo integer [not null, default: 0]
+  activo boolean [not null, default: true]
+  creado_en datetime [not null, default: `CURRENT_TIMESTAMP`]
+  actualizado_en datetime
+
+  Note: 'El código identifica el QR o código de barras. El stock se mantiene por ubicación en repuestos_x_ubicaciones.'
+
+  // CHECK `stock_minimo >= 0` [name: 'repuestos_stock_minimo_no_negativo']
+}
+
+Table tipos_maquina_x_repuestos {
+  tipo_maquina_id integer [not null]
+  repuesto_id integer [not null]
+  cantidad_minima integer [not null, default: 1]
+
+  Indexes {
+    (tipo_maquina_id, repuesto_id) [pk]
+    repuesto_id
+  }
+
+  Note: 'Lista de repuestos a mantener para cada tipo de máquina. Permite generar la lista inicial al registrar un ejemplar.'
+
+  // CHECK `cantidad_minima >= 1` [name: 'tipos_maquina_x_repuestos_cantidad_minima_positiva']
+}
+
+Table repuestos_x_ubicaciones {
+  repuesto_id integer [not null]
+  ubicacion_id integer [not null]
+  cantidad_fisica integer [not null, default: 0]
+  cantidad_reservada integer [not null, default: 0]
+  actualizado_en datetime [not null, default: `CURRENT_TIMESTAMP`]
+
+  Indexes {
+    (repuesto_id, ubicacion_id) [pk]
+    ubicacion_id
+  }
+
+  Note: 'Stock disponible = cantidad_fisica - cantidad_reservada en esa ubicación. Las cantidades no pueden ser negativas y se actualizan en la misma transacción que el movimiento.'
+
+  // CHECK `cantidad_fisica >= 0` [name: 'repuestos_x_ubicaciones_fisico_no_negativo']
+  // CHECK `cantidad_reservada >= 0` [name: 'repuestos_x_ubicaciones_reservado_no_negativo']
+  // CHECK `cantidad_reservada <= cantidad_fisica` [name: 'repuestos_x_ubicaciones_reservado_dentro_fisico']
+}
+
+// -----------------------------------------------------------------------------
+// Incidencias, reparaciones y consumo de repuestos
+// -----------------------------------------------------------------------------
+
+Table incidencias {
+  id integer [pk, increment]
+  maquina_id integer [not null]
+  reportada_por_usuario_id integer [not null]
+  descripcion text [not null]
+  estado varchar(50) [not null, default: 'reportada']
+  turno varchar(20) [not null]
+  reportada_en datetime [not null, default: `CURRENT_TIMESTAMP`]
+  resuelta_en datetime
+
+  // CHECK `turno IN ('manana', 'tarde', 'noche')` [name: 'incidencias_turno_valido']
+
+  Note: 'turno admite manana, tarde o noche. Los estados se definen en docs/estado-incidencia.md.'
+}
+
+Table fotos_incidencias {
+  id integer [pk, increment]
+  incidencia_id integer [not null]
+  contenido_base64 text [not null]
+  nombre_archivo varchar(255)
+  tipo_mime varchar(100) [not null]
+  capturada_en datetime
+
+  Note: 'En el MVP la imagen se almacena como Base64 en TEXT. Si el volumen crece, conviene mover el contenido a almacenamiento de archivos y conservar solo su referencia.'
+}
+
+Table reparaciones {
+  id integer [pk, increment]
+  incidencia_id integer [not null, unique]
+  empleado_id integer
+  estado varchar(50) [not null, default: 'pendiente']
+  iniciada_en datetime
+  completada_en datetime
+
+  Note: 'Una incidencia puede tener como máximo una reparación en este modelo inicial.'
+}
+
+Table usos_repuestos_reparacion {
+  id integer [pk, increment]
+  reparacion_id integer [not null]
+  repuesto_id integer [not null]
+  cantidad integer [not null]
+  usada_por_usuario_id integer [not null]
+  usada_en datetime [not null, default: `CURRENT_TIMESTAMP`]
+
+  Indexes {
+    (reparacion_id, repuesto_id) [unique]
+    repuesto_id
+  }
+
+  Note: 'Línea de uso. cantidad >= 1; registrar esta línea descuenta el stock físico y genera un movimiento de tipo consumo.'
+
+  // CHECK `cantidad >= 1` [name: 'usos_repuestos_reparacion_cantidad_positiva']
+}
+
+Table informes_resolucion {
+  id integer [pk, increment]
+  reparacion_id integer [not null, unique]
+  empleado_id integer [not null]
+  resumen text [not null]
+  creada_en datetime [not null, default: `CURRENT_TIMESTAMP`]
+}
+
+// -----------------------------------------------------------------------------
+// Compras y recepción de stock
+// -----------------------------------------------------------------------------
+
+Table pedidos_compra {
+  id integer [pk, increment]
+  creada_por_usuario_id integer [not null]
+  urgencia varchar(20) [not null, default: 'normal']
+  origen varchar(20) [not null, default: 'manual']
+  estado varchar(50) [not null, default: 'creado']
+  motivo text
+  asignado_a_usuario_id integer
+  revision_resuelta_por_usuario_id integer
+  revision_resuelta_en datetime
+  motivo_cancelacion text
+  creado_en datetime [not null, default: `CURRENT_TIMESTAMP`]
+
+  Note: 'urgencia admite normal o urgente; origen admite manual o automatico. Los estados persistidos son creado, pendiente_revision, pendiente_aprobacion, confirmado, cancelado, pendiente_recepcion y recibido. La creación automática depende de la configuración del sistema. La lista de compras no se persiste: se deriva del umbral y de requerimientos que se materializan en este pedido.'
+
+  // CHECK `urgencia IN ('normal', 'urgente')` [name: 'pedidos_compra_urgencia_valida']
+  // CHECK `origen IN ('manual', 'automatico')` [name: 'pedidos_compra_origen_valido']
+  // CHECK `estado IN ('creado', 'pendiente_revision', 'pendiente_aprobacion', 'confirmado', 'cancelado', 'pendiente_recepcion', 'recibido')` [name: 'pedidos_compra_estado_valido']
+}
+
+Table items_pedido_compra {
+  id integer [pk, increment]
+  pedido_compra_id integer [not null]
+  repuesto_id integer [not null]
+  cantidad_solicitada integer [not null]
+
+  Indexes {
+    (pedido_compra_id, repuesto_id) [unique]
+    repuesto_id
+  }
+
+  // CHECK `cantidad_solicitada >= 1` [name: 'items_pedido_compra_cantidad_positiva']
+}
+
+Table recepciones_compra {
+  id integer [pk, increment]
+  pedido_compra_id integer [not null]
+  recibida_por_usuario_id integer [not null]
+  delegada_a_usuario_id integer
+  recibida_en datetime [not null, default: `CURRENT_TIMESTAMP`]
+  notas text
+}
+
+Table items_recepcion_compra {
+  id integer [pk, increment]
+  recepcion_id integer [not null]
+  item_pedido_compra_id integer [not null]
+  ubicacion_id integer [not null]
+  cantidad integer [not null]
+
+  Indexes {
+    (recepcion_id, item_pedido_compra_id, ubicacion_id) [unique]
+    item_pedido_compra_id
+    ubicacion_id
+  }
+
+  Note: 'Cada recepción indica cantidad y ubicación. La carga genera un movimiento de tipo entrada.'
+
+  // CHECK `cantidad >= 1` [name: 'items_recepcion_compra_cantidad_positiva']
+}
+
+// -----------------------------------------------------------------------------
+// Reservas y movimientos inmutables
+// -----------------------------------------------------------------------------
+
+Table reservas {
+  id integer [pk, increment]
+  creada_por_usuario_id integer [not null]
+  titulo varchar(200) [not null]
+  motivo text
+  planificada_para datetime [not null]
+  estado varchar(50) [not null, default: 'planificada']
+  autorizada_por_usuario_id integer
+  liberada_por_usuario_id integer
+  creada_en datetime [not null, default: `CURRENT_TIMESTAMP`]
+  liberada_en datetime
+  ejecutada_en datetime
+
+  Note: 'La liberación requiere un usuario con rol encargado_mantenimiento. Los estados se definen en la máquina de estados de Reserva.'
+}
+
+Table items_reserva {
+  id integer [pk, increment]
+  reserva_id integer [not null]
+  repuesto_id integer [not null]
+  ubicacion_id integer [not null]
+  cantidad integer [not null]
+  cantidad_consumida integer [not null, default: 0]
+
+  Indexes {
+    (reserva_id, repuesto_id, ubicacion_id) [unique]
+    repuesto_id
+    ubicacion_id
+  }
+
+  Note: 'Al reservar se incrementa cantidad_reservada. Al ejecutar, se descuenta cantidad_fisica y se libera la reserva en una misma transacción.'
+
+  // CHECK `cantidad >= 1` [name: 'items_reserva_cantidad_positiva']
+  // CHECK `cantidad_consumida >= 0` [name: 'items_reserva_consumido_no_negativo']
+  // CHECK `cantidad_consumida <= cantidad` [name: 'items_reserva_consumido_dentro_cantidad']
+}
+
+Table movimientos_stock {
+  id integer [pk, increment]
+  repuesto_id integer [not null]
+  ubicacion_id integer [not null]
+  tipo_movimiento varchar(30) [not null]
+  cantidad integer [not null]
+  variacion_fisica integer [not null]
+  variacion_reservada integer [not null]
+  realizado_por_usuario_id integer [not null]
+  ocurrido_en datetime [not null, default: `CURRENT_TIMESTAMP`]
+  motivo text
+  item_recepcion_compra_id integer
+  uso_repuesto_reparacion_id integer
+  item_reserva_id integer
+
+  Indexes {
+    (repuesto_id, ocurrido_en)
+    tipo_movimiento
+    item_recepcion_compra_id
+    uso_repuesto_reparacion_id
+    item_reserva_id
+  }
+
+  Note: 'Registro de solo agregado. tipo_movimiento admite entrada, salida, reserva, liberacion o consumo. No tiene actualizado_en: no se edita ni elimina desde la aplicación.'
+
+  // CHECK `cantidad > 0` [name: 'movimientos_stock_cantidad_positiva']
+}
+
+// -----------------------------------------------------------------------------
+// Relaciones
+// -----------------------------------------------------------------------------
+
+Ref: usuarios_x_roles.usuario_id > usuarios.id
+Ref: usuarios_x_roles.rol_id > roles.id
+
+Ref: maquinas.tipo_maquina_id > tipos_maquina.id
+Ref: tipos_maquina_x_repuestos.tipo_maquina_id > tipos_maquina.id
+Ref: tipos_maquina_x_repuestos.repuesto_id > repuestos.id
+Ref: repuestos_x_ubicaciones.repuesto_id > repuestos.id
+Ref: repuestos_x_ubicaciones.ubicacion_id > ubicaciones.id
+
+Ref: incidencias.maquina_id > maquinas.id
+Ref: incidencias.reportada_por_usuario_id > usuarios.id
+Ref: fotos_incidencias.incidencia_id > incidencias.id
+Ref: incidencias.id - reparaciones.incidencia_id
+Ref: reparaciones.empleado_id > usuarios.id
+Ref: usos_repuestos_reparacion.reparacion_id > reparaciones.id
+Ref: usos_repuestos_reparacion.repuesto_id > repuestos.id
+Ref: usos_repuestos_reparacion.usada_por_usuario_id > usuarios.id
+Ref: reparaciones.id - informes_resolucion.reparacion_id
+Ref: informes_resolucion.empleado_id > usuarios.id
+
+Ref: pedidos_compra.creada_por_usuario_id > usuarios.id
+Ref: pedidos_compra.asignado_a_usuario_id > usuarios.id
+Ref: pedidos_compra.revision_resuelta_por_usuario_id > usuarios.id
+Ref: items_pedido_compra.pedido_compra_id > pedidos_compra.id
+Ref: items_pedido_compra.repuesto_id > repuestos.id
+Ref: recepciones_compra.pedido_compra_id > pedidos_compra.id
+Ref: recepciones_compra.recibida_por_usuario_id > usuarios.id
+Ref: recepciones_compra.delegada_a_usuario_id > usuarios.id
+Ref: items_recepcion_compra.recepcion_id > recepciones_compra.id
+Ref: items_recepcion_compra.item_pedido_compra_id > items_pedido_compra.id
+Ref: items_recepcion_compra.ubicacion_id > ubicaciones.id
+
+Ref: reservas.creada_por_usuario_id > usuarios.id
+Ref: reservas.autorizada_por_usuario_id > usuarios.id
+Ref: reservas.liberada_por_usuario_id > usuarios.id
+Ref: items_reserva.reserva_id > reservas.id
+Ref: items_reserva.repuesto_id > repuestos.id
+Ref: items_reserva.ubicacion_id > ubicaciones.id
+
+Ref: movimientos_stock.repuesto_id > repuestos.id
+Ref: movimientos_stock.ubicacion_id > ubicaciones.id
+Ref: movimientos_stock.realizado_por_usuario_id > usuarios.id
+Ref: movimientos_stock.item_recepcion_compra_id > items_recepcion_compra.id
+Ref: movimientos_stock.uso_repuesto_reparacion_id > usos_repuestos_reparacion.id
+Ref: movimientos_stock.item_reserva_id > items_reserva.id
+
+TableGroup identidad {
+  usuarios
+  roles
+  usuarios_x_roles
+}
+
+TableGroup catalogo {
+  tipos_maquina
+  maquinas
+  ubicaciones
+  repuestos
+  tipos_maquina_x_repuestos
+}
+
+TableGroup mantenimiento {
+  incidencias
+  fotos_incidencias
+  reparaciones
+  usos_repuestos_reparacion
+  informes_resolucion
+}
+
+TableGroup compras {
+  pedidos_compra
+  items_pedido_compra
+  recepciones_compra
+  items_recepcion_compra
+}
+
+TableGroup inventario {
+  repuestos_x_ubicaciones
+  reservas
+  items_reserva
+  movimientos_stock
 }
