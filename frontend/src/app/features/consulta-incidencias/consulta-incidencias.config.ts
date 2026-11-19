@@ -38,13 +38,25 @@ export const ESTADOS_INCIDENCIA: Record<
     variante: BadgeVariants['variant'];
   }
 > = {
+  reportada: {
+    etiqueta: 'Reportada',
+    variante: 'outline',
+  },
   en_triage: {
     etiqueta: 'En triage',
-    variante: 'outline',
+    variante: 'warning',
   },
 
   en_reparacion: {
     etiqueta: 'En reparación',
-    variante: 'secondary',
+    variante: 'warning',
+  },
+  pendiente_repuesto: {
+    etiqueta: 'Pendiente de repuesto',
+    variante: 'warning',
+  },
+  resuelta: {
+    etiqueta: 'Resuelta',
+    variante: 'success',
   },
 };

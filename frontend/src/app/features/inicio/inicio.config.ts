@@ -1,5 +1,3 @@
-import { type BadgeVariants } from '@shared/ui/badge';
-
 /** Textos de la vista de inicio*/
 export const INICIO_CONFIG = {
   eyebrow: 'OPERACIÓN DE PLANTA',
@@ -42,10 +40,3 @@ export const INICIO_CONFIG = {
   },
 } as const;
 
-export const ESTADOS_INCIDENCIA: Record<
-  string,
-  { etiqueta: string; variante: BadgeVariants['variant'] }
-> = {
-  en_triage: { etiqueta: 'En triage', variante: 'outline' },
-  en_reparacion: { etiqueta: 'En reparación', variante: 'secondary' },
-};

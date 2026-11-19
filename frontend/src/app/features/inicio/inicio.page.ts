@@ -13,7 +13,8 @@ import {
   tieneAlgunRol,
 } from '../../core/auth/roles.guard';
 import { SessionService } from '../../core/auth/session.service';
-import { ESTADOS_INCIDENCIA, INICIO_CONFIG } from './inicio.config';
+import { ESTADOS_INCIDENCIA } from '../consulta-incidencias/consulta-incidencias.config';
+import { INICIO_CONFIG } from './inicio.config';
 import { AlertaStockDto, IncidenciaDto } from './inicio.models';
 import { InicioService } from './inicio.service';
 
