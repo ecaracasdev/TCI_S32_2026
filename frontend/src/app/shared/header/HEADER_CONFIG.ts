@@ -1,5 +1,6 @@
 import {
   ROLES_CONSULTA_INCIDENCIAS,
+  ROLES_CONSULTA_PEDIDOS,
   ROLES_LECTURA_PLANTA,
   ROLES_REPARACION,
   ROLES_REPORTE_INCIDENCIA,
@@ -21,5 +22,6 @@ export const HEADER_CONFIG = {
     { label: 'Ubicaciones', href: '/ubicaciones', roles: ROLES_LECTURA_PLANTA },
     { label: 'Reposición', href: '/reposicion', roles: ROLES_LECTURA_PLANTA },
     { label: 'Compras', href: '/compras', roles: ROLES_LECTURA_PLANTA },
+    { label: 'Pedidos de compra', href: '/pedidos-compra', roles: ROLES_CONSULTA_PEDIDOS },
   ] as { label: string; href: string; roles?: string[] }[],
 };

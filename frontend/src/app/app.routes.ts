@@ -4,6 +4,8 @@ import { environment } from '../environments/environment';
 import { authGuard } from './core/auth/auth.guard';
 import {
   ROLES_CONSULTA_INCIDENCIAS,
+  ROLES_CONSULTA_PEDIDOS,
+  ROLES_GESTION_PEDIDOS,
   ROLES_LECTURA_PLANTA,
   ROLES_REPARACION,
   ROLES_REPORTE_INCIDENCIA,
@@ -25,6 +27,9 @@ import { MockInicioService } from './features/inicio/mock-inicio.service';
 import { MockRepuestosService } from './features/repuestos/mock-repuestos.service';
 import { RepuestosHttpService } from './features/repuestos/repuestos.http.service';
 import { RepuestosService } from './features/repuestos/repuestos.service';
+import { MockPedidosCompraService } from './features/pedidos-compra/mock-pedidos-compra.service';
+import { PedidosCompraHttpService } from './features/pedidos-compra/pedidos-compra.http.service';
+import { PedidosCompraService } from './features/pedidos-compra/pedidos-compra.service';
 import { MaquinasHttpService } from './features/maquinas/maquinas.http.service';
 import { MockMaquinasService } from './features/maquinas/mock-maquinas.service';
 import { MaquinasService } from './features/maquinas/maquinas.service';
@@ -149,6 +154,47 @@ export const routes: Routes = [
         ],
         loadComponent: () =>
           import('./features/compras/compras.page').then((page) => page.ComprasPage),
+      },
+
+      {
+        path: 'pedidos-compra',
+        canActivate: [rolGuard(ROLES_CONSULTA_PEDIDOS)],
+        providers: [
+          {
+            provide: PedidosCompraService,
+            useFactory: () =>
+              environment.useMockData
+                ? inject(MockPedidosCompraService)
+                : inject(PedidosCompraHttpService),
+          },
+        ],
+        children: [
+          {
+            path: '',
+            title: 'Pedidos de compra · TCI',
+            loadComponent: () =>
+              import('./features/pedidos-compra/pedidos-compra.page').then(
+                (page) => page.PedidosCompraPage,
+              ),
+          },
+          {
+            path: ':id',
+            title: 'Detalle de pedido · TCI',
+            loadComponent: () =>
+              import('./features/pedidos-compra/pedido-compra-detalle.page').then(
+                (page) => page.PedidoCompraDetallePage,
+              ),
+          },
+          {
+            path: ':id/recepcion',
+            canActivate: [rolGuard(ROLES_GESTION_PEDIDOS)],
+            title: 'Registrar recepción · TCI',
+            loadComponent: () =>
+              import('./features/pedidos-compra/recepcion-compra.page').then(
+                (page) => page.RecepcionCompraPage,
+              ),
+          },
+        ],
       },
 
       // Va antes que 'incidencias': si no, 'nueva' se toma como el :id del detalle.

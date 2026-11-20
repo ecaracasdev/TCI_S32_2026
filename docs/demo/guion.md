@@ -1,4 +1,3 @@
-
 # Guion de la demo (M6)
 
 Duración estimada: 15 minutos. Cada paso dice qué hacer, qué se tiene que ver y qué decir. Los números (cantidades, stock) corresponden a los datos recién cargados con `crear-dummy-db`.
@@ -15,14 +14,14 @@ Duración estimada: 15 minutos. Cada paso dice qué hacer, qué se tiene que ver
    - **Navegador** en http://localhost:8080.
    - **Terminal** en la raíz del repo, con los tokens y el repuesto de la demo listos. Si recargaste los datos, recalculá estas variables, porque los repuestos cambian de id:
 
-   ```bash
-   API=http://localhost:8300
-   token() { curl -s -X POST $API/auth/token -d "username=$1@test&password=test&grant_type=password" | jq -r .access_token; }
-   EMP=$(token empleado); ENC=$(token encargado); OPE=$(token operario)
-   REP=$(curl -s $API/api/v0/repuestos/codigo/REP-00087 -H "Authorization: Bearer $EMP" | jq .id)
-   UBI=$(curl -s $API/api/v0/repuestos/$REP -H "Authorization: Bearer $EMP" | jq '.stock[0].ubicacion_id')
-   echo "repuesto $REP, ubicación $UBI"
-   ```
+     ```bash
+     API=http://localhost:8300
+     token() { curl -s -X POST $API/auth/token -d "username=$1@test&password=test&grant_type=password" | jq -r .access_token; }
+     EMP=$(token empleado); ENC=$(token encargado); OPE=$(token operario)
+     REP=$(curl -s $API/api/v0/repuestos/codigo/REP-00087 -H "Authorization: Bearer $EMP" | jq .id)
+     UBI=$(curl -s $API/api/v0/repuestos/$REP -H "Authorization: Bearer $EMP" | jq '.stock[0].ubicacion_id')
+     echo "repuesto $REP, ubicación $UBI"
+     ```
 
 3. Si vas a mostrar las tablas, dejá abierta en DBeaver la conexión a `tci` (paso 6 de `levantar.md`).
 
@@ -186,25 +185,14 @@ Resultado: `liberada`, con el encargado registrado como quien la autorizó.
 
 ## 8. Pedidos de compra: CUN-03 (2 minutos)
 
-**Preparación:** contar con pedidos de compra en estado `pendiente_aprobacion` y usuarios habilitados para los roles encargado de mantenimiento y gerencia.
+Los datos de prueba traen dos pedidos en "Pendiente de aprobación": uno para aprobar y otro para cancelar.
 
-1. Iniciar sesión como **encargado de mantenimiento**.
-2. Entrar a **Pedidos de compra** y consultar los pedidos existentes.
-3. Seleccionar un pedido en estado `pendiente_aprobacion` y aprobarlo.
-4. Verificar que su estado cambie a `confirmado`.
-5. Seleccionar otro pedido pendiente de aprobación y cancelarlo indicando un motivo.
-6. Verificar que su estado cambie a `cancelado` y que el motivo quede registrado.
-7. Cerrar sesión e iniciar como **gerencia**.
-8. Consultar los pedidos y comprobar que puede visualizar la información, pero no aprobarlos ni cancelarlos.
+1. Entrar con `encargado@test` e ir a **Pedidos de compra**: la lista muestra origen, urgencia y estado de cada pedido.
+2. Abrir un pedido en **Pendiente de aprobación**, tocar **Aprobar pedido** y después **Sí, aprobar**. El estado pasa a **Confirmado**.
+3. Abrir el otro pedido en **Pendiente de aprobación**, tocar **Cancelar pedido**, escribir el motivo (`El proveedor ya no fabrica la válvula.`) y tocar **Confirmar cancelación**. El estado pasa a **Cancelado** y el motivo queda registrado.
+4. Cerrar sesión y entrar con `gerencia@test`: ve **Pedidos de compra** y el detalle de cada pedido, pero sin botones de acción.
 
-> "El encargado de mantenimiento puede aprobar o cancelar pedidos que esperan aprobación. Gerencia puede consultar la información, pero no modificar los pedidos. Las operaciones validan los permisos y las transiciones de estado."
-
-**Resultado esperado:**
-- El encargado de mantenimiento puede aprobar y cancelar pedidos pendientes de aprobación.
-- La aprobación cambia el estado a `confirmado`.
-- La cancelación requiere un motivo y cambia el estado a `cancelado`.
-- Gerencia puede consultar los pedidos, pero no modificarlos.
-- Los roles sin permisos no pueden ejecutar estas operaciones.
+> "El encargado aprueba o cancela los pedidos que esperan aprobación, siguiendo la máquina de estados del pedido. Gerencia solo consulta. Una acción sobre un pedido en otro estado se rechaza, y cancelar exige un motivo."
 
 ## 9. Todo quedó en PostgreSQL (1 minuto)
 
@@ -259,30 +247,3 @@ No: corren contra SQLite. La aplicación corre en PostgreSQL, y las reservas y l
 **"¿Por qué no hay migraciones con Alembic?"**
 
 El esquema se crea al iniciar con `create_all`. Alembic es lo primero que habría que agregar antes de producción, y así está escrito en el ADR.
-
-## Pedidos de compra (CUN-03)
-
-### Preparación
-
-- Levantar el entorno con `docker compose up -d`.
-- Contar con pedidos de compra en estado `pendiente_aprobacion`. Si solamente hay uno, revisar otro pedido para llevarlo a ese estado.
-- Disponer de usuarios habilitados para los roles encargado de mantenimiento y gerencia.
-
-### Demostración
-
-1. Iniciar sesión como **encargado de mantenimiento**.
-2. Consultar los pedidos mediante los endpoints del backend (la pantalla del frontend todavía no está habilitada).
-3. Seleccionar un pedido en estado `pendiente_aprobacion` y aprobarlo.
-4. Verificar que su estado cambie a `confirmado`.
-5. Si no hay otro pedido pendiente, revisar un segundo pedido para llevarlo a ese estado.
-6. Seleccionar ese pedido y cancelarlo indicando un motivo.
-7. Verificar que su estado cambie a `cancelado` y que el motivo quede registrado.
-8. Cerrar sesión e iniciar como **gerencia**.
-9. Consultar los pedidos y comprobar que puede visualizar la información, pero no aprobarlos ni cancelarlos.
-
-### Resultado esperado
-
-- El encargado de mantenimiento puede aprobar y cancelar pedidos pendientes de aprobación.
-- La aprobación cambia el estado a `confirmado`.
-- La cancelación requiere un motivo y cambia el estado a `cancelado`.
-- Gerencia puede consultar los pedidos, pero no modificarlos.

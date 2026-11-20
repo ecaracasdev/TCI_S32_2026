@@ -33,7 +33,7 @@ PEDIDOS_COMPRA = (
      "Reposición de sellos hidráulicos.", None, timedelta(days=12),
      (("REP-00302", 4),),
      ((timedelta(days=11), (("REP-00302", "B-01-04", 2),)),)),
-    ("pendiente_revision", "urgente", "manual", "empleado", None, None,
+    ("pendiente_aprobacion", "urgente", "manual", "empleado", "encargado", None,
      "Acople requerido para la mezcladora M-07.", None, timedelta(hours=12),
      (("REP-00303", 2),), ()),
 )
