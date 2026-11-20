@@ -96,7 +96,10 @@
                   <span class="numeric rounded border border-border px-1.5 py-0.5">{{ u }}</span>
                 }
                 @for (maquina of r.maquinas_compatibles ?? []; track maquina.id) {
-                  <span>{{ maquina.tipo_maquina.nombre }} <span class="machine-code text-base">{{ maquina.codigo }}</span></span>
+                  <button type="button" class="compatible-chip" [attr.title]="maquina.tipo_maquina.nombre" [attr.aria-label]="maquina.codigo + ': ' + maquina.tipo_maquina.nombre">
+                    {{ maquina.codigo }}
+                    <span class="compatible-tooltip" aria-hidden="true">{{ maquina.tipo_maquina.nombre }}</span>
+                  </button>
                 }
               </div>
             </li>
@@ -124,11 +127,16 @@
                     <span class="numeric text-xs text-muted-foreground">{{ r.codigo }}@if (r.descripcion) { · {{ r.descripcion }} }</span>
                   </td>
                   <td>
-                    @for (maquina of r.maquinas_compatibles ?? []; track maquina.id; let ultima = $last) {
-                      {{ maquina.tipo_maquina.nombre }} <span class="machine-code text-base">{{ maquina.codigo }}</span>@if (!ultima) {, }
-                    } @empty {
-                      {{ config.sinDato }}
-                    }
+                    <div class="flex flex-wrap gap-1">
+                      @for (maquina of r.maquinas_compatibles ?? []; track maquina.id) {
+                        <button type="button" class="compatible-chip" [attr.title]="maquina.tipo_maquina.nombre" [attr.aria-label]="maquina.codigo + ': ' + maquina.tipo_maquina.nombre">
+                          {{ maquina.codigo }}
+                          <span class="compatible-tooltip" aria-hidden="true">{{ maquina.tipo_maquina.nombre }}</span>
+                        </button>
+                      } @empty {
+                        {{ config.sinDato }}
+                      }
+                    </div>
                   </td>
                   <td data-align="center" class="numeric font-semibold">{{ cifra(r.stock_fisico_total) }}</td>
                   <td data-align="center" class="numeric">{{ cifra(r.stock_reservado_total) }}</td>

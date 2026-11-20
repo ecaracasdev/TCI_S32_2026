@@ -31,3 +31,38 @@
 .minimum-info:focus .minimum-tooltip {
   visibility: visible;
 }
+
+.compatible-chip {
+  position: relative;
+  border: 1px solid var(--ui-border);
+  border-radius: var(--ui-radius);
+  padding: 0.2rem 0.5rem;
+  color: var(--ui-text);
+  background: var(--ui-surface-muted);
+  font-size: 0.875rem;
+  font-weight: 400;
+  cursor: help;
+}
+
+.compatible-tooltip {
+  position: absolute;
+  z-index: 10;
+  left: 0;
+  bottom: calc(100% + 0.4rem);
+  width: max-content;
+  max-width: 14rem;
+  padding: 0.5rem;
+  border: 1px solid var(--ui-border);
+  border-radius: var(--ui-radius);
+  background: var(--ui-surface);
+  color: var(--ui-text);
+  font-size: 0.75rem;
+  white-space: normal;
+  box-shadow: 0 2px 8px rgb(0 0 0 / 0.15);
+  visibility: hidden;
+}
+
+.compatible-chip:hover .compatible-tooltip,
+.compatible-chip:focus .compatible-tooltip {
+  visibility: visible;
+}
