@@ -36,6 +36,9 @@
               [placeholder]="config.formulario.codigoPlaceholder"
               [attr.aria-invalid]="invalido('codigo')"
             />
+            @if (!id) {
+              <app-escaner-codigo (codigoLeido)="codigoEscaneado($event)" />
+            }
             @if (invalido('codigo')) {
               <p class="text-sm text-destructive">{{ config.formulario.requerido }}</p>
             }

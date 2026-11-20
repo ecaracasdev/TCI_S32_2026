@@ -4792,14 +4792,14 @@
           "stock_minimo": {
             "type": "integer",
             "minimum": 0.0,
-            "title": "Stock Minimo",
-            "default": 0
+            "title": "Stock Minimo"
           }
         },
         "type": "object",
         "required": [
           "codigo",
-          "nombre"
+          "nombre",
+          "stock_minimo"
         ],
         "title": "RepuestoCreateDto"
       },

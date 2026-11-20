@@ -1,4 +1,4 @@
-# CUN-02: Registrar un repuesto
+# CUN-04: Registrar un repuesto
 
 ## Objetivo
 
@@ -30,7 +30,7 @@ El encargado de mantenimiento necesita incorporar al catálogo un repuesto que t
 ## Flujo principal
 
 1. El encargado de mantenimiento solicita registrar un repuesto.
-2. El sistema solicita el código QR o de barras, el nombre, la descripción y el umbral mínimo del repuesto.
+2. El sistema solicita el código QR o de barras, el nombre y el umbral mínimo obligatorios, y una descripción opcional del repuesto.
 3. El encargado de mantenimiento informa los datos del repuesto.
 4. El sistema valida que los datos obligatorios estén completos y que el código no esté utilizado por otro repuesto.
 5. El sistema registra el repuesto como activo en el catálogo.
@@ -61,7 +61,7 @@ En los pasos 5 a 7, si el sistema no puede completar el registro, informa que la
 ## Postcondiciones
 
 - El repuesto queda registrado como activo en el catálogo.
-- El repuesto cuenta con un código único, nombre, descripción y umbral mínimo.
+- El repuesto cuenta con un código único, nombre y umbral mínimo; la descripción es opcional.
 - El stock físico, reservado y disponible quedan inicialmente en cero.
 - La ubicación queda pendiente de asignación hasta la recepción de unidades.
 - No se registra un movimiento de stock porque todavía no ingresaron unidades físicas.
@@ -144,3 +144,10 @@ sequenceDiagram
         Sistema-->>Encargado: Informar error
     end
 ```
+
+## Implementación
+
+- **Pantalla:** `/stock/nuevo`, disponible para `encargado_mantenimiento`. Permite ingresar el código manualmente o escanearlo con la cámara en navegadores compatibles; la descripción es opcional.
+- **API:** `POST /api/v0/repuestos`, protegida por autenticación y rol de encargado. Requiere código, nombre y stock mínimo entero no negativo; devuelve `201`, `409` ante código duplicado, `422` ante datos inválidos, `401` sin autenticación y `403` sin el rol.
+- **Persistencia:** el alta crea el repuesto activo sin registros de stock por ubicación ni movimientos; el stock se incorpora mediante una recepción.
+- **Pruebas:** `backend/tests/test_cun04_registrar_repuesto.py`. Ejecutar desde `backend` con `uv run pytest tests/test_cun04_registrar_repuesto.py -v`.

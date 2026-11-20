@@ -84,8 +84,9 @@ Con el **empleado** (volver a entrar con `empleado@test`):
 
 > "El stock disponible es el físico menos lo reservado, y es el número que decide si se puede usar o reservar un repuesto."
 
-3. **Nuevo repuesto**: código `REP-00300`, nombre `Termostato de seguridad TS-90`, mínimo `2`. Guardar. Queda creado sin existencias.
-4. Intentar crear otro con código `REP-00142`: la pantalla avisa que ya existe.
+3. Entrar con `encargado@test`. En **Nuevo repuesto**: código `REP-00300`, nombre `Termostato de seguridad TS-90`, mínimo `2`. Guardar. Queda creado sin existencias.
+4. Intentar crear otro con código `REP-00142`: la pantalla avisa que ya existe. Probar un mínimo negativo o decimal: el formulario informa el error y no guarda. La descripción es opcional.
+5. Opcionalmente, tocar **Escanear** y leer un QR o código de barras con la cámara en un navegador compatible; también se puede escribir el código. El empleado no tiene acceso al alta.
 
 > "Un repuesto nuevo arranca sin stock: el stock entra por las recepciones de compra, no se escribe a mano."
 

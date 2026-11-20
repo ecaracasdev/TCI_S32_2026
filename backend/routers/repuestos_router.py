@@ -25,6 +25,7 @@ lectura = requiere_rol(
     "empleado_mantenimiento", "encargado_mantenimiento", "gerencia_administracion"
 )
 escritura = requiere_rol("empleado_mantenimiento", "encargado_mantenimiento")
+alta_repuesto = requiere_rol("encargado_mantenimiento")
 
 
 def obtener_servicio(sesion: AsyncSession = Depends(get_db)) -> ServicioRepuestos:
@@ -56,7 +57,7 @@ async def listar_repuestos(
 @router.post("/repuestos", tags=["Repuestos"], status_code=201, response_model=RepuestoResponseDto)
 async def crear_repuesto(
     datos: RepuestoCreateDto,
-    usuario=Depends(escritura),
+    usuario=Depends(alta_repuesto),
     servicio: ServicioRepuestos = Depends(obtener_servicio),
 ):
     """Incorpora un repuesto al catálogo sin existencias iniciales."""

@@ -13,7 +13,7 @@ import { SessionService } from '../../core/auth/session.service';
 import { ESTADOS_STOCK, FILTROS, REPUESTOS_CONFIG } from './repuestos.config';
 import {
   FiltroEstado,
-  ROLES_ESCRITURA,
+  ROLES_ALTA_REPUESTO,
   RepuestoDto,
   TAMANO_PAGINA,
   cifra,
@@ -50,8 +50,8 @@ export class RepuestosPage {
   private readonly sesion = inject(SessionService);
 
   protected readonly config = REPUESTOS_CONFIG;
-  protected readonly puedeEditar = computed(() =>
-    this.sesion.roles().some((rol) => ROLES_ESCRITURA.includes(rol.toLowerCase())),
+  protected readonly puedeCrear = computed(() =>
+    this.sesion.roles().some((rol) => ROLES_ALTA_REPUESTO.includes(rol.toLowerCase())),
   );
   protected readonly filtros = FILTROS;
   protected readonly esDemo = environment.useMockData;

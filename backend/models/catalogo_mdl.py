@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from pydantic import AliasChoices, Field, PositiveInt, computed_field
+from pydantic import AliasChoices, Field, PositiveInt, computed_field, field_validator
 
 from .common_mdl import RequestDto, ResponseDto
 
@@ -118,7 +118,12 @@ class RepuestoCreateDto(RequestDto):
     codigo: str = Field(min_length=1, max_length=100)
     nombre: str = Field(min_length=1, max_length=200)
     descripcion: str | None = None
-    stock_minimo: int = Field(default=0, ge=0)
+    stock_minimo: int = Field(ge=0, strict=True)
+
+    @field_validator("codigo", "nombre", mode="before")
+    @classmethod
+    def quitar_espacios(cls, valor):
+        return valor.strip() if isinstance(valor, str) else valor
 
 
 class RepuestoUpdateDto(RequestDto):
