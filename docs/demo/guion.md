@@ -214,7 +214,7 @@ No intentar ejecutar desde el Swagger las rutas protegidas: no tiene botón para
 ## Preguntas probables
 
 **"¿Y los pedidos de compra?"**
-La pantalla está hecha, pero su backend todavía no: el router de pedidos de compra y la recepción con carga de stock (CUN-03, #89) están pendientes. Para la demo mostramos solo lo que funciona de punta a punta.
+La pantalla está hecha, pero su backend todavía no: el router de pedidos de compra y la recepción con carga de stock (CUN-02, #89) están pendientes. Para la demo mostramos solo lo que funciona de punta a punta.
 
 **"¿Qué pasa si falta stock para la reparación?"**
 Se rechaza el uso con el faltante. El CUN-01 prevé ofrecer un pedido de compra (RN-03) y dejar la incidencia "Pendiente de repuesto": eso depende de los pedidos de compra y queda pendiente.
