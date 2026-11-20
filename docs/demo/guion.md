@@ -238,7 +238,7 @@ No intentar ejecutar desde el Swagger las rutas protegidas: no tiene botón para
 
 **"¿Y los pedidos de compra?"**
 
-El sistema permite consultar pedidos, asignar responsables, revisar, aprobar y cancelar pedidos de compra. La aprobación los deja en estado `confirmado`; la cancelación requiere un motivo y los deja en estado `cancelado`. La recepción de mercadería es otro caso de uso y no forma parte de esta demostración.
+El sistema permite consultar pedidos, asignar responsables, revisar, aprobar y cancelar pedidos de compra. La aprobación los deja en estado `confirmado`; la cancelación requiere un motivo y los deja en estado `cancelado`. La recepción de mercadería es otro caso de uso (CUN-02) y no forma parte de esta demostración.
 
 **"¿Qué pasa si falta stock para la reparación?"**
 
