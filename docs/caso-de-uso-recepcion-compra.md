@@ -1,7 +1,7 @@
 # CU: Cargar stock recibido con ubicación
 
 ## Identificación
-- **ID**: CUN-03
+- **ID**: CUN-02
 - **Objetivo**: Registrar la recepción de un pedido de compra, cargando el stock físico y la ubicación de cada repuesto recibido
 - **Prioridad**: Alta
 - **Actor principal**: Encargado de mantenimiento

@@ -1,3 +1,4 @@
+
 # Guion de la demo (M6)
 
 Duración estimada: 15 minutos. Cada paso dice qué hacer, qué se tiene que ver y qué decir. Los números (cantidades, stock) corresponden a los datos recién cargados con `crear-dummy-db`.
@@ -14,14 +15,14 @@ Duración estimada: 15 minutos. Cada paso dice qué hacer, qué se tiene que ver
    - **Navegador** en http://localhost:8080.
    - **Terminal** en la raíz del repo, con los tokens y el repuesto de la demo listos. Si recargaste los datos, recalculá estas variables, porque los repuestos cambian de id:
 
-     ```bash
-     API=http://localhost:8300
-     token() { curl -s -X POST $API/auth/token -d "username=$1@test&password=test&grant_type=password" | jq -r .access_token; }
-     EMP=$(token empleado); ENC=$(token encargado); OPE=$(token operario)
-     REP=$(curl -s $API/api/v0/repuestos/codigo/REP-00087 -H "Authorization: Bearer $EMP" | jq .id)
-     UBI=$(curl -s $API/api/v0/repuestos/$REP -H "Authorization: Bearer $EMP" | jq '.stock[0].ubicacion_id')
-     echo "repuesto $REP, ubicación $UBI"
-     ```
+   ```bash
+   API=http://localhost:8300
+   token() { curl -s -X POST $API/auth/token -d "username=$1@test&password=test&grant_type=password" | jq -r .access_token; }
+   EMP=$(token empleado); ENC=$(token encargado); OPE=$(token operario)
+   REP=$(curl -s $API/api/v0/repuestos/codigo/REP-00087 -H "Authorization: Bearer $EMP" | jq .id)
+   UBI=$(curl -s $API/api/v0/repuestos/$REP -H "Authorization: Bearer $EMP" | jq '.stock[0].ubicacion_id')
+   echo "repuesto $REP, ubicación $UBI"
+   ```
 
 3. Si vas a mostrar las tablas, dejá abierta en DBeaver la conexión a `tci` (paso 6 de `levantar.md`).
 
@@ -35,13 +36,13 @@ Cada rol ve en el menú solo lo que puede usar, y todo lo que aparece funciona c
 | --- | --- |
 | Operario | Inicio, Reportar incidencia, Incidencias |
 | Empleado | Inicio, Incidencias, Registrar uso, Máquinas, Repuestos, Ubicaciones, Reposición, Compras |
-| Encargado y gerencia | Inicio, Incidencias, Máquinas, Repuestos, Ubicaciones, Reposición, Compras |
+| Encargado y gerencia | Inicio, Incidencias, Máquinas, Repuestos, Ubicaciones, Reposición, Compras, Pedidos de compra |
 
-Pedidos de compra no está en el menú porque su backend todavía no existe (#89). Si alguien escribe esa dirección a mano, ve "Pantalla en desarrollo".
+En **Pedidos de compra**, el encargado de mantenimiento puede gestionar los pedidos y gerencia puede consultarlos, sin aprobarlos ni cancelarlos.
 
 ## 1. Presentación (30 segundos)
 
-> "Es el sistema de stock y mantenimiento de la planta: Angular 21 en el front, FastAPI en el back y PostgreSQL como base, todo levantado con `docker compose`. Vamos a mostrar el ciclo completo de una incidencia, desde que el operario la reporta hasta que el empleado la resuelve registrando los repuestos que usó (CUN-01), el stock por ubicación, las reservas con sus reglas de negocio y cómo se controlan los permisos por rol."
+> "Es el sistema de stock y mantenimiento de la planta: Angular 21 en el front, FastAPI en el back y PostgreSQL como base, todo levantado con `docker compose`. Vamos a mostrar el ciclo completo de una incidencia, desde que el operario la reporta hasta que el empleado la resuelve registrando los repuestos que usó (CUN-01), el stock por ubicación, las reservas con sus reglas de negocio, los pedidos de compra y cómo se controlan los permisos por rol."
 
 ## 2. El operario reporta una incidencia (2 minutos)
 
@@ -183,7 +184,29 @@ curl -s -X POST $API/api/v0/reservas/$ID2/liberacion -H "Authorization: Bearer $
 
 Resultado: `liberada`, con el encargado registrado como quien la autorizó.
 
-## 8. Todo quedó en PostgreSQL (1 minuto)
+## 8. Pedidos de compra: CUN-03 (2 minutos)
+
+**Preparación:** contar con pedidos de compra en estado `pendiente_aprobacion` y usuarios habilitados para los roles encargado de mantenimiento y gerencia.
+
+1. Iniciar sesión como **encargado de mantenimiento**.
+2. Entrar a **Pedidos de compra** y consultar los pedidos existentes.
+3. Seleccionar un pedido en estado `pendiente_aprobacion` y aprobarlo.
+4. Verificar que su estado cambie a `confirmado`.
+5. Seleccionar otro pedido pendiente de aprobación y cancelarlo indicando un motivo.
+6. Verificar que su estado cambie a `cancelado` y que el motivo quede registrado.
+7. Cerrar sesión e iniciar como **gerencia**.
+8. Consultar los pedidos y comprobar que puede visualizar la información, pero no aprobarlos ni cancelarlos.
+
+> "El encargado de mantenimiento puede aprobar o cancelar pedidos que esperan aprobación. Gerencia puede consultar la información, pero no modificar los pedidos. Las operaciones validan los permisos y las transiciones de estado."
+
+**Resultado esperado:**
+- El encargado de mantenimiento puede aprobar y cancelar pedidos pendientes de aprobación.
+- La aprobación cambia el estado a `confirmado`.
+- La cancelación requiere un motivo y cambia el estado a `cancelado`.
+- Gerencia puede consultar los pedidos, pero no modificarlos.
+- Los roles sin permisos no pueden ejecutar estas operaciones.
+
+## 9. Todo quedó en PostgreSQL (1 minuto)
 
 ```bash
 docker compose exec db psql -U tci -d tci -c "select tipo_movimiento, cantidad, variacion_fisica, variacion_reservada from movimientos_stock where item_reserva_id is not null order by id desc limit 5;"
@@ -193,7 +216,7 @@ Se ven, del más nuevo al más viejo: `liberacion` (-1 reservado), `reserva` (+1
 
 > "Cada cambio de stock queda como un movimiento que no se modifica: así se reconstruye la historia de cada repuesto (RN-06). La base es PostgreSQL 16, levantada por el compose. Sin Docker y en los tests usamos SQLite, y la decisión con sus pruebas está en el ADR `docs/M6-adr-sqlite-o-postgres.md`."
 
-## 9. Contrato y tests (1 minuto)
+## 10. Contrato y tests (1 minuto)
 
 1. Abrir http://localhost:8300/docs: el Swagger con las rutas implementadas, incluidas incidencias, reservas y alertas de stock.
 
@@ -207,26 +230,59 @@ No intentar ejecutar desde el Swagger las rutas protegidas: no tiene botón para
    cd backend && uv run pytest tests/test_reservas.py -v
    ```
 
-   Se ven los 7 tests en verde, con la regla en el nombre (`test_rn05_...`, `test_rn10_...`). Los del CUN-01 están en `tests/test_reparaciones.py` (`test_rn01_...`). La suite completa del backend corre con `uv run pytest -q`.
+   Se ven los 7 tests en verde, con la regla en el nombre (`test_rn05_...`, `test_rn10_...`). Los del CUN-01 están en `tests/test_reparaciones.py` (`test_rn01_...`). Los tests de CUN-03 están en `tests/test_pedidos_compra.py`. La suite completa del backend corre con `uv run pytest -q`.
 
-> "Cada uno de estos tests lo comprobamos rompiendo a propósito lo que protege: si se saca el rollback o el control de disponible, el test falla."
+> "Cada uno de estos tests comprueba reglas y errores esperados. Las verificaciones manuales de la demo se realizan con Docker y PostgreSQL."
 
 ## Preguntas probables
 
 **"¿Y los pedidos de compra?"**
-La pantalla está hecha, pero su backend todavía no: el router de pedidos de compra y la recepción con carga de stock (CUN-03, #89) están pendientes. Para la demo mostramos solo lo que funciona de punta a punta.
+
+El sistema permite consultar pedidos, asignar responsables, revisar, aprobar y cancelar pedidos de compra. La aprobación los deja en estado `confirmado`; la cancelación requiere un motivo y los deja en estado `cancelado`. La recepción de mercadería es otro caso de uso (CUN-02) y no forma parte de esta demostración.
 
 **"¿Qué pasa si falta stock para la reparación?"**
-Se rechaza el uso con el faltante. El CUN-01 prevé ofrecer un pedido de compra (RN-03) y dejar la incidencia "Pendiente de repuesto": eso depende de los pedidos de compra y queda pendiente.
+
+Se rechaza el uso con el faltante. El CUN-01 prevé ofrecer un pedido de compra (RN-03) y dejar la incidencia "Pendiente de repuesto": eso depende de la integración de ese flujo.
 
 **"¿Por qué las reservas no tienen pantalla?"**
+
 Priorizamos la regla de negocio con sus tests (RN-05 y RN-10), que era lo que faltaba. La pantalla queda pendiente.
 
 **"¿Qué pasa si dos empleados usan o reservan la última unidad a la vez?"**
+
 El descuento y la reserva se hacen con un `UPDATE ... WHERE disponible >= cantidad` en una sola sentencia: solo una de las dos actualiza la fila y la otra recibe `409`. Además la base tiene restricciones `CHECK`: el stock físico nunca queda negativo y lo reservado nunca supera al físico. La decisión está en `docs/M6-adr-concurrencia-rn01.md`.
 
 **"¿Los tests corren contra PostgreSQL?"**
+
 No: corren contra SQLite. La aplicación corre en PostgreSQL, y las reservas y las incidencias se probaron a mano contra PostgreSQL. Pasar la suite a PostgreSQL implica reescribir los tests que usan `sqlite3` directo, y está anotado como pendiente en el ADR.
 
 **"¿Por qué no hay migraciones con Alembic?"**
+
 El esquema se crea al iniciar con `create_all`. Alembic es lo primero que habría que agregar antes de producción, y así está escrito en el ADR.
+
+## Pedidos de compra (CUN-03)
+
+### Preparación
+
+- Levantar el entorno con `docker compose up -d`.
+- Contar con pedidos de compra en estado `pendiente_aprobacion`. Si solamente hay uno, revisar otro pedido para llevarlo a ese estado.
+- Disponer de usuarios habilitados para los roles encargado de mantenimiento y gerencia.
+
+### Demostración
+
+1. Iniciar sesión como **encargado de mantenimiento**.
+2. Consultar los pedidos mediante los endpoints del backend (la pantalla del frontend todavía no está habilitada).
+3. Seleccionar un pedido en estado `pendiente_aprobacion` y aprobarlo.
+4. Verificar que su estado cambie a `confirmado`.
+5. Si no hay otro pedido pendiente, revisar un segundo pedido para llevarlo a ese estado.
+6. Seleccionar ese pedido y cancelarlo indicando un motivo.
+7. Verificar que su estado cambie a `cancelado` y que el motivo quede registrado.
+8. Cerrar sesión e iniciar como **gerencia**.
+9. Consultar los pedidos y comprobar que puede visualizar la información, pero no aprobarlos ni cancelarlos.
+
+### Resultado esperado
+
+- El encargado de mantenimiento puede aprobar y cancelar pedidos pendientes de aprobación.
+- La aprobación cambia el estado a `confirmado`.
+- La cancelación requiere un motivo y cambia el estado a `cancelado`.
+- Gerencia puede consultar los pedidos, pero no modificarlos.

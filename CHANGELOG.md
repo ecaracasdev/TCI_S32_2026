@@ -10,7 +10,7 @@ Registro de cambios relevantes del proyecto. Formato basado en [Keep a Changelog
 
 ### Changed
 
-- El CU "Cargar stock recibido con ubicación" (`docs/caso-de-uso-recepcion-compra.md`) pasa de CUN-02 a **CUN-03**: el número CUN-02 ya lo usaba "Registrar un repuesto" (`docs/negocio/casos-de-uso/cun-02-registrar-repuesto.md`).
+- Numeración de los casos de uso por integrante: CUN-01 y CUN-02 (Elias), CUN-03 (Martin, `docs/caso-de-uso-cun03-aprobar-pedido.md`) y CUN-04 (Nicolás). "Registrar un repuesto" pasa de CUN-02 a **CUN-04** (`docs/negocio/casos-de-uso/cun-04-registrar-repuesto.md`) para no chocar con "Cargar stock recibido con ubicación", que queda como CUN-02.
 - `docker compose up` requiere un `.env` con `SECRET_KEY` y `CLAVE_JWT` (copiar `.env.example`). El compose activa el JWT local con `AUTOCONFIG_AUTH__JWT__HABILITADO=true`; `config.toml` ya no define `HABILITADO` (el valor por defecto sigue siendo `false`) porque el archivo gana sobre la variable.
 
 ### Fixed
@@ -29,3 +29,4 @@ Registro de cambios relevantes del proyecto. Formato basado en [Keep a Changelog
 - `.dockerignore` en `backend/` y `frontend/` para no copiar `node_modules`, `.venv`, `dist` ni logs al build.
 - Sección "Cómo levantar el proyecto con Docker" en el README principal, más una sección de Docker en `backend/README.md` y `frontend/README.md`.
 - `docs/M6-adr-sqlite-o-postgres.md`: ADR de la base de datos del entregable: PostgreSQL en Docker Compose y SQLite sin Docker y en los tests (issue #94, M6). Verificado contra PostgreSQL 16: la misma carga de datos y 31 pedidos HTTP a un backend sobre cada motor dieron 29 respuestas idénticas; las 2 diferencias (búsqueda de repuestos con mayúsculas acentuadas) y lo que no se verificó figuran en el documento.
+- Gestión de pedidos de compra (CUN-03): se agrega la consulta de pedidos, asignación de responsables, revisión, aprobación y cancelación con motivo. Se validan los permisos según el rol y las transiciones de estado. Se incorporan pruebas automatizadas para los casos correctos y los errores esperados.

@@ -1,4 +1,4 @@
-# CUN-02: Registrar un repuesto
+# CUN-04: Registrar un repuesto
 
 ## Objetivo
 
