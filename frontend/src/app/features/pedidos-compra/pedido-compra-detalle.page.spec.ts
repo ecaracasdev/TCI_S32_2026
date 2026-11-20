@@ -1,6 +1,8 @@
 import { TestBed } from '@angular/core/testing';
 import { ActivatedRoute, provideRouter } from '@angular/router';
+import { signal } from '@angular/core';
 import { Observable, of, throwError } from 'rxjs';
+import { SessionService } from '../../core/auth/session.service';
 import { PedidoCompraDetallePage } from './pedido-compra-detalle.page';
 import { EstadoPedido, PedidoCompraDto } from './pedidos-compra.models';
 import { PedidosCompraService } from './pedidos-compra.service';
@@ -63,11 +65,12 @@ class ServicioFalso extends PedidosCompraService {
   }
 }
 
-async function montar(servicio: ServicioFalso) {
+async function montar(servicio: ServicioFalso, roles = ['encargado_mantenimiento']) {
   TestBed.configureTestingModule({
     providers: [
       provideRouter([]),
       { provide: PedidosCompraService, useValue: servicio },
+      { provide: SessionService, useValue: { roles: signal(roles) } },
       { provide: ActivatedRoute, useValue: { snapshot: { paramMap: { get: () => '103' } } } },
     ],
   });
@@ -81,6 +84,20 @@ async function montar(servicio: ServicioFalso) {
 }
 
 describe('PedidoCompraDetallePage · resolver pedido', () => {
+  it('a gerencia no le muestra aprobar, cancelar ni registrar recepción', async () => {
+    const pendiente = await montar(new ServicioFalso(pedido('pendiente_aprobacion')), [
+      'gerencia_administracion',
+    ]);
+    expect(pendiente.boton('Aprobar pedido')).toBeFalsy();
+    expect(pendiente.boton('Cancelar pedido')).toBeFalsy();
+    TestBed.resetTestingModule();
+
+    const confirmado = await montar(new ServicioFalso(pedido('confirmado')), [
+      'gerencia_administracion',
+    ]);
+    expect(confirmado.el.textContent).not.toContain('Registrar recepción');
+  });
+
   it('muestra aprobar y cancelar solo en pendiente_aprobacion', async () => {
     const pendiente = await montar(new ServicioFalso(pedido('pendiente_aprobacion')));
     expect(pendiente.boton('Aprobar pedido')).toBeTruthy();

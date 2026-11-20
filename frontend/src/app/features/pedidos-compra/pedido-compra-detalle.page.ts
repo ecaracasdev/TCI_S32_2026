@@ -3,6 +3,8 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
+import { ROLES_GESTION_PEDIDOS, tieneAlgunRol } from '../../core/auth/roles.guard';
+import { SessionService } from '../../core/auth/session.service';
 import { ToastService } from '../../core/services/toast.service';
 import { HlmBadgeImports } from '@shared/ui/badge';
 import { HlmButtonImports } from '@shared/ui/button';
@@ -39,6 +41,7 @@ export class PedidoCompraDetallePage {
   private readonly destroyRef = inject(DestroyRef);
   private readonly ruta = inject(ActivatedRoute);
   private readonly toast = inject(ToastService);
+  private readonly sesion = inject(SessionService);
 
   protected readonly config = PEDIDOS_COMPRA_CONFIG;
   protected readonly pedido = signal<PedidoCompraDto | null>(null);
@@ -128,7 +131,11 @@ export class PedidoCompraDetallePage {
   }
 
   protected puedeResolver(pedido: PedidoCompraDto): boolean {
-    return pedido.estado === 'pendiente_aprobacion';
+    return this.puedeGestionar() && pedido.estado === 'pendiente_aprobacion';
+  }
+
+  private puedeGestionar(): boolean {
+    return tieneAlgunRol(this.sesion.roles(), ROLES_GESTION_PEDIDOS);
   }
 
   protected estado(valor: PedidoCompraDto['estado']) {
@@ -148,6 +155,9 @@ export class PedidoCompraDetallePage {
   }
 
   protected puedeRegistrarRecepcion(pedido: PedidoCompraDto): boolean {
-    return pedido.estado === 'confirmado' || pedido.estado === 'pendiente_recepcion';
+    return (
+      this.puedeGestionar() &&
+      (pedido.estado === 'confirmado' || pedido.estado === 'pendiente_recepcion')
+    );
   }
 }

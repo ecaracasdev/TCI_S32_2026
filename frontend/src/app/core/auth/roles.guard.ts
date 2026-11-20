@@ -18,6 +18,10 @@ export const ROLES_CONSULTA_INCIDENCIAS = ['operario_maquina', ...ROLES_LECTURA_
 export const ROLES_REPARACION = ['empleado_mantenimiento'];
 export const ROLES_CONSULTA_REPARACION = ROLES_LECTURA_PLANTA;
 
+/** CUN-03: el encargado gestiona los pedidos de compra; gerencia solo los consulta. */
+export const ROLES_CONSULTA_PEDIDOS = ['encargado_mantenimiento', 'gerencia_administracion'];
+export const ROLES_GESTION_PEDIDOS = ['encargado_mantenimiento'];
+
 export function tieneAlgunRol(roles: string[], permitidos: string[]): boolean {
   return roles.some((rol) => permitidos.includes(rol.toLowerCase()));
 }
