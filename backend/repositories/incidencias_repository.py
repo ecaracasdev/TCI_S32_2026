@@ -3,7 +3,7 @@ from typing import Optional, Tuple, Sequence
 from sqlmodel import select, func
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from db.db_models.incidencias import IncidenciaDb, FotoIncidenciaDb
+from db.db_models.incidencias import IncidenciaDb, FotoIncidenciaDb, ReparacionDb
 from db.db_models.catalogo import MaquinaDb, TipoMaquinaDb
 
 
@@ -67,6 +67,12 @@ class RepositorioIncidencias:
         await self.sesion.commit()
         await self.sesion.refresh(incidencia)
         return incidencia
+
+    async def obtener_reparacion_id(self, incidencia_id: int) -> Optional[int]:
+        """Id de la reparación de la incidencia, si un empleado ya la tomó."""
+        return await self.sesion.scalar(
+            select(ReparacionDb.id).where(ReparacionDb.incidencia_id == incidencia_id)
+        )
 
     async def listar(
         self, offset: int, limit: int, estado: Optional[str]

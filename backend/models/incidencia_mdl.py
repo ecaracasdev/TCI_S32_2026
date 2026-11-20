@@ -44,6 +44,9 @@ class IncidenciaResponseDto(ResponseDto):
     turno: TurnoDto
     reportada_en: datetime
     resuelta_en: datetime | None = None
+    reparacion_id: int | None = Field(
+        default=None, description="Reparación de la incidencia, si un empleado ya la tomó."
+    )
     fotos: list[FotoIncidenciaDto] = Field(
         default_factory=list,
         validation_alias=AliasChoices("fotos", "photos"),

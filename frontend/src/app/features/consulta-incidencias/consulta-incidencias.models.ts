@@ -24,6 +24,8 @@ export interface IncidenciaDto {
   reportada_en: string;
   resuelta_en: string | null;
   reportada_por_usuario_id: number;
+  /** Reparación de la incidencia, si un empleado ya la tomó. */
+  reparacion_id: number | null;
 
   fotos: FotoDto[];
 
@@ -31,4 +33,23 @@ export interface IncidenciaDto {
     id: number;
     codigo: string;
   } | null;
+}
+
+export interface UsoRepuestoDto {
+  id: number;
+  cantidad: number;
+  usada_en: string;
+  repuesto: { id: number; codigo: string; nombre: string };
+}
+
+export interface ReparacionDto {
+  id: number;
+  incidencia_id: number;
+  empleado_id: number | null;
+  /** en_curso, pendiente_repuesto o completada. */
+  estado: string;
+  iniciada_en: string | null;
+  completada_en: string | null;
+  usos: UsoRepuestoDto[];
+  informe_resolucion: { resumen: string; creada_en: string } | null;
 }

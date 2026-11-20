@@ -14,6 +14,10 @@ export const ROLES_LECTURA_PLANTA = [
 export const ROLES_REPORTE_INCIDENCIA = ['operario_maquina'];
 export const ROLES_CONSULTA_INCIDENCIAS = ['operario_maquina', ...ROLES_LECTURA_PLANTA];
 
+/** CUN-01: el empleado toma la incidencia, registra los repuestos usados y la resuelve. */
+export const ROLES_REPARACION = ['empleado_mantenimiento'];
+export const ROLES_CONSULTA_REPARACION = ROLES_LECTURA_PLANTA;
+
 export function tieneAlgunRol(roles: string[], permitidos: string[]): boolean {
   return roles.some((rol) => permitidos.includes(rol.toLowerCase()));
 }

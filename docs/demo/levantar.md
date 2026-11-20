@@ -80,9 +80,9 @@ Carga 18 máquinas, 10 ubicaciones, 13 repuestos, 19 incidencias, 9 pedidos de c
 | Usuario | Contraseña | Rol | Qué ve en el menú |
 | --- | --- | --- | --- |
 | `operario@test` | `test` | Operario de máquina | Inicio, Reportar incidencia e Incidencias |
-| `empleado@test` | `test` | Empleado de mantenimiento | Inicio, Incidencias, Máquinas, Repuestos, Ubicaciones, Reposición y Compras |
-| `encargado@test` | `test` | Encargado de mantenimiento | Lo mismo que el empleado; además da de alta y edita máquinas y libera reservas |
-| `gerencia@test` | `test` | Gerencia / Administración | Lo mismo que el empleado, solo lectura |
+| `empleado@test` | `test` | Empleado de mantenimiento | Inicio, Incidencias, Registrar uso, Máquinas, Repuestos, Ubicaciones, Reposición y Compras; toma y resuelve incidencias |
+| `encargado@test` | `test` | Encargado de mantenimiento | Inicio, Incidencias, Máquinas, Repuestos, Ubicaciones, Reposición y Compras; además da de alta y edita máquinas y libera reservas |
+| `gerencia@test` | `test` | Gerencia / Administración | Lo mismo que el encargado, solo lectura |
 
 Los permisos completos están en [`docs/actores.md`](../actores.md).
 

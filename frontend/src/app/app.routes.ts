@@ -5,9 +5,13 @@ import { authGuard } from './core/auth/auth.guard';
 import {
   ROLES_CONSULTA_INCIDENCIAS,
   ROLES_LECTURA_PLANTA,
+  ROLES_REPARACION,
   ROLES_REPORTE_INCIDENCIA,
   rolGuard,
 } from './core/auth/roles.guard';
+import { MockRegistrarUsoService } from './features/registrar-uso/mock-registrar-uso.service';
+import { RegistrarUsoHttpService } from './features/registrar-uso/registrar-uso.http.service';
+import { RegistrarUsoService } from './features/registrar-uso/registrar-uso.service';
 import { ConsultaIncidenciasHttpService } from './features/consulta-incidencias/consulta-incidencias.http.service';
 import { ConsultaIncidenciasService } from './features/consulta-incidencias/consulta-incidencias.service';
 import { MockConsultaIncidenciasService } from './features/consulta-incidencias/mock-consulta-incidencias.service';
@@ -197,6 +201,25 @@ export const routes: Routes = [
               ),
           },
         ],
+      },
+
+      {
+        path: 'usos/nuevo',
+        title: 'Registrar uso de repuesto · TCI',
+        canActivate: [rolGuard(ROLES_REPARACION)],
+        providers: [
+          {
+            provide: RegistrarUsoService,
+            useFactory: () =>
+              environment.useMockData
+                ? inject(MockRegistrarUsoService)
+                : inject(RegistrarUsoHttpService),
+          },
+        ],
+        loadComponent: () =>
+          import('./features/registrar-uso/registrar-uso.page').then(
+            (page) => page.RegistrarUsoPage,
+          ),
       },
 
       {

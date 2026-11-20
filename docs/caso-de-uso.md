@@ -116,6 +116,16 @@ sequenceDiagram
     end
 ```
 
+## Implementación
+
+Implementado de punta a punta en la issue #112. Decisiones tomadas al implementarlo:
+
+- **Cómo se llega a "En reparación":** el empleado toma la incidencia (`POST /api/v0/incidencias/{id}/reparacion`), que crea la reparación a su nombre y pasa la incidencia a `en_reparacion`. Se puede tomar una incidencia `reportada` o `en_triage`; el triage no es obligatorio (en la máquina de estados T01 figura como supuesto).
+- **Registrar el uso:** `POST /api/v0/reparaciones/{id}/usos`. Valida contra el stock **disponible** (físico − reservado) para no usar unidades reservadas (RN-05), descuenta de una sola ubicación (la indicada o la de mayor disponible) y deja un movimiento `consumo`. La alerta de umbral (RN-02) se refleja en `/stock/alertas`.
+- **Cierre:** `POST /api/v0/reparaciones/{id}/informe` registra el informe de resolución; la reparación queda `completada` y la incidencia `resuelta`. Excede este CU, pero cierra el ciclo de la incidencia.
+- **Concurrencia (excepción del paso 5):** resuelta con una sentencia condicionada en la base; ver `docs/M6-adr-concurrencia-rn01.md`.
+- **Falta de stock:** se rechaza con `409` e informa el faltante. La derivación a un pedido de compra (RN-03) queda pendiente.
+
 ## Reglas de negocio relacionadas
 
 - **RN-01 — Descuento por uso.** Usar un repuesto en una reparación descuenta del stock físico la cantidad de la línea de uso. El stock físico resultante debe ser ≥ 0: si no alcanza, el uso se rechaza.

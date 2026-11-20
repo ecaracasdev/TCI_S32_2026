@@ -1517,6 +1517,85 @@
         }
       }
     },
+    "/api/v0/incidencias/{incidencia_id}/reparacion": {
+      "post": {
+        "tags": [
+          "Incidencias"
+        ],
+        "summary": "Tomar incidencia",
+        "description": "El empleado de mantenimiento toma una incidencia reportada o en triage: se crea su reparación y la incidencia pasa a en reparación.",
+        "operationId": "tomar_incidencia_api_v0_incidencias__incidencia_id__reparacion_post",
+        "security": [
+          {
+            "Autenticación Bearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "incidencia_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Identificador de incidencia"
+            },
+            "description": "Identificador de la incidencia consultada."
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "La operación se completó correctamente.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReparacionResponseDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Autenticación requerida.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Recurso inexistente.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflicto con el estado o stock actual.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Los datos enviados no cumplen el formato esperado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v0/reparaciones/{reparacion_id}": {
       "get": {
         "tags": [
@@ -3572,6 +3651,18 @@
               }
             ],
             "title": "Resuelta En"
+          },
+          "reparacion_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reparacion Id",
+            "description": "Reparación de la incidencia, si un empleado ya la tomó."
           },
           "fotos": {
             "items": {

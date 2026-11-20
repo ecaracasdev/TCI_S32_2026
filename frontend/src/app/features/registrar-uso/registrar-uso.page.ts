@@ -1,6 +1,7 @@
 import { Component, DestroyRef, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { HlmButtonImports } from '@shared/ui/button';
 import { HlmCardImports } from '@shared/ui/card';
 import { HlmInputImports } from '@shared/ui/input';
@@ -14,7 +15,14 @@ import { RegistrarUsoService } from './registrar-uso.service';
 @Component({
   selector: 'app-registrar-uso-page',
   standalone: true,
-  imports: [ReactiveFormsModule, HlmButtonImports, HlmCardImports, HlmInputImports, HlmLabelImports],
+  imports: [
+    ReactiveFormsModule,
+    RouterLink,
+    HlmButtonImports,
+    HlmCardImports,
+    HlmInputImports,
+    HlmLabelImports,
+  ],
   templateUrl: './registrar-uso.page.html',
 })
 export class RegistrarUsoPage {
@@ -33,6 +41,19 @@ export class RegistrarUsoPage {
     reparacion_id: [null as number | null, [Validators.required, Validators.min(1)]],
     cantidad: [1, [Validators.required, Validators.min(1), Validators.pattern(/^[1-9]\d*$/)]],
   });
+
+  /** Incidencia de origen, cuando se llega desde su detalle (CUN-01). */
+  protected readonly incidenciaId: number | null;
+
+  constructor() {
+    const parametros = inject(ActivatedRoute).snapshot.queryParamMap;
+    const reparacion = Number(parametros.get('reparacion'));
+    if (reparacion > 0) {
+      this.form.controls.reparacion_id.setValue(reparacion);
+    }
+    const incidencia = Number(parametros.get('incidencia'));
+    this.incidenciaId = incidencia > 0 ? incidencia : null;
+  }
 
   protected escanear(): void {
     const codigos = this.config.repuesto.codigosDemo;
@@ -128,14 +149,16 @@ export class RegistrarUsoPage {
           }
           this.form.controls.cantidad.setValue(1);
         },
-        error: (error: { status?: number; message?: string }) => {
+        error: (error: { status?: number; message?: string; error?: { mensaje?: string } }) => {
           this.enviando.set(false);
+          // El backend explica el rechazo (stock insuficiente, reparación terminada, etc.).
           const message =
-            error.status === 404
+            error.error?.mensaje ??
+            (error.status === 404
               ? this.config.reparacion.noEncontrada
               : error.status === 409
                 ? this.config.stockInsuficiente
-                : (error.message ?? this.config.errorGenerico);
+                : (error.message ?? this.config.errorGenerico));
           this.toast.show({
             variant: 'error',
             title: this.config.errorGenerico,

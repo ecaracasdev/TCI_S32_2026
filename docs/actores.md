@@ -23,10 +23,12 @@
 | Reposición de repuestos (T14) | — | Lectura | Lectura | Lectura |
 | Generar pedido de compra (T15) | — | Alta (reporta faltante) | Lectura/gestión | Lectura |
 | Consultar pedidos de compra (T18) | — | — | Lectura | Lectura |
+| Asignar pedido de compra (CUN-03) | — | — | Gestión | — |
+| Revisar pedido de compra (CUN-03) | — | — | Gestión | — |
+| Aprobar pedido de compra (CUN-03) | — | — | Gestión | — |
+| Cancelar pedido de compra (CUN-03) | — | — | Gestión | — |
 | Consultar máquinas (T19) | — | Lectura | Lectura | Lectura |
 | Cargar stock recibido con ubicación (RN-08, pendiente — issue #27) | — | — | Alta (o delega) | — |
-
-La tabla de permisos es una propuesta para validar: hoy el frontend no tiene autenticación real ni estas restricciones implementadas (todas las pantallas se navegan sin login en modo mock, ver `frontend/SKILL.md`), así que esto queda como la referencia a implementar cuando se conecte la autenticación real (M5).
 
 ## Permisos de la API de repuestos y ubicaciones (T28)
 
@@ -51,6 +53,17 @@ Acordado con el equipo el 19/11: solo el operario reporta; todos los roles consu
 | Reportar una incidencia (`POST /incidencias`) | Sí | — | — | — |
 | Listar y consultar incidencias (`GET /incidencias`, `/incidencias/{id}`) | Sí | Sí | Sí | Sí |
 
+## Permisos de la API de reparaciones (CUN-01)
+
+El empleado de mantenimiento es quien repara: toma la incidencia, registra los repuestos usados (RN-01) y la resuelve con el informe. Encargado y gerencia consultan; el operario sigue el estado de su incidencia, pero no ve la reparación.
+
+| Operación | Operario | Empleado de mantenimiento | Encargado | Gerencia/Administración |
+| --- | --- | --- | --- | --- |
+| Tomar una incidencia (`POST /incidencias/{id}/reparacion`) | — | Sí | — | — |
+| Registrar un repuesto usado (`POST /reparaciones/{id}/usos`) | — | Sí | — | — |
+| Finalizar con el informe (`POST /reparaciones/{id}/informe`) | — | Sí | — | — |
+| Consultar una reparación (`GET /reparaciones/{id}`) | — | Sí | Sí | Sí |
+
 ## Permisos de la API de reservas (RN-05 y RN-10)
 
 | Operación | Operario | Empleado de mantenimiento | Encargado | Gerencia/Administración |
@@ -61,6 +74,23 @@ Acordado con el equipo el 19/11: solo el operario reporta; todos los roles consu
 | Liberar una reserva (`POST /reservas/{id}/liberacion`) | — | — | Sí | — |
 
 Solo el encargado libera una reserva (RN-05) y queda registrado como quien la autorizó. El empleado crea y ejecuta las reservas porque es quien hace el mantenimiento. El aviso inmediato de la liberación depende del puerto de notificación (RN-09) y todavía no está implementado.
+
+## Permisos de la API de pedidos de compra (CUN-03)
+
+El backend verifica los roles en cada solicitud. Sin token responde `401`; con un rol sin permiso, `403`.
+
+| Operación | Operario | Empleado de mantenimiento | Encargado | Gerencia/Administración |
+| --- | --- | --- | --- | --- |
+| Listar y consultar pedidos (`GET /pedidos-compra`, `GET /pedidos-compra/{id}`) | — | — | Sí | Sí |
+| Crear pedidos (`POST /pedidos-compra`) | — | Sí | Sí | — |
+| Asignar pedidos (`POST /pedidos-compra/{id}/asignacion`) | — | — | Sí | — |
+| Revisar pedidos (`POST /pedidos-compra/{id}/revision`) | — | — | Sí | — |
+| Aprobar pedidos (`POST /pedidos-compra/{id}/aprobacion`) | — | — | Sí | — |
+| Cancelar pedidos (`POST /pedidos-compra/{id}/cancelacion`) | — | — | Sí | — |
+| Confirmar pedidos (`POST /pedidos-compra/{id}/confirmacion`) | — | — | Sí | — |
+| Registrar recepciones (`POST /pedidos-compra/{id}/recepciones`) | — | — | Sí | — |
+
+El empleado y el encargado pueden crear pedidos. La gestión de pedidos existentes corresponde exclusivamente al encargado. Gerencia puede consultar, pero no modificar ni gestionar pedidos.
 
 ## Fuente
 

@@ -78,6 +78,73 @@
 
     </section>
 
+    @if (puedeTomar()) {
+      <section hlmCard class="mt-6">
+        <div hlmCardContent class="flex flex-col items-start gap-3">
+          <p class="text-sm text-muted-foreground">{{ config.reparacion.tomarAyuda }}</p>
+          <button hlmBtn type="button" [disabled]="procesando()" (click)="tomar(inc)">
+            {{ config.reparacion.tomar }}
+          </button>
+        </div>
+      </section>
+    }
+
+    @if (reparacion(); as rep) {
+      <section hlmCard class="mt-6">
+        <div hlmCardContent class="flex flex-col gap-4">
+          <h2 class="text-xl font-semibold">
+            {{ config.reparacion.titulo }} N.º {{ rep.id }}
+            <span hlmBadge variant="outline" class="ms-2 align-middle">{{ estadoReparacion(rep.estado) }}</span>
+          </h2>
+
+          @if (rep.usos.length === 0) {
+            <p class="text-sm text-muted-foreground">{{ config.reparacion.sinUsos }}</p>
+          } @else {
+            <ul class="flex flex-col gap-1">
+              @for (uso of rep.usos; track uso.id) {
+                <li>
+                  <span class="machine-code">{{ uso.repuesto.codigo }}</span>
+                  · {{ uso.repuesto.nombre }} · {{ uso.cantidad }} u.
+                </li>
+              }
+            </ul>
+          }
+
+          @if (rep.informe_resolucion; as informe) {
+            <div>
+              <p class="font-medium">{{ config.reparacion.informe }}</p>
+              <p>{{ informe.resumen }}</p>
+            </div>
+          }
+
+          @if (repara() && reparacionEnCurso()) {
+            <a
+              hlmBtn
+              variant="outline"
+              class="self-start"
+              routerLink="/usos/nuevo"
+              [queryParams]="{ reparacion: rep.id, incidencia: inc.id }">
+              {{ config.reparacion.registrarUso }}
+            </a>
+
+            <div class="flex flex-col gap-2">
+              <label class="font-medium" for="resumen">{{ config.reparacion.finalizarTitulo }}</label>
+              <textarea
+                id="resumen"
+                rows="3"
+                class="rounded-md border px-3 py-2"
+                [placeholder]="config.reparacion.resumen"
+                [value]="resumen()"
+                (input)="resumen.set($any($event.target).value)"></textarea>
+              <button hlmBtn type="button" class="self-start" [disabled]="procesando()" (click)="finalizar(rep)">
+                {{ config.reparacion.finalizar }}
+              </button>
+            </div>
+          }
+        </div>
+      </section>
+    }
+
     <section hlmCard class="mt-6">
 
       <div hlmCardContent>

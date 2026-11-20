@@ -4,6 +4,7 @@ export const REGISTRAR_USO_CONFIG = {
   demo: 'Datos de demostración: el uso no se guarda en el backend y el stock vuelve a su valor al recargar la página.',
   enviar: 'Registrar uso',
   enviando: 'Registrando…',
+  volverIncidencia: 'Volver a la incidencia',
   exito: 'Uso registrado',
   stockInsuficiente: 'No hay stock disponible suficiente.',
   alertaTitulo: 'Alerta de stock mínimo',
@@ -22,7 +23,7 @@ export const REGISTRAR_USO_CONFIG = {
     // TODO: escaneo simulado. La lectura real con cámara necesita HTTPS.
     codigosDemo: ['REP-00031', 'REP-00106', 'REP-00203'],
   },
-  // TODO: el contrato no tiene un endpoint para listar reparaciones, así que el número se escribe a mano.
+  // Se completa solo al llegar desde una incidencia tomada; si no, se escribe a mano.
   reparacion: {
     etiqueta: 'N.º de reparación',
     placeholder: 'Ej.: 101',

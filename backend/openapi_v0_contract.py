@@ -216,6 +216,12 @@ async def obtener_incidencia(incidencia_id: int):
     return _draft_route()
 
 
+@router.post("/incidencias/{incidencia_id}/reparacion", summary="Tomar incidencia", tags=["Incidencias"], response_model=ReparacionResponseDto, status_code=status.HTTP_201_CREATED, responses=ERRORS)
+async def tomar_incidencia(incidencia_id: int):
+    """El empleado de mantenimiento toma una incidencia reportada o en triage: se crea su reparación y la incidencia pasa a en reparación."""
+    return _draft_route()
+
+
 @router.get("/reparaciones/{reparacion_id}", summary="Consultar reparación", tags=["Reparaciones"], response_model=ReparacionResponseDto, responses=ERRORS)
 async def obtener_reparacion(reparacion_id: int):
     """Obtiene el estado de una reparación, sus consumos y su informe final."""

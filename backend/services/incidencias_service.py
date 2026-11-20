@@ -68,6 +68,7 @@ class ServicioIncidencias:
             "turno": incidencia.turno,
             "reportada_en": incidencia.reportada_en,
             "resuelta_en": incidencia.resuelta_en,
+            "reparacion_id": await self.repositorio.obtener_reparacion_id(incidencia.id),
             "fotos": [
                 FotoIncidenciaDto.model_validate(
                     foto,
