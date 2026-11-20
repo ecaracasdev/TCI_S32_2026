@@ -75,13 +75,24 @@ def test_carga_datos_coherentes(tmp_path):
     resultado = _cargar(config)
 
     assert resultado.exit_code == 0, resultado.output
+    assert "10 reparaciones" in resultado.output
     with sqlite3.connect(base) as db:
         assert db.execute("SELECT count(*) FROM maquinas").fetchone()[0] == 18
         assert db.execute("SELECT count(*) FROM repuestos").fetchone()[0] == 13
         assert db.execute("SELECT count(*) FROM incidencias").fetchone()[0] == 19
         assert db.execute("SELECT count(*) FROM fotos_incidencias").fetchone()[0] == 3
-        assert db.execute("SELECT count(*) FROM reparaciones").fetchone()[0] == 7
+        assert db.execute("SELECT count(*) FROM reparaciones").fetchone()[0] == 10
         assert db.execute("SELECT count(*) FROM informes_resolucion").fetchone()[0] == 3
+        estados_reparacion = dict(db.execute("SELECT estado, count(*) FROM reparaciones GROUP BY estado"))
+        assert estados_reparacion == {"en_curso": 5, "pendiente_repuesto": 2, "completada": 3}
+        assert db.execute("""
+            SELECT count(*) FROM reparaciones r JOIN incidencias i ON i.id = r.incidencia_id
+            WHERE (r.estado = 'en_curso' AND i.estado != 'en_reparacion')
+               OR (r.estado = 'pendiente_repuesto' AND i.estado != 'pendiente_repuesto')
+               OR (r.estado = 'completada' AND i.estado != 'resuelta')
+               OR r.iniciada_en < i.reportada_en
+               OR (r.completada_en IS NOT NULL AND r.completada_en < r.iniciada_en)
+        """).fetchone()[0] == 0
         assert db.execute("SELECT count(*) FROM pedidos_compra").fetchone()[0] == 9
         assert db.execute("SELECT count(*) FROM recepciones_compra").fetchone()[0] == 3
         assert db.execute("SELECT count(*) FROM reservas").fetchone()[0] == 3
