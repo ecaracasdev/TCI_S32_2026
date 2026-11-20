@@ -77,11 +77,11 @@
                 </div>
                 <div>
                   <dt class="text-xs text-muted-foreground">{{ config.columnas.reservado }}</dt>
-                  <dd class="numeric text-lg font-semibold">{{ cifra(r.stock_reservado_total) }}</dd>
+                  <dd class="numeric text-lg font-semibold italic">{{ cifra(r.stock_reservado_total) }}</dd>
                 </div>
                 <div>
                   <dt class="text-xs text-muted-foreground">{{ config.columnas.disponible }}</dt>
-                  <dd class="numeric text-lg font-semibold">{{ cifra(r.stock_disponible_total) }}</dd>
+                  <dd class="stock-disponible numeric text-lg font-semibold">{{ cifra(r.stock_disponible_total) }}</dd>
                   <dd class="numeric text-sm text-muted-foreground">
                     {{ config.minimo }} {{ cifra(r.stock_minimo) }}
                     <button type="button" class="minimum-info" [attr.aria-label]="detalleMinimo(r)">
@@ -139,9 +139,9 @@
                     </div>
                   </td>
                   <td data-align="center" class="numeric font-semibold">{{ cifra(r.stock_fisico_total) }}</td>
-                  <td data-align="center" class="numeric">{{ cifra(r.stock_reservado_total) }}</td>
+                  <td data-align="center" class="numeric italic">{{ cifra(r.stock_reservado_total) }}</td>
                   <td data-align="center">
-                    <span class="numeric font-semibold">{{ cifra(r.stock_disponible_total) }}</span><br />
+                    <span class="stock-disponible numeric font-semibold">{{ cifra(r.stock_disponible_total) }}</span><br />
                     <span class="numeric text-xs text-muted-foreground">{{ config.minimo }} {{ cifra(r.stock_minimo) }}</span>
                     <button type="button" class="minimum-info" [attr.aria-label]="detalleMinimo(r)">
                       <app-icon name="alert" class="size-4" />

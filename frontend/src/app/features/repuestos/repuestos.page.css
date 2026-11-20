@@ -7,6 +7,10 @@
   cursor: pointer;
 }
 
+.stock-disponible {
+  color: #14532d;
+}
+
 .minimum-tooltip {
   position: absolute;
   z-index: 10;
