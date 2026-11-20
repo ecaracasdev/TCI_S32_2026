@@ -185,14 +185,7 @@ Resultado: `liberada`, con el encargado registrado como quien la autorizó.
 
 ## 8. Pedidos de compra: CUN-03 (2 minutos)
 
-Los datos de prueba traen un solo pedido en "Pendiente de aprobación". Para mostrar también la cancelación, pasá antes un segundo pedido a ese estado desde la terminal (la revisión no tiene pantalla):
-
-```bash
-PED=$(curl -s "$API/api/v0/pedidos-compra?estado=pendiente_revision&limit=1" -H "Authorization: Bearer $ENC" | jq '.items[0].id')
-curl -s -X POST $API/api/v0/pedidos-compra/$PED/revision -H "Authorization: Bearer $ENC" -H "Content-Type: application/json" -d '{}' | jq '{id, estado}'
-```
-
-Resultado: el pedido queda en `pendiente_aprobacion`.
+Los datos de prueba traen dos pedidos en "Pendiente de aprobación": uno para aprobar y otro para cancelar.
 
 1. Entrar con `encargado@test` e ir a **Pedidos de compra**: la lista muestra origen, urgencia y estado de cada pedido.
 2. Abrir un pedido en **Pendiente de aprobación**, tocar **Aprobar pedido** y después **Sí, aprobar**. El estado pasa a **Confirmado**.
