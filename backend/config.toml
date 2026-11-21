@@ -10,7 +10,7 @@
 [secrets]
     # Las claves no se versionan: se leen de variables de entorno (README, "Claves y variables
     # de entorno"). Si las definís acá, el archivo gana sobre la variable.
-    #   SECRET_KEY <- AUTOCONFIG_SECRETS__SECRET_KEY  obligatoria, al menos 32 bytes
+    #   AUTH_SIGNING_KEY <- AUTOCONFIG_SECRETS__AUTH_SIGNING_KEY  para firmas de auth, al menos 32 bytes
     #   CLAVE_JWT  <- AUTOCONFIG_SECRETS__CLAVE_JWT   obligatoria con JWT local, 32 bytes en HS256
 
 [database]

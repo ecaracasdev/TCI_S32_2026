@@ -108,9 +108,10 @@ def create_app(app_name: str = "app", description: str = "---", cfg: Config = No
 
     # Flujo OAuth genérico basado en sesiones.
     if auth_cfg.ENABLED and auth_cfg.OAUTH.ENABLED:
+        from secretos import clave_firma_auth
         app.add_middleware(
             SessionMiddleware,
-            secret_key=get_config().secrets.SECRET_KEY,
+            secret_key=clave_firma_auth(get_config()),
             session_cookie=auth_cfg.SESSION_COOKIE_NAME,
             max_age=auth_cfg.SESSION_MAX_AGE_SECONDS,
             same_site=auth_cfg.SESSION_SAME_SITE,

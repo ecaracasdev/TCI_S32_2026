@@ -21,8 +21,9 @@ services:
       # Misma configuración que config.toml, pero con la base en el servicio db.
       - ./backend/config.docker.toml:/app/config.toml:ro
     environment:
-      # Las claves salen del archivo .env (copiá .env.example); si faltan, compose no arranca.
-      AUTOCONFIG_SECRETS__SECRET_KEY: ${SECRET_KEY:?Falta SECRET_KEY. Copiá .env.example a .env y completalo (ver README)}
+      # La clave de auth es opcional salvo que se use el OAuth genérico.
+      AUTOCONFIG_SECRETS__AUTH_SIGNING_KEY: ${AUTH_SIGNING_KEY:-}
+      AUTOCONFIG_SECRETS__SECRET_KEY: ${SECRET_KEY:-}
       AUTOCONFIG_SECRETS__CLAVE_JWT: ${CLAVE_JWT:?Falta CLAVE_JWT. Copiá .env.example a .env y completalo (ver README)}
       AUTOCONFIG_DATABASE__DB_PASSWORD: ${POSTGRES_PASSWORD:?Falta POSTGRES_PASSWORD. Copiá .env.example a .env y completalo (ver README)}
       AUTOCONFIG_AUTH__JWT__HABILITADO: "true"

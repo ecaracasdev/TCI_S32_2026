@@ -31,10 +31,10 @@ Para correrlo suelto (sin el frontend), desde esta carpeta:
 
 ```bash
 docker build -t tci-backend .
-docker run -p 8300:8300 -e AUTOCONFIG_SECRETS__SECRET_KEY=<clave de al menos 32 bytes> tci-backend
+docker run -p 8300:8300 tci-backend
 ```
 
-Sin esa variable, el contenedor termina con un mensaje que explica cómo definirla.
+La clave de firma solo es obligatoria al usar el OAuth genérico o sus tokens firmados.
 
 Para levantar todo el stack (backend + frontend) juntos, usar `docker compose up --build` desde la raíz del repo — ver el README principal.
 
@@ -70,13 +70,13 @@ entorno.
 
 | Clave | Variable de entorno | Cuándo es obligatoria | Largo mínimo |
 | --- | --- | --- | --- |
-| `SECRET_KEY` | `AUTOCONFIG_SECRETS__SECRET_KEY` | Siempre | 32 bytes |
+| `AUTH_SIGNING_KEY` | `AUTOCONFIG_SECRETS__AUTH_SIGNING_KEY` | Al usar las firmas de auth o habilitar OAuth genérico | 32 bytes |
 | `CLAVE_JWT` | `AUTOCONFIG_SECRETS__CLAVE_JWT` | Con el JWT local habilitado | 32 bytes en HS256, 48 en HS384, 64 en HS512 |
 
 Generá cada valor con `python3 -c "import secrets; print(secrets.token_urlsafe(48))"`. Para correr sin Docker:
 
 ```bash
-export AUTOCONFIG_SECRETS__SECRET_KEY=<clave>
+export AUTOCONFIG_SECRETS__AUTH_SIGNING_KEY=<clave> # solo para OAuth genérico o tokens de auth
 export AUTOCONFIG_SECRETS__CLAVE_JWT=<otra clave>
 export AUTOCONFIG_AUTH__JWT__HABILITADO=true   # solo si querés el login con JWT
 uv run app.py
@@ -94,11 +94,11 @@ si los dos archivos difieren en otra sección.
 - **Precedencia:** el archivo de configuración gana sobre la variable, así que esta solo tiene efecto sobre
   los campos que el archivo no define. Por ejemplo, `config.toml` define `PORT`, por lo que
   `AUTOCONFIG_SERVER__PORT` se ignora. Por eso `config.toml` no trae las claves ni `HABILITADO`: así la
-  variable puede definirlas. Si definís `SECRET_KEY` en un `config.<env>.toml` (que no se versiona), esa
+  variable puede definirlas. Si definís `AUTH_SIGNING_KEY` en un `config.<env>.toml` (que no se versiona), esa
   es la que se usa.
-- **Si falta o es corta**, el backend aborta al iniciar y el mensaje dice qué variable definir y cómo
-  generar el valor. El mensaje no muestra el valor de la clave.
-- **Tests:** `tests/conftest.py` define una `SECRET_KEY` propia para las pruebas.
+- **Si falta o es corta**, se emite una advertencia; al utilizarla, la operación falla. El JWT local valida su propia clave al habilitarse.
+- **Migración:** `SECRET_KEY` sigue aceptándose como nombre anterior. Renombrala a `AUTH_SIGNING_KEY` conservando el valor para mantener las firmas existentes. Si ambas tienen valores distintos, no se puede usar la firma.
+- **Tests:** `tests/conftest.py` define una clave anterior propia para las pruebas.
 
 ---
 
@@ -402,3 +402,35 @@ Las etapas comparten una sesión y los cambios de datos se confirman juntos al
 final. Para cambiar una máquina de ejemplo, editar `MAQUINAS` en el paso 2;
 la definición de columnas de la tabla está en `db/db_models/catalogo.py`.
 Los correos `@test` son identificadores de prueba, no direcciones de entrega.
+
+### Asignar un rol por correo
+
+Desde `backend`, el comando agrega un rol existente sin quitar los demás:
+
+```bash
+uv run asignar-rol --user empleado@example.com --role empleado_mantenimiento -c dev
+```
+
+`-c` selecciona `config.dev.toml` (por defecto se usa `config.toml`). El correo se
+busca sin distinguir mayúsculas. El usuario y el rol deben existir; repetir la
+asignación no duplica el rol. Para reemplazar todos los roles, usar explícitamente
+`gestionar_acceso.py reemplazar-roles`.
+
+### Listar usuarios
+
+```bash
+uv run listar-usuarios -c dev
+```
+
+Muestra ID, correo, nombre y roles; quienes no tengan roles figuran como
+`Sin roles`. Sin `-c` usa `config.toml`. La consulta no crea ni modifica tablas.
+
+### Listar roles
+
+```bash
+uv run listar-roles -c dev
+```
+
+Muestra el ID, el nombre y la descripción de todos los roles de la base, incluso
+los que no tienen usuarios asignados. Sin `-c` usa `config.toml`; la consulta no
+crea ni modifica tablas.

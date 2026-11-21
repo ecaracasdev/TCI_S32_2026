@@ -52,22 +52,3 @@ def test_comando_crea_base(tmp_path, atajo, opcion_config):
             assert conexion.execute("SELECT count(*) FROM usuarios").fetchone()[0] == 5
     finally:
         archivo_config.unlink(missing_ok=True)
-
-
-@pytest.mark.parametrize("atajo", [False, True], ids=["script", "atajo"])
-def test_comando_informa_si_falta_secreto(atajo):
-    backend = Path(__file__).resolve().parents[1]
-    if not (backend / "secretos.py").exists():
-        pytest.skip("La validación de secretos se incorpora desde main.")
-    ejecutable = Path(sys.executable).parent / (
-        "crear-dummy-db.exe" if os.name == "nt" else "crear-dummy-db"
-    )
-    comando = [str(ejecutable)] if atajo else [sys.executable, "datos_prueba.py"]
-    variables = os.environ.copy()
-    variables.pop("AUTOCONFIG_SECRETS__SECRET_KEY", None)
-    resultado = subprocess.run(
-        comando, cwd=backend, env=variables, capture_output=True, text=True,
-        encoding="utf-8", timeout=30,
-    )
-    assert resultado.returncode != 0
-    assert "Falta configurar SECRET_KEY" in resultado.stdout + resultado.stderr

@@ -9,7 +9,7 @@ from pydantic import BaseModel
 
 from config import Config
 from logs import get_logger
-from secretos import validar_secretos
+from secretos import SecretoInvalidoError, clave_firma_auth
 
 config: Config | None = None
 __loaded = False
@@ -49,7 +49,12 @@ def load_config(config_file: str | Path = "default", reload: bool = False) -> Co
         get_logger().critical("Cannot load configuration file: %s", path)
         raise
 
-    validar_secretos(loaded)
+    try:
+        clave_firma_auth(loaded)
+    except SecretoInvalidoError as error:
+        get_logger().warning("Clave de firma de autenticación no disponible: %s", error)
+    if loaded.secrets.SECRET_KEY.strip():
+        get_logger().warning("SECRET_KEY está obsoleta; usá AUTH_SIGNING_KEY con el mismo valor.")
     config = _with_runtime_metadata(loaded, path)
     __loaded = True
     return config
