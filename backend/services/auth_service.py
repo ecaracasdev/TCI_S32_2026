@@ -7,6 +7,7 @@ from itsdangerous import URLSafeTimedSerializer
 
 from config import Auth as AuthConfig
 from services.base_service import Service
+from secretos import clave_firma_auth
 from utils import get_config
 
 
@@ -18,16 +19,11 @@ class AuthService(Service):
 
         cfg = get_config()
         self._config: AuthConfig = cfg.auth
-        self._secret_key = cfg.secrets.SECRET_KEY
-        self._token_serializer = URLSafeTimedSerializer(
-            self._secret_key,
-            salt=self._config.TOKEN_SALT,
-        )
-        self._oauth_state_serializer = URLSafeTimedSerializer(
-            self._secret_key,
-            salt=f"{self._config.TOKEN_SALT}:oauth-state",
-        )
         self._auth_initialized = True
+
+    def _serializer(self, salt: str) -> URLSafeTimedSerializer:
+        """Valida la clave al firmar o verificar, no al construir el servicio."""
+        return URLSafeTimedSerializer(clave_firma_auth(get_config()), salt=salt)
 
     @property
     def config(self) -> AuthConfig:
@@ -61,10 +57,10 @@ class AuthService(Service):
         }
         if claims:
             payload["claims"] = claims
-        return self._token_serializer.dumps(payload)
+        return self._serializer(self._config.TOKEN_SALT).dumps(payload)
 
     def verify_token(self, token: str) -> dict[str, Any]:
-        return self._token_serializer.loads(
+        return self._serializer(self._config.TOKEN_SALT).loads(
             token,
             max_age=self._config.TOKEN_TTL_MINUTES * 60,
         )
@@ -76,10 +72,10 @@ class AuthService(Service):
         }
         if payload:
             data["payload"] = payload
-        return self._oauth_state_serializer.dumps(data)
+        return self._serializer(f"{self._config.TOKEN_SALT}:oauth-state").dumps(data)
 
     def verify_oauth_state(self, state: str) -> dict[str, Any]:
-        return self._oauth_state_serializer.loads(
+        return self._serializer(f"{self._config.TOKEN_SALT}:oauth-state").loads(
             state,
             max_age=self._config.SESSION_MAX_AGE_SECONDS,
         )

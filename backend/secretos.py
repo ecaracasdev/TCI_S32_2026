@@ -34,20 +34,23 @@ def como_definir(clave: str, largo_minimo: int = LARGO_MINIMO_BYTES) -> str:
     )
 
 
-def validar_secretos(configuracion: Config) -> None:
-    """Exige que ``SECRET_KEY`` esté definida y tenga el largo mínimo.
+def clave_firma_auth(configuracion: Config) -> str:
+    """Obtiene la clave de firmas de auth y la valida antes de utilizarla.
 
-    ``CLAVE_JWT`` se valida aparte, con el largo que pide el algoritmo elegido, y solo
-    cuando el JWT local está habilitado (ver ``autenticacion_jwt``).
+    El nombre anterior se acepta para no invalidar sesiones existentes.
     """
-
-    valor = configuracion.secrets.SECRET_KEY
+    actual = configuracion.secrets.AUTH_SIGNING_KEY
+    anterior = configuracion.secrets.SECRET_KEY
+    if actual.strip() and anterior.strip() and actual != anterior:
+        raise SecretoInvalidoError("AUTH_SIGNING_KEY y SECRET_KEY contienen valores distintos; usá solo AUTH_SIGNING_KEY.")
+    valor = actual if actual.strip() else anterior
     if not valor.strip():
-        raise SecretoInvalidoError(f"Falta configurar SECRET_KEY. {como_definir('SECRET_KEY')}")
+        raise SecretoInvalidoError(f"Falta configurar AUTH_SIGNING_KEY. {como_definir('AUTH_SIGNING_KEY')}")
 
     largo = len(valor.encode("utf-8"))
     if largo < LARGO_MINIMO_BYTES:
         raise SecretoInvalidoError(
-            f"SECRET_KEY tiene {largo} bytes y se exigen al menos {LARGO_MINIMO_BYTES}. "
-            f"{como_definir('SECRET_KEY')}"
+            f"AUTH_SIGNING_KEY tiene {largo} bytes y se exigen al menos {LARGO_MINIMO_BYTES}. "
+            f"{como_definir('AUTH_SIGNING_KEY')}"
         )
+    return valor

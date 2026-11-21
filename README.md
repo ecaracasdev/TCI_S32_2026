@@ -90,8 +90,8 @@ Desde un clone limpio, con Docker instalado y corriendo:
 cp .env.example .env
 ```
 
-Abrí `.env` y completá `SECRET_KEY`, `CLAVE_JWT` y `POSTGRES_PASSWORD`. Generá cada valor con
-`python3 -c "import secrets; print(secrets.token_urlsafe(48))"` (mínimo 32 bytes para las dos claves). El
+Abrí `.env` y completá `CLAVE_JWT` y `POSTGRES_PASSWORD` (`AUTH_SIGNING_KEY` solo si usás las firmas del OAuth genérico). Generá cada valor con
+`python3 -c "import secrets; print(secrets.token_urlsafe(48))"` (mínimo 32 bytes para cada clave de firma que se utilice). El
 archivo `.env` no se versiona: las claves y la contraseña no están en el repositorio. Después:
 
 ```bash

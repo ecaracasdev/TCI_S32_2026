@@ -6,12 +6,12 @@ Registro de cambios relevantes del proyecto. Formato basado en [Keep a Changelog
 
 ### Security
 
-- `SECRET_KEY` y `CLAVE_JWT` ya no están en `config.toml` (traía `SECRET_KEY = "123456"` y `CLAVE_JWT` vacía). Se leen de las variables `AUTOCONFIG_SECRETS__SECRET_KEY` y `AUTOCONFIG_SECRETS__CLAVE_JWT`; `docker compose` las toma de un `.env` que no se versiona (issue #92, M6). `SECRET_KEY` es obligatoria y exige 32 bytes; si falta o es corta, el backend aborta con un mensaje que explica cómo definirla. Verificado con `docker compose`: el backend arranca con las claves, `POST /auth/token` responde `400` (login activo) y la API sin token responde `401`; sin las claves, la imagen termina con código `1` y el mensaje. `CLAVE_JWT` ya exigía 32/48/64 bytes según el algoritmo, pero no tenía tests: ahora se prueba el límite exacto.
+- Las claves no se versionan. `AUTH_SIGNING_KEY` firma la sesión y los datos del servicio de autenticación genérico; se valida al utilizarse y, si falta o es inválida, la carga de configuración solo advierte. El nombre anterior `SECRET_KEY` sigue admitido. `CLAVE_JWT` se valida al habilitar el JWT local y requiere 32/48/64 bytes según el algoritmo.
 
 ### Changed
 
 - Numeración de los casos de uso por integrante: CUN-01 y CUN-02 (Elias), CUN-03 (Martin, `docs/caso-de-uso-cun03-aprobar-pedido.md`) y CUN-04 (Nicolás). "Registrar un repuesto" pasa de CUN-02 a **CUN-04** (`docs/negocio/casos-de-uso/cun-04-registrar-repuesto.md`) para no chocar con "Cargar stock recibido con ubicación", que queda como CUN-02.
-- `docker compose up` requiere un `.env` con `SECRET_KEY` y `CLAVE_JWT` (copiar `.env.example`). El compose activa el JWT local con `AUTOCONFIG_AUTH__JWT__HABILITADO=true`; `config.toml` ya no define `HABILITADO` (el valor por defecto sigue siendo `false`) porque el archivo gana sobre la variable.
+- `docker compose up` requiere un `.env` con `CLAVE_JWT` y `POSTGRES_PASSWORD` (`AUTH_SIGNING_KEY` es opcional) (copiar `.env.example`). El compose activa el JWT local con `AUTOCONFIG_AUTH__JWT__HABILITADO=true`; `config.toml` ya no define `HABILITADO` (el valor por defecto sigue siendo `false`) porque el archivo gana sobre la variable.
 
 ### Fixed
 

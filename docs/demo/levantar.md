@@ -22,13 +22,13 @@ git pull
 
 ## 2. Crear el `.env` (solo la primera vez)
 
-El `.env` lleva las dos claves del backend y la contraseña de PostgreSQL. No se versiona. Este comando lo crea con valores aleatorios:
+El `.env` lleva la clave JWT del backend y la contraseña de PostgreSQL; `AUTH_SIGNING_KEY` solo es necesaria para el OAuth genérico. No se versiona. Este comando lo crea con valores aleatorios:
 
 ```bash
-python3 -c "import secrets; print('\n'.join(f'{k}={secrets.token_urlsafe(48)}' for k in ('SECRET_KEY', 'CLAVE_JWT', 'POSTGRES_PASSWORD')))" > .env
+python3 -c "import secrets; print('\n'.join(f'{k}={secrets.token_urlsafe(48)}' for k in ('CLAVE_JWT', 'POSTGRES_PASSWORD')))" > .env
 ```
 
-Si ya tenías un `.env` con `SECRET_KEY` y `CLAVE_JWT`, alcanza con agregarle la contraseña:
+Si ya tenías un `.env` con `CLAVE_JWT`, alcanza con agregarle la contraseña:
 
 ```bash
 echo "POSTGRES_PASSWORD=$(python3 -c 'import secrets; print(secrets.token_urlsafe(32))')" >> .env
@@ -172,7 +172,7 @@ docker compose down -v     # para todo y BORRA la base (volumen pgdata)
 
 | Síntoma | Causa | Solución |
 | --- | --- | --- |
-| `Falta POSTGRES_PASSWORD` (o `SECRET_KEY`, `CLAVE_JWT`) | No existe el `.env` o le falta ese valor | Paso 2 |
+| `Falta POSTGRES_PASSWORD` (o `CLAVE_JWT`) | No existe el `.env` o le falta ese valor | Paso 2 |
 | `port is already allocated` en 8080 u 8300 | Otro contenedor o programa usa ese puerto | `docker ps` para ver cuál y pararlo |
 | El login falla con usuario y contraseña correctos | La base está vacía | Paso 5 |
 | El login falla con `@test` / `test`, pero la base tiene datos | La base se cargó con una versión anterior de los datos de prueba | `docker compose down -v`, `docker compose up -d` y el paso 5 |

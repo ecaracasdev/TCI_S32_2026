@@ -6,7 +6,7 @@ from pathlib import Path
 import pytest
 
 from autenticacion_jwt import validar_configuracion_jwt
-from secretos import SecretoInvalidoError
+from secretos import SecretoInvalidoError, clave_firma_auth
 from utils import load_config, update_config
 
 SECRET_KEY = "AUTOCONFIG_SECRETS__SECRET_KEY"
@@ -19,39 +19,71 @@ def test_config_toml_no_trae_claves():
     assert secretos == {}
 
 
-def test_sin_secret_key_el_error_explica_como_definirla(monkeypatch):
-    monkeypatch.delenv(SECRET_KEY)
-
-    with pytest.raises(SecretoInvalidoError) as error:
-        load_config("default", reload=True)
-
-    mensaje = str(error.value)
-    assert "Falta configurar SECRET_KEY" in mensaje
-    assert SECRET_KEY in mensaje
-    assert ".env.example" in mensaje
-    assert "token_urlsafe" in mensaje
-
-
-def test_secret_key_en_blanco_cuenta_como_faltante(monkeypatch):
-    monkeypatch.setenv(SECRET_KEY, "   ")
-
-    with pytest.raises(SecretoInvalidoError, match="Falta configurar SECRET_KEY"):
-        load_config("default", reload=True)
+def test_clave_ausente_advierte_y_falla_al_usarla(monkeypatch):
+    from unittest.mock import Mock
+    logger = Mock()
+    monkeypatch.setattr("utils.get_logger", lambda: logger)
+    monkeypatch.delenv(SECRET_KEY, raising=False)
+    monkeypatch.delenv("AUTOCONFIG_SECRETS__AUTH_SIGNING_KEY", raising=False)
+    config = load_config("default", reload=True)
+    assert "Falta configurar AUTH_SIGNING_KEY" in str(logger.warning.call_args)
+    with pytest.raises(SecretoInvalidoError, match="Falta configurar AUTH_SIGNING_KEY"):
+        clave_firma_auth(config)
 
 
-def test_secret_key_corta_se_rechaza_sin_mostrar_su_valor(monkeypatch):
-    monkeypatch.setenv(SECRET_KEY, "123456")
-
+def test_clave_corta_advierte_y_falla_al_usarla(monkeypatch):
+    from unittest.mock import Mock
+    logger = Mock()
+    monkeypatch.setattr("utils.get_logger", lambda: logger)
+    monkeypatch.delenv(SECRET_KEY, raising=False)
+    monkeypatch.setenv("AUTOCONFIG_SECRETS__AUTH_SIGNING_KEY", "123456")
+    config = load_config("default", reload=True)
+    assert "6 bytes" in str(logger.warning.call_args)
     with pytest.raises(SecretoInvalidoError, match="6 bytes") as error:
-        load_config("default", reload=True)
-
+        clave_firma_auth(config)
     assert "123456" not in str(error.value)
 
 
-def test_la_secret_key_se_lee_de_la_variable_de_entorno(monkeypatch):
+def test_nombre_anterior_sigue_funcionando(monkeypatch):
+    from unittest.mock import Mock
+    logger = Mock()
+    monkeypatch.setattr("utils.get_logger", lambda: logger)
+    monkeypatch.delenv("AUTOCONFIG_SECRETS__AUTH_SIGNING_KEY", raising=False)
     monkeypatch.setenv(SECRET_KEY, "s" * 32)
+    assert clave_firma_auth(load_config("default", reload=True)) == "s" * 32
+    assert "obsoleta" in str(logger.warning.call_args)
 
-    assert load_config("default", reload=True).secrets.SECRET_KEY == "s" * 32
+
+def test_nombres_distintos_no_se_usan_silenciosamente(monkeypatch):
+    monkeypatch.setenv(SECRET_KEY, "a" * 32)
+    monkeypatch.setenv("AUTOCONFIG_SECRETS__AUTH_SIGNING_KEY", "b" * 32)
+    config = load_config("default", reload=True)
+    with pytest.raises(SecretoInvalidoError, match="valores distintos"):
+        clave_firma_auth(config)
+
+
+def test_servicio_valida_solo_al_firmar(monkeypatch):
+    from services.auth_service import AuthService
+    monkeypatch.delenv(SECRET_KEY, raising=False)
+    monkeypatch.delenv("AUTOCONFIG_SECRETS__AUTH_SIGNING_KEY", raising=False)
+    load_config("default", reload=True)
+    servicio = AuthService()
+    with pytest.raises(SecretoInvalidoError, match="AUTH_SIGNING_KEY"):
+        servicio.create_token("usuario")
+    with pytest.raises(SecretoInvalidoError, match="AUTH_SIGNING_KEY"):
+        servicio.create_oauth_state()
+
+
+def test_oauth_habilitado_exige_clave_al_crear_app(monkeypatch):
+    from app import create_app
+
+    monkeypatch.delenv(SECRET_KEY, raising=False)
+    monkeypatch.delenv("AUTOCONFIG_SECRETS__AUTH_SIGNING_KEY", raising=False)
+    base = load_config("default", reload=True)
+    oauth = base.auth.OAUTH.model_copy(update={"ENABLED": True})
+    config = update_config({"auth": base.auth.model_copy(update={"ENABLED": True, "OAUTH": oauth})})
+    with pytest.raises(SecretoInvalidoError, match="AUTH_SIGNING_KEY"):
+        create_app(cfg=config)
 
 
 def configuracion_jwt(algoritmo: str, largo_clave: int):
