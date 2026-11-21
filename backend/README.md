@@ -424,3 +424,13 @@ uv run listar-usuarios -c dev
 
 Muestra ID, correo, nombre y roles; quienes no tengan roles figuran como
 `Sin roles`. Sin `-c` usa `config.toml`. La consulta no crea ni modifica tablas.
+
+### Listar roles
+
+```bash
+uv run listar-roles -c dev
+```
+
+Muestra el ID, el nombre y la descripción de todos los roles de la base, incluso
+los que no tienen usuarios asignados. Sin `-c` usa `config.toml`; la consulta no
+crea ni modifica tablas.
