@@ -28,6 +28,8 @@ dependencies = [
 
 [project.scripts]
 crear-dummy-db = "arranque_datos_prueba:ejecutar"
+asignar-rol = "asignar_rol:ejecutar"
+listar-usuarios = "listar_usuarios:ejecutar"
 
 [build-system]
 requires = ["setuptools>=61"]

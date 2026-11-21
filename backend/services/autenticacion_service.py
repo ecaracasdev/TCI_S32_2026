@@ -75,6 +75,20 @@ class ServicioAutenticacion:
         await self.sesion.flush()
         return usuario
 
+    async def asignar_rol_por_correo(self, correo: str, nombre_rol: str) -> tuple[UsuarioDb, bool]:
+        """Agrega un rol existente sin quitar los demás; indica si hubo un cambio."""
+        if not nombre_rol.strip():
+            raise ValueError("El rol no puede estar vacío.")
+        usuario = await self.buscar_usuario_por_correo(correo)
+        if usuario is None:
+            raise ValueError(f"No existe el usuario '{correo.strip()}'.")
+        rol = (await self._buscar_roles([nombre_rol]))[0]
+        if any(actual.id == rol.id for actual in usuario.roles):
+            return usuario, False
+        usuario.roles.append(rol)
+        await self.sesion.flush()
+        return usuario, True
+
     async def _buscar_roles(self, nombres_roles: list[str]) -> list[RolDb]:
         nombres = list(dict.fromkeys(nombre.strip() for nombre in nombres_roles))
         if not nombres:
