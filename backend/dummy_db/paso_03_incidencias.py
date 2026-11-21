@@ -21,11 +21,11 @@ INCIDENCIAS = (
     ("i7", "M-05", "operario2", "Ruido metálico en la paleta de mezcla al subir de velocidad.",
      "resuelta", timedelta(days=12), timedelta(days=11), False),
     ("i8", "C-03", "operario", "Variación de presión durante el encendido.", "reportada", timedelta(hours=1), None, False),
-    ("i9", "F-04", "operario2", "Dosificación irregular en la línea.", "en_triage", timedelta(hours=5), None, False),
+    ("i9", "F-04", "operario2", "Dosificación irregular en la línea.", "en_reparacion", timedelta(hours=5), None, False),
     ("i10", "B-05", "operario", "Ruido intermitente en el rodillo.", "reportada", timedelta(hours=8), None, False),
-    ("i11", "P-04", "operario2", "Presión de trabajo inferior a la habitual.", "en_triage", timedelta(hours=12), None, False),
+    ("i11", "P-04", "operario2", "Presión de trabajo inferior a la habitual.", "en_reparacion", timedelta(hours=12), None, False),
     ("i12", "M-06", "operario", "Vibración durante la mezcla.", "reportada", timedelta(days=1), None, False),
-    ("i13", "E-07", "operario2", "El elevador se detiene brevemente entre pisos.", "en_triage", timedelta(days=2), None, False),
+    ("i13", "E-07", "operario2", "El elevador se detiene brevemente entre pisos.", "en_reparacion", timedelta(days=2), None, False),
     ("i14", "F-01", "operario", "Pérdida de producto en la tolva.", "reportada", timedelta(hours=4), None, False),
     ("i15", "C-02", "operario2", "Lectura irregular del sensor de temperatura.", "en_triage", timedelta(days=1, hours=2), None, False),
     ("i16", "P-05", "operario", "Pérdida de presión en el cilindro.", "en_reparacion", timedelta(days=2), None, True),
@@ -46,6 +46,9 @@ REPARACIONES = (
     ("i17", "completada", timedelta(days=9), timedelta(days=8), (("REP-00301", 1),),
      "Se reemplazó y calibró el manómetro de la caldera."),
     ("i18", "pendiente_repuesto", timedelta(days=2), None, (), None),
+    ("i9", "en_curso", timedelta(hours=3), None, (), None),
+    ("i11", "en_curso", timedelta(hours=8), None, (), None),
+    ("i13", "en_curso", timedelta(days=1), None, (), None),
 )
 
 # PNG de 1x1 px: alcanza para probar el alta y la lectura de evidencias.

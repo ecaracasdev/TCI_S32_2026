@@ -20,7 +20,7 @@ import { MockConsultaIncidenciasService } from './features/consulta-incidencias/
 import { MockReportarIncidenciaService } from './features/reportar-incidencia/mock-reportar-incidencia.service';
 import { ReportarIncidenciaHttpService } from './features/reportar-incidencia/reportar-incidencia.http.service';
 import { ReportarIncidenciaService } from './features/reportar-incidencia/reportar-incidencia.service';
-import { ROLES_ESCRITURA } from './features/repuestos/repuestos.models';
+import { ROLES_ALTA_REPUESTO, ROLES_ESCRITURA } from './features/repuestos/repuestos.models';
 import { InicioHttpService } from './features/inicio/inicio.http.service';
 import { InicioService } from './features/inicio/inicio.service';
 import { MockInicioService } from './features/inicio/mock-inicio.service';
@@ -84,7 +84,7 @@ export const routes: Routes = [
           },
           {
             path: 'nuevo',
-            canActivate: [rolGuard(ROLES_ESCRITURA)],
+            canActivate: [rolGuard(ROLES_ALTA_REPUESTO)],
             title: 'Nuevo repuesto · TCI',
             loadComponent: () =>
               import('./features/repuestos/repuesto-form.page').then(

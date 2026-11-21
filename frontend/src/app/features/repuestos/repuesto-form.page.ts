@@ -10,6 +10,7 @@ import { HlmLabelImports } from '@shared/ui/label';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { ToastService } from '../../core/services/toast.service';
+import { EscanerCodigoComponent } from './escaner-codigo.component';
 import { REPUESTOS_CONFIG } from './repuestos.config';
 import { RepuestoDto } from './repuestos.models';
 import { RepuestosService } from './repuestos.service';
@@ -20,7 +21,7 @@ type Carga = 'cargando' | 'listo' | 'error';
 @Component({
   selector: 'app-repuesto-form-page',
   standalone: true,
-  imports: [ReactiveFormsModule, RouterLink, HlmButtonImports, HlmCardImports, HlmInputImports, HlmLabelImports],
+  imports: [EscanerCodigoComponent, ReactiveFormsModule, RouterLink, HlmButtonImports, HlmCardImports, HlmInputImports, HlmLabelImports],
   templateUrl: './repuesto-form.page.html',
 })
 export class RepuestoFormPage {
@@ -38,8 +39,8 @@ export class RepuestoFormPage {
   protected readonly error = signal<string | null>(null);
 
   protected readonly form = this.fb.nonNullable.group({
-    codigo: ['', [Validators.required, Validators.maxLength(100)]],
-    nombre: ['', [Validators.required, Validators.maxLength(200)]],
+    codigo: ['', [Validators.required, Validators.pattern(/\S/), Validators.maxLength(100)]],
+    nombre: ['', [Validators.required, Validators.pattern(/\S/), Validators.maxLength(200)]],
     descripcion: [''],
     stock_minimo: [0, [Validators.required, Validators.min(0), Validators.pattern(/^\d+$/)]],
     activo: [true],
@@ -73,6 +74,11 @@ export class RepuestoFormPage {
   protected invalido(campo: 'codigo' | 'nombre' | 'stock_minimo'): boolean {
     const control = this.form.controls[campo];
     return control.invalid && (control.touched || control.dirty);
+  }
+
+  protected codigoEscaneado(codigo: string): void {
+    this.form.controls.codigo.setValue(codigo);
+    this.form.controls.codigo.markAsDirty();
   }
 
   protected guardar(): void {

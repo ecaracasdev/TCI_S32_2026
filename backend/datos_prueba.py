@@ -78,6 +78,7 @@ async def _cargar_dominio(sesion, usuarios):
         "ubicaciones": len(contexto["ubicaciones"]),
         "repuestos": len(contexto["repuestos"]),
         "incidencias": len(contexto["incidencias"]),
+        "reparaciones": len(paso_03_incidencias.REPARACIONES),
         "pedidos de compra": len(paso_04_compras.PEDIDOS_COMPRA),
         "movimientos de stock": len(contexto["movimientos"]),
     }

@@ -72,6 +72,7 @@ export interface ErrorApiDto {
 }
 
 /** Roles que pueden crear y editar repuestos y ubicaciones (docs/actores.md). */
+export const ROLES_ALTA_REPUESTO = ['encargado_mantenimiento'];
 export const ROLES_ESCRITURA = ['empleado_mantenimiento', 'encargado_mantenimiento'];
 
 export type EstadoStock = 'sin_stock' | 'bajo_minimo' | 'normal';

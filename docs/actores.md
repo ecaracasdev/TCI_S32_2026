@@ -18,6 +18,7 @@
 | Reportar incidencia (T16) | Alta | — | — | — |
 | Registrar uso de repuesto (T17, CUN-01) | — | Alta | — | — |
 | Consulta de incidencias (T13) | Lectura | Lectura | Lectura | Lectura |
+| Registrar un repuesto (T28, CUN-04) | — | — | Alta | — |
 | Consulta de repuestos / stock (T12) | — | Lectura | Lectura | Lectura |
 | Reposición de repuestos (T14) | — | Lectura | Lectura | Lectura |
 | Generar pedido de compra (T15) | — | Alta (reporta faltante) | Lectura/gestión | Lectura |
@@ -36,11 +37,12 @@ El backend verifica estos roles en cada solicitud, leyéndolos de la base (no de
 | Operación | Operario | Empleado de mantenimiento | Encargado | Gerencia/Administración |
 | --- | --- | --- | --- | --- |
 | Listar, buscar y consultar repuestos (`GET /repuestos`, `/repuestos/{id}`, `/repuestos/codigo/{codigo}`) | — | Sí | Sí | Sí |
-| Crear y actualizar repuestos (`POST /repuestos`, `PATCH /repuestos/{id}`) | — | Sí | Sí | — |
+| Crear repuestos (`POST /repuestos`) | — | — | Sí | — |
+| Actualizar repuestos (`PATCH /repuestos/{id}`) | — | Sí | Sí | — |
 | Listar ubicaciones (`GET /ubicaciones`) | — | Sí | Sí | Sí |
 | Crear ubicaciones (`POST /ubicaciones`) | — | Sí | Sí | — |
 
-El empleado mantiene el catálogo porque es quien ingresa repuestos al almacén; el encargado, porque carga el stock recibido y su ubicación (RN-08). Gerencia solo consulta y el operario no accede al almacén.
+El encargado da de alta repuestos en el catálogo. El empleado y el encargado pueden actualizar repuestos y gestionar ubicaciones; el ingreso de unidades corresponde a la recepción (RN-08). Gerencia solo consulta y el operario no accede al almacén.
 
 ## Permisos de la API de incidencias (T29)
 

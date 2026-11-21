@@ -61,6 +61,7 @@ def test_repuestos_ubicaciones_y_stock(tmp_path):
 
         assert client.get("/api/v0/ubicaciones").json()["total"] == 2
 
+        con_rol(app, "encargado_mantenimiento")
         creado = client.post(
             "/api/v0/repuestos",
             json={
@@ -79,6 +80,7 @@ def test_repuestos_ubicaciones_y_stock(tmp_path):
             json={
                 "codigo": "REP-087",
                 "nombre": "Filtro de aceite",
+                "stock_minimo": 0,
             },
         )
 
@@ -87,10 +89,13 @@ def test_repuestos_ubicaciones_y_stock(tmp_path):
             json={
                 "codigo": "REP-142",
                 "nombre": "Otro",
+                "stock_minimo": 0,
             },
         )
         assert duplicado.status_code == 409
         assert duplicado.json()["codigo"] == "duplicado"
+
+        con_rol(app, "empleado_mantenimiento")
 
         # Las existencias se insertan directamente porque las recepciones
         # están fuera del alcance de estas pruebas.
